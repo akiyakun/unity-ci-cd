@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if __USE_UNICICD_BUILDMENU__
+using UnityEditor;
 
 namespace unicicd.Editor.Build
 {
@@ -65,24 +66,24 @@ namespace unicicd.Editor.Build
         #endif
         */
 
-#if (UNITY_EDITOR && UNITY_IOS)
-        [MenuItem(BuildsMenu + "Xcode build (*.ipa) [debug]", false, PriorityBuilds + 81)]
-        static void build_ipa()
-        {
-            bool isDebug = true;
-            string strMode = isDebug ? "debug" : "release";
+// #if (UNITY_EDITOR && UNITY_IOS)
+//         [MenuItem(BuildsMenu + "Xcode build (*.ipa) [debug]", false, PriorityBuilds + 81)]
+//         static void build_ipa()
+//         {
+//             bool isDebug = true;
+//             string strMode = isDebug ? "debug" : "release";
 
-            var builder = new CICDBuilder();
-            builder.Build(isDebug, "", EditorUserBuildSettings.activeBuildTarget);
+//             var builder = new CICDBuilder();
+//             builder.Build(isDebug, "", EditorUserBuildSettings.activeBuildTarget);
 
-            string workDir = BuildUtility.GetRootPath() + "tools/build/";
-            string proj_dir = string.Format("../../build/{0}/iOS/xcode/", strMode);
+//             string workDir = BuildUtility.GetRootPath() + "tools/build/";
+//             string proj_dir = string.Format("../../build/{0}/iOS/xcode/", strMode);
 
-            BuildUtility.DoConsoleCommand(string.Format(
-                "python3 build_ipa.py -proj_dir \"{1}\" -archive_path '../../build/{0}/iOS/app.xcarchive' -ipa_plist 'ipa_adhoc.plist' -out_ipa_dir '../../build/{0}/iOS/ipa/' > ../../build/{0}_ios_ipa.log",
-                strMode, proj_dir), workDir);
-        }
-#endif
+//             BuildUtility.DoConsoleCommand(string.Format(
+//                 "python3 build_ipa.py -proj_dir \"{1}\" -archive_path '../../build/{0}/iOS/app.xcarchive' -ipa_plist 'ipa_adhoc.plist' -out_ipa_dir '../../build/{0}/iOS/ipa/' > ../../build/{0}_ios_ipa.log",
+//                 strMode, proj_dir), workDir);
+//         }
+// #endif
 
         [MenuItem(BuildsMenu + "Cleanup", false, PriorityBuilds + 990)]
         static void Build_Cleanup()
@@ -105,4 +106,4 @@ namespace unicicd.Editor.Build
         #endregion
     }
 }
-
+#endif

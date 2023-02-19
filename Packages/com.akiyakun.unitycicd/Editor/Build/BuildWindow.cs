@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if __USE_UNICICD_BUILDMENU__
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using unicicd.Editor;
@@ -190,3 +191,4 @@ namespace unicicd.Editor.Build
         }
     }
 }
+#endif
