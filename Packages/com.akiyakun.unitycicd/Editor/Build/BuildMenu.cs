@@ -1,5 +1,4 @@
-﻿#if __USE_UNICICD_BUILDMENU__
-using UnityEditor;
+﻿using UnityEditor;
 
 namespace unicicd.Editor.Build
 {
@@ -19,14 +18,18 @@ namespace unicicd.Editor.Build
         public const int PriorityTests = 2000;
 
         #region Builds
+#if __USE_UNICICD_BUILDMENU__
         [MenuItem(BuildsMenu + "Debug Build", false, PriorityBuilds + 0)]
+#endif
         static void DebugBuild()
         {
             var window = EditorWindow.GetWindow<BuildWindow>(true);
             window.Initialize(BuildMode.Debug);
         }
 
+#if __USE_UNICICD_BUILDMENU__
         [MenuItem(BuildsMenu + "Release Build", false, PriorityBuilds + 1)]
+#endif
         static void ReleaseBuild()
         {
             var window = EditorWindow.GetWindow<BuildWindow>(true);
@@ -66,26 +69,28 @@ namespace unicicd.Editor.Build
         #endif
         */
 
-// #if (UNITY_EDITOR && UNITY_IOS)
-//         [MenuItem(BuildsMenu + "Xcode build (*.ipa) [debug]", false, PriorityBuilds + 81)]
-//         static void build_ipa()
-//         {
-//             bool isDebug = true;
-//             string strMode = isDebug ? "debug" : "release";
+        // #if (UNITY_EDITOR && UNITY_IOS)
+        //         [MenuItem(BuildsMenu + "Xcode build (*.ipa) [debug]", false, PriorityBuilds + 81)]
+        //         static void build_ipa()
+        //         {
+        //             bool isDebug = true;
+        //             string strMode = isDebug ? "debug" : "release";
 
-//             var builder = new CICDBuilder();
-//             builder.Build(isDebug, "", EditorUserBuildSettings.activeBuildTarget);
+        //             var builder = new CICDBuilder();
+        //             builder.Build(isDebug, "", EditorUserBuildSettings.activeBuildTarget);
 
-//             string workDir = BuildUtility.GetRootPath() + "tools/build/";
-//             string proj_dir = string.Format("../../build/{0}/iOS/xcode/", strMode);
+        //             string workDir = BuildUtility.GetRootPath() + "tools/build/";
+        //             string proj_dir = string.Format("../../build/{0}/iOS/xcode/", strMode);
 
-//             BuildUtility.DoConsoleCommand(string.Format(
-//                 "python3 build_ipa.py -proj_dir \"{1}\" -archive_path '../../build/{0}/iOS/app.xcarchive' -ipa_plist 'ipa_adhoc.plist' -out_ipa_dir '../../build/{0}/iOS/ipa/' > ../../build/{0}_ios_ipa.log",
-//                 strMode, proj_dir), workDir);
-//         }
-// #endif
+        //             BuildUtility.DoConsoleCommand(string.Format(
+        //                 "python3 build_ipa.py -proj_dir \"{1}\" -archive_path '../../build/{0}/iOS/app.xcarchive' -ipa_plist 'ipa_adhoc.plist' -out_ipa_dir '../../build/{0}/iOS/ipa/' > ../../build/{0}_ios_ipa.log",
+        //                 strMode, proj_dir), workDir);
+        //         }
+        // #endif
 
+#if __USE_UNICICD_BUILDMENU__
         [MenuItem(BuildsMenu + "Cleanup", false, PriorityBuilds + 990)]
+#endif
         static void Build_Cleanup()
         {
             CICDBuilder.CleanupBuildDirectory(true);
@@ -96,7 +101,9 @@ namespace unicicd.Editor.Build
         #endregion
 
         #region Tests
+#if __USE_UNICICD_BUILDMENU__
         [MenuItem(BuildsMenu + "Tests Run...", false, PriorityTests + 0)]
+#endif
         static void Tests_Run()
         {
             // SymbolEditor.AddSymbol("__TESTS__", BuildTargetGroup.Standalone);
@@ -106,4 +113,3 @@ namespace unicicd.Editor.Build
         #endregion
     }
 }
-#endif

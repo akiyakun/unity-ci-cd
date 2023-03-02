@@ -1,5 +1,4 @@
-﻿#if __USE_UNICICD_BUILDMENU__
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using unicicd.Editor;
@@ -56,10 +55,10 @@ namespace unicicd.Editor.Build
             EditorGUILayout.LabelField("");
 
             // Development Build
-            if (BuildMode == BuildMenu.BuildMode.Debug)
-            {
+            // if (BuildMode == BuildMenu.BuildMode.Debug)
+            // {
                 developmentBuild = EditorGUILayout.Toggle("Development Build", developmentBuild);
-            }
+            // }
 
 #if (UNITY_EDITOR && UNITY_ANDROID)
             if (BuildMode == BuildMenu.BuildMode.AndroidMono) install = true;
@@ -191,4 +190,3 @@ namespace unicicd.Editor.Build
         }
     }
 }
-#endif
