@@ -14,7 +14,7 @@ namespace unicicd.Editor.Build
         {
             string platform = null;
             bool development = false;
-            string[] options = null;
+            string[] optionStrings = null;
 
             // 引数をパース
             string[] args = System.Environment.GetCommandLineArgs();
@@ -29,7 +29,7 @@ namespace unicicd.Editor.Build
                         development = true;
                         break;
                     case "--options":
-                        options = args[i + 1].Split(',');
+                        optionStrings = args[i + 1].Split(',');
                         break;
                 }
             }
@@ -45,13 +45,12 @@ namespace unicicd.Editor.Build
 
 
             CICDBuilder builder = new CICDBuilder();
-            var ret = builder.Build(
-                development: development,
-                jobName: "",
-                optionStrings: options,
-                buildTarget: buildTarget
-            );
+            CICDBuildOptions options = new CICDBuildOptions();
+            options.Build = CICDBuildOptions.BuildMode.Debug;
+            options.BuildTarget = buildTarget;
+            options.OptionStrings = new List<string>(optionStrings);
 
+            var ret = builder.Build(options);
             if (ret.BuildSucceeded)
             {
                 EditorApplication.Exit(0);

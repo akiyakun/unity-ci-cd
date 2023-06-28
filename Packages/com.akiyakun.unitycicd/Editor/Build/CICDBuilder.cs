@@ -35,28 +35,49 @@ namespace unicicd.Editor.Build
 #endif
         }
 
-        // ターゲットのビルドディレクトリを削除します
-        public static void CleanupBuildDirectory(bool development, BuildTarget buildTarget = BuildTarget.NoTarget)
+        public static void CleanupAllBuildDirectory()
         {
-            // if (buildTarget == BuildTarget.NoTarget) buildTarget = EditorUserBuildSettings.selectedStandaloneTarget;
-            if (buildTarget == BuildTarget.NoTarget) buildTarget = EditorUserBuildSettings.activeBuildTarget;
-            string path = GetWorkingBuildDirectory(development, buildTarget);
+            BuildUtility.DeleteDirectory("build/");
+            BuildUtility.CreateDirectory("build/");
+        }
+
+        // ビルドモードののルートビルドディレクトリを削除します
+        public static void CleanupBuildModeRootDirectory(CICDBuildOptions.BuildMode buildMode)
+        {
+            string path = GetWorkingBuildModeRootDirectory(buildMode);
+            BuildUtility.DeleteDirectory(path);
+        }
+
+        // ビルドターゲットのビルドディレクトリを削除します
+        public static void CleanupBuildTargetDirectory(CICDBuildOptions options)
+        {
+            string path = GetWorkingBuildDirectory(options);
             Debug.Log("CleanupBuildDirectory: " + path);
             BuildUtility.DeleteDirectory(path);
         }
 
-        // ターゲットのビルドディレクトリを取得
-        public static string GetWorkingBuildDirectory(bool development, BuildTarget buildTarget = BuildTarget.NoTarget)
+        // ビルドモード別のディレクトリパスを取得
+        public static string GetWorkingBuildModeRootDirectory(CICDBuildOptions.BuildMode buildMode)
         {
-            // if (buildTarget == BuildTarget.NoTarget) buildTarget = EditorUserBuildSettings.selectedStandaloneTarget;
-            if (buildTarget == BuildTarget.NoTarget) buildTarget = EditorUserBuildSettings.activeBuildTarget;
+            switch (buildMode)
+            {
+                case CICDBuildOptions.BuildMode.Current:
+                    return "build/current/";
+                case CICDBuildOptions.BuildMode.Debug:
+                    return "build/debug/";
+                case CICDBuildOptions.BuildMode.Release:
+                    return "build/release/";
+            }
 
-            string path = "build/";
+            return "";
+        }
 
-            if (development) path += "debug/";
-            else path += "release/";
+        // ターゲットのビルドディレクトリパスを取得
+        public static string GetWorkingBuildDirectory(CICDBuildOptions options)
+        {
+            string path = GetWorkingBuildModeRootDirectory(options.Build);
 
-            switch (buildTarget)
+            switch (options.BuildTarget)
             {
                 case BuildTarget.Android: path += "Android/"; break;
                 case BuildTarget.iOS: path += "iOS/xcode"; break;
@@ -65,7 +86,7 @@ namespace unicicd.Editor.Build
                 case BuildTarget.StandaloneOSX: path += "macOS/"; break;
                 case BuildTarget.WebGL: path += "WebGL/"; break;
                 default:
-                    Log("[Build] Unknown BuildTarget is " + buildTarget.ToString());
+                    Log("[Build] Unknown BuildTarget is " + options.BuildTarget.ToString());
                     Debug.Assert(false);
                     break;
             }
@@ -74,13 +95,17 @@ namespace unicicd.Editor.Build
         }
 
         // ビルドを実行します
-        public CICDBuildResult Build(bool development, string jobName = "", string[] optionStrings = null, BuildTarget buildTarget = BuildTarget.NoTarget)
+        public CICDBuildResult Build(CICDBuildOptions options)
         {
-            // if (buildTarget == BuildTarget.NoTarget) buildTarget = EditorUserBuildSettings.selectedStandaloneTarget;
-            if (buildTarget == BuildTarget.NoTarget) buildTarget = EditorUserBuildSettings.activeBuildTarget;
+            if (options.BuildTarget == BuildTarget.NoTarget)
+            {
+                options.ApplyCurrentBuildTarget();
+            }
 
-            // MEMO: 既存ファイルがあるとビルドに支障が出る事が多々あるので削除を強制しています
-            CleanupBuildDirectory(development, buildTarget);
+            if (!options.CleanupBuildDirectory)
+            {
+                CleanupBuildTargetDirectory(options);
+            }
 
             // 現在のDefineを一時保存
             var saveSymbols = SymbolEditor.GetSymbols();
@@ -88,44 +113,51 @@ namespace unicicd.Editor.Build
             var result = new CICDBuildResult();
             try
             {
-                result = _Build(development, jobName, optionStrings, buildTarget);
+                result = _Build(options);
             }
             finally
             {
-                // Defineを元に戻す
-                SymbolEditor.SetSymbols(saveSymbols);
-                SymbolEditor.RemoveSymbol("__TESTS__");
-                SymbolEditor.RemoveSymbol("__PUBLISH__");
+                switch (options.Build)
+                {
+                    case CICDBuildOptions.BuildMode.Current:
+                        break;
+                    default:
+                        // Defineを元に戻す
+                        SymbolEditor.SetSymbols(saveSymbols);
+                        SymbolEditor.RemoveSymbol("__TESTS__");
+                        SymbolEditor.RemoveSymbol("__PUBLISH__");
+                        break;
+                }
             }
 
             return result;
         }
 
-        CICDBuildResult _Build(bool development, string jobName = "", string[] optionStrings = null, BuildTarget buildTarget = BuildTarget.NoTarget)
+        CICDBuildResult _Build(CICDBuildOptions options)
         {
             var result = new CICDBuildResult();
 
-            // ビルドオプション
-            if (development)
+            switch (options.Build)
             {
-                // デバッグビルド
-                Log("[Build] Development Build.");
-                SymbolEditor.AddSymbol("__DEBUG__");
-                SymbolEditor.RemoveSymbol("__TESTS__");
-                SymbolEditor.AddSymbol("__PUBLISH__");
-
-            }
-            else
-            {
-                // リリースビルド
-                Log("[Build] Release Build.");
-                SymbolEditor.RemoveSymbol("__DEBUG__");
-                SymbolEditor.RemoveSymbol("__TESTS__");
-                SymbolEditor.AddSymbol("__PUBLISH__");
+                case CICDBuildOptions.BuildMode.Current:
+                    Log("[Build] Current Build.");
+                    break;
+                case CICDBuildOptions.BuildMode.Debug:
+                    Log("[Build] Development Build.");
+                    SymbolEditor.AddSymbol("__DEBUG__");
+                    SymbolEditor.RemoveSymbol("__TESTS__");
+                    SymbolEditor.AddSymbol("__PUBLISH__");
+                    break;
+                case CICDBuildOptions.BuildMode.Release:
+                    Log("[Build] Release Build.");
+                    SymbolEditor.RemoveSymbol("__DEBUG__");
+                    SymbolEditor.RemoveSymbol("__TESTS__");
+                    SymbolEditor.AddSymbol("__PUBLISH__");
+                    break;
             }
 
             // ビルドターゲットを変更
-            if (!SwitchBuildTarget(buildTarget))
+            if (!SwitchBuildTarget(options.BuildTarget))
             {
                 Log("[Build] SwitchBuildTarget() failed.");
                 return result;
@@ -134,13 +166,13 @@ namespace unicicd.Editor.Build
             // ビルドプレイヤーオプションの設定
             BuildPlayerOptions bpo = new BuildPlayerOptions();
             {
-                SettingBuildPlayerOptions(buildTarget, development, optionStrings, out bpo);
+                SettingBuildPlayerOptions(options, out bpo);
 
-                result.BuildDirectory = GetWorkingBuildDirectory(development, buildTarget);
+                result.BuildDirectory = GetWorkingBuildDirectory(options);
 
                 // ロケーションパスの設定はココで…
-                bpo.locationPathName = CreateLocationPathName(config,
-                    result.BuildDirectory, buildTarget, development, jobName);
+                bpo.locationPathName = CreateLocationPathName(
+                    config, result.BuildDirectory, options);
 
                 // BuildPipeline.BuildPlayer()はフォルダが無いとエラーが出る
                 BuildUtility.CreateDirectory(bpo.locationPathName);
@@ -153,7 +185,7 @@ namespace unicicd.Editor.Build
                 report = BuildPipeline.BuildPlayer(bpo);
                 Log("[Build] Finished BuildPlayer().");
 
-                PostprocessBuild(bpo, development, optionStrings);
+                PostprocessBuild(bpo, options);
                 Log("[Build] Finished PostprocessBuild().");
             }
             catch (Exception e)
@@ -181,25 +213,22 @@ namespace unicicd.Editor.Build
         }
 
         // ターゲット毎のビルドプレイヤーオプション設定
-        public static void SettingBuildPlayerOptions(BuildTarget buildTarget, bool development, string[] optionStrings, out BuildPlayerOptions bpo)
+        public static void SettingBuildPlayerOptions(CICDBuildOptions options, out BuildPlayerOptions bpo)
         {
             bpo = new BuildPlayerOptions();
-            bpo.target = buildTarget;
-            bpo.scenes = BuildUtility.GetBuildSettingsScene().ToArray();
+            bpo.target = options.BuildTarget;
+            bpo.scenes = options.Scenes.ToArray();
             bpo.options = BuildOptions.None;
 
-            switch (buildTarget)
+            switch (options.BuildTarget)
             {
                 case BuildTarget.StandaloneWindows:
                 case BuildTarget.StandaloneWindows64:
                 case BuildTarget.StandaloneOSX:
-                    if (development)
+                    if (options.UnityDevelopmentBuild)
                     {
-                        if (optionStrings.Contains("DevelopmentBuild"))
-                        {
-                            // スタンドアローンビルドはUnityEditorのコンソールにアタッチできる
-                            bpo.options = BuildOptions.Development;
-                        }
+                        // スタンドアローンビルドはUnityEditorのコンソールにアタッチできる
+                        bpo.options = BuildOptions.Development;
                     }
                     break;
             }
@@ -210,13 +239,14 @@ namespace unicicd.Editor.Build
 
             MEMO: platform名の文字列を直接書いているのでどうにかしたい
          */
-        public static string CreateLocationPathName(CICDConfig config, string workPath, BuildTarget buildTarget, bool development, string jobName)
+        public static string CreateLocationPathName(
+            CICDConfig config, string workPath, CICDBuildOptions options)
         {
             string app_name = "";
             string extension = "";
             string platform = "";
 
-            switch (buildTarget)
+            switch (options.BuildTarget)
             {
                 case BuildTarget.Android:
                     extension = ".apk";
@@ -237,27 +267,27 @@ namespace unicicd.Editor.Build
                 case BuildTarget.WebGL:
                     break;
                 default:
-                    Log("[Build] Unknown BuildTarget is " + buildTarget.ToString());
+                    Log("[Build] Unknown BuildTarget is " + options.BuildTarget.ToString());
                     Debug.Assert(false);
                     break;
             }
 
             string ret = "";
 
-            if (string.IsNullOrEmpty(jobName))
+            if (string.IsNullOrEmpty(options.JobName))
             {
                 app_name = config.jobs.Find(obj => obj.platform == platform).application_filename;
             }
             else
             {
-                Log("jobName = " + jobName);
-                app_name = config.jobs.Find(obj => obj.platform == platform && obj.job_name == jobName).application_filename;
+                Log("jobName = " + options.JobName);
+                app_name = config.jobs.Find(obj => obj.platform == platform && obj.job_name == options.JobName).application_filename;
             }
 
             if (app_name.Length <= 0)
             {
                 // アプリファイル名の設定なし
-                string mode = development ? "Debug" : "Release";
+                string mode = options.Build.ToString();
 
 #if (UNITY_EDITOR && UNITY_ANDROID)
             if (PreprocessorBuild.AndroidMonoBuild) mode += "(Mono)";
@@ -349,9 +379,9 @@ namespace unicicd.Editor.Build
             return EditorUserBuildSettings.SwitchActiveBuildTarget(group, buildTarget);
         }
 
-        void PostprocessBuild(BuildPlayerOptions bpo, bool development, string[] options)
+        void PostprocessBuild(BuildPlayerOptions bpo, CICDBuildOptions options)
         {
-            string workPath = BuildUtility.GetRootPath() + GetWorkingBuildDirectory(development, bpo.target);
+            string workPath = BuildUtility.GetRootPath() + GetWorkingBuildDirectory(options);
 
             switch (bpo.target)
             {
@@ -365,7 +395,7 @@ namespace unicicd.Editor.Build
 
                         // 輸出コンプライアンスの設定
                         // trueでUploadしようとするとエラーになる
-                        if (options.Contains("ITSAppUsesNonExemptEncryption-false"))
+                        if (options.OptionStrings.Contains("ITSAppUsesNonExemptEncryption-false"))
                         {
                             // Log("ITSAppUsesNonExemptEncryption-false");
                             plist.root.SetString("ITSAppUsesNonExemptEncryption", "false");

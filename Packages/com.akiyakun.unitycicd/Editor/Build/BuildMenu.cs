@@ -24,7 +24,10 @@ namespace unicicd.Editor.Build
         static void DebugBuild()
         {
             var window = EditorWindow.GetWindow<BuildWindow>(true);
-            window.Initialize(BuildMode.Debug);
+            CICDBuildOptions options = new CICDBuildOptions();
+            options.SetupDefaultSettings();
+            options.Build = CICDBuildOptions.BuildMode.Debug;
+            window.Initialize(options);
         }
 
 #if __USE_UNICICD_BUILDMENU__
@@ -33,7 +36,10 @@ namespace unicicd.Editor.Build
         static void ReleaseBuild()
         {
             var window = EditorWindow.GetWindow<BuildWindow>(true);
-            window.Initialize(BuildMode.Release);
+            CICDBuildOptions options = new CICDBuildOptions();
+            options.SetupDefaultSettings();
+            options.Build = CICDBuildOptions.BuildMode.Release;
+            window.Initialize(options);
         }
 
         /*
@@ -93,8 +99,7 @@ namespace unicicd.Editor.Build
 #endif
         static void Build_Cleanup()
         {
-            CICDBuilder.CleanupBuildDirectory(true);
-            CICDBuilder.CleanupBuildDirectory(false);
+            CICDBuilder.CleanupAllBuildDirectory();
             UnityEngine.Debug.Log("Cleanup finished.");
         }
 
