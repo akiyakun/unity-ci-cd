@@ -10,24 +10,26 @@ namespace unicicd.Editor.Build
         bool incrementBuildNumber = true;
         bool developmentBuild = false;
 
-        BuildMenu.BuildMode BuildMode { get; set; }
-        string jobName;
+        // BuildMenu.BuildMode BuildMode { get; set; }
+        // string jobName;
+        public CICDBuildOptions Options { get; private set; }
 
         public System.Action OnBuildBegin;
         public System.Action<CICDBuildResult> OnBuildEnd;
 
         public void Initialize(CICDBuildOptions options)
         {
-            jobName = options.JobName;
+            // jobName = options.JobName;
+            Options = options;
 
             switch (options.Build)
             {
                 case CICDBuildOptions.BuildMode.Debug:
-                    BuildMode = BuildMenu.BuildMode.Debug;
+                    // BuildMode = BuildMenu.BuildMode.Debug;
                     titleContent.text = "Debug Build";
                     break;
                 case CICDBuildOptions.BuildMode.Release:
-                    BuildMode = BuildMenu.BuildMode.Release;
+                    // BuildMode = BuildMenu.BuildMode.Release;
                     titleContent.text = "Release Build";
                     break;
                 // case CICDBuildOptions.BuildMode.AndroidMono:
@@ -123,42 +125,46 @@ namespace unicicd.Editor.Build
 
             if (developmentBuild) optionStrings.Add("DevelopmentBuild");
 
-            switch (BuildMode)
+            // switch (BuildMode)
+            switch (Options.Build)
             {
-                case BuildMenu.BuildMode.Debug:
+                // case BuildMenu.BuildMode.Debug:
+                case CICDBuildOptions.BuildMode.Debug:
                     {
                         Debug.Log("Debug Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
 
                         optionStrings.Add("ITSAppUsesNonExemptEncryption-false");
 
-                        CICDBuildOptions options = new CICDBuildOptions();
-                        options.Build = CICDBuildOptions.BuildMode.Debug;
-                        options.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-                        options.JobName = jobName;
-                        options.OptionStrings = new List<string>(optionStrings);
-                        ret = builder.Build(options);
+                        // CICDBuildOptions options = new CICDBuildOptions();
+                        // options.Build = CICDBuildOptions.BuildMode.Debug;
+                        // options.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
+                        // options.JobName = jobName;
+                        Options.OptionStrings.AddRange(optionStrings);
+                        ret = builder.Build(Options);
 
 #if (UNITY_EDITOR && UNITY_ANDROID)
                         if (install) BuildMenu.AndroidInstallAPK();
 #endif
                     }
                     break;
-                case BuildMenu.BuildMode.Release:
+                // case BuildMenu.BuildMode.Release:
+                case CICDBuildOptions.BuildMode.Release:
                     {
                         Debug.Log("Release Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
 
-                        CICDBuildOptions options = new CICDBuildOptions();
-                        options.Build = CICDBuildOptions.BuildMode.Release;
-                        options.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-                        options.JobName = jobName;
-                        options.OptionStrings = new List<string>(optionStrings);
-                        ret = builder.Build(options);
+                        // CICDBuildOptions options = new CICDBuildOptions();
+                        // options.Build = CICDBuildOptions.BuildMode.Release;
+                        // options.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
+                        // options.JobName = jobName;
+                        Options.OptionStrings.AddRange(optionStrings);
+                        ret = builder.Build(Options);
 
 #if (UNITY_EDITOR && UNITY_ANDROID)
                         if (install) BuildMenu.AndroidInstallAPK();
 #endif
                     }
                     break;
+/*
                 case BuildMenu.BuildMode.AndroidMono:
 #if (UNITY_EDITOR && UNITY_ANDROID)
                     {
@@ -167,11 +173,11 @@ namespace unicicd.Editor.Build
 
                         try
                         {
-                            CICDBuildOptions options = new CICDBuildOptions();
-                            options.Build = CICDBuildOptions.BuildMode.Debug;
-                            options.BuildTarget = BuildTarget.Android;
-                            options.JobName = jobName;
-                            options.OptionStrings = new List<string>(optionStrings);
+                            // CICDBuildOptions options = new CICDBuildOptions();
+                            // options.Build = CICDBuildOptions.BuildMode.Debug;
+                            // options.BuildTarget = BuildTarget.Android;
+                            // options.JobName = jobName;
+                            options.OptionStrings.AddRange(optionStrings);
                             ret = builder.Build(options);
 
                             if (install) BuildMenu.AndroidInstallAPK();
@@ -185,6 +191,7 @@ namespace unicicd.Editor.Build
                     }
 #endif
                     break;
+*/
             }
 
             return ret;

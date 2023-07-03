@@ -217,8 +217,16 @@ namespace unicicd.Editor.Build
         {
             bpo = new BuildPlayerOptions();
             bpo.target = options.BuildTarget;
-            bpo.scenes = options.Scenes.ToArray();
             bpo.options = BuildOptions.None;
+
+            if (options.Scenes.Count <= 0)
+            {
+                bpo.scenes = BuildUtility.GetBuildSettingsScene().ToArray();
+            }
+            else
+            {
+                bpo.scenes = options.Scenes.ToArray();
+            }
 
             switch (options.BuildTarget)
             {
