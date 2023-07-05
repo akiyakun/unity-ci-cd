@@ -102,7 +102,7 @@ namespace unicicd.Editor.Build
                 options.ApplyCurrentBuildTarget();
             }
 
-            if (!options.CleanupBuildDirectory)
+            if (options.CleanupBuildDirectory)
             {
                 CleanupBuildTargetDirectory(options);
             }
