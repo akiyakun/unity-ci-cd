@@ -123,7 +123,10 @@ namespace unicicd.Editor.Build
             List<string> optionStrings = new List<string>();
             var ret = new CICDBuildResult();
 
-            if (developmentBuild) optionStrings.Add("DevelopmentBuild");
+            if (developmentBuild)
+            {
+                Options.UnityDevelopmentBuild = true;
+            }
 
             // switch (BuildMode)
             switch (Options.Build)
