@@ -135,7 +135,7 @@ def SendMsgArtifacts() {
                 + "Commit Log:\n" \
                 + "${git_log}"
         
-        // rocketSend emoji: ':floppy_disk:', attachments: [[color: '#0000ff', text: text]], channel: "${Config.notify.channel}", rawMessage: true, message: ""
+        rocketSend emoji: ':floppy_disk:', attachments: [[color: '#0000ff', text: text]], channel: "${Config.notify.channel}", rawMessage: true, message: ""
     }
 }
 
@@ -147,10 +147,10 @@ def SendMsgTestFailed() {
         
         def text = "${git_log}"
 
-        // rocketSend emoji: ':sob:', attachments: [[color: '#ff0000', text: text]], channel: "${Config.notify.channel}", rawMessage: true,
-        //     message: "Test Failed!\n" \
-        //                 + "@${git_user} pushed. commito to *<${GIT_URL.minus('.git')}/commit/${GIT_COMMIT}|${GIT_BRANCH.split('/')[1]}>*\n" \
-        //                 + "${env.JOB_NAME} - <${env.BUILD_URL}|#${env.BUILD_NUMBER}> - <${env.BUILD_URL}testReport/|TestReport>"
+        rocketSend emoji: ':sob:', attachments: [[color: '#ff0000', text: text]], channel: "${Config.notify.channel}", rawMessage: true,
+            message: "Test Failed!\n" \
+                        + "@${git_user} pushed. commito to *<${GIT_URL.minus('.git')}/commit/${GIT_COMMIT}|${GIT_BRANCH.split('/')[1]}>*\n" \
+                        + "${env.JOB_NAME} - <${env.BUILD_URL}|#${env.BUILD_NUMBER}> - <${env.BUILD_URL}testReport/|TestReport>"
     }
 }
 
@@ -167,7 +167,7 @@ def SendMsgBuildFailed() {
                     + "Log:\n ${git_log}"
 
         def avater = 'https://wiki.jenkins.io/download/attachments/2916393/fire-jenkins.svg'
-        // rocketSend avatar: avater, attachments: [[color: '#ff0000', text: text]], channel: "${Config.notify.channel}", message: 'Build Failed!', rawMessage: true
+        rocketSend avatar: avater, attachments: [[color: '#ff0000', text: text]], channel: "${Config.notify.channel}", message: 'Build Failed!', rawMessage: true
     }
 }
 

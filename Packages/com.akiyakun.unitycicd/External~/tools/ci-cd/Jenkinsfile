@@ -28,10 +28,10 @@ pipeline {
     //     choice(name: 'STAGE', choices: 'staging\nproduction', description: '説明')
     // }
 
-    options {
-        // gitLabConnection('GitLab')
-        // gitlabBuilds(builds: ['Test', 'Android', 'iOS'])
-    }
+    // options {
+    //     // gitLabConnection('GitLab')
+    //     // gitlabBuilds(builds: ['Test', 'Android', 'iOS'])
+    // }
 
     triggers {
         // ここに記述された設定がジョブ設定で優先・上書きされます
@@ -90,13 +90,13 @@ pipeline {
             post {
                 success {
                     script {
-                        // echo 'Tests success.' 
+                        echo 'success.' 
                         // updateGitlabCommitStatus name: "${env.STAGE_NAME}", state: 'success'
                     }
                 }
                 failure {
                     script {
-                        // echo 'Tests failure.' 
+                        echo 'failure.' 
                         // updateGitlabCommitStatus name: "${env.STAGE_NAME}", state: 'failed'
                         // Common.SendMsgTestFailed()
                     }
