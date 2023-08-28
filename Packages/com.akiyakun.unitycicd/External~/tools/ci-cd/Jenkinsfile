@@ -29,30 +29,30 @@ pipeline {
     // }
 
     options {
-        gitLabConnection('GitLab')
+        // gitLabConnection('GitLab')
         // gitlabBuilds(builds: ['Test', 'Android', 'iOS'])
     }
 
     triggers {
         // ここに記述された設定がジョブ設定で優先・上書きされます
-        gitlab(
-            triggerOnPush: true,
-            triggerOnMergeRequest: true,
-            addNoteOnMergeRequest: true,
-            addCiMessage: true,
-            // branchFilterType: 'All',
-            branchFilterType: "NameBasedFilter",
-            includeBranchesSpec: "${includeBranchesSpec}",
-            excludeBranchesSpec: "${excludeBranchesSpec}",
-            pendingBuildName: "Jenkins"
-        )
+        // gitlab(
+        //     triggerOnPush: true,
+        //     triggerOnMergeRequest: true,
+        //     addNoteOnMergeRequest: true,
+        //     addCiMessage: true,
+        //     // branchFilterType: 'All',
+        //     branchFilterType: "NameBasedFilter",
+        //     includeBranchesSpec: "${includeBranchesSpec}",
+        //     excludeBranchesSpec: "${excludeBranchesSpec}",
+        //     pendingBuildName: "Jenkins"
+        // )
     }
 
     stages {
         stage('Startup'){
             steps {
                 script {
-                    Common = load("tools/ci-cd/Common.groovy")
+                    Common = load("${LOCATION_PATH}/tools/ci-cd/Common.groovy")
                     Common.ReadConfig()
                     Common.CleanupBuild()
                 }
@@ -91,14 +91,14 @@ pipeline {
                 success {
                     script {
                         // echo 'Tests success.' 
-                        updateGitlabCommitStatus name: "${env.STAGE_NAME}", state: 'success'
+                        // updateGitlabCommitStatus name: "${env.STAGE_NAME}", state: 'success'
                     }
                 }
                 failure {
                     script {
                         // echo 'Tests failure.' 
-                        updateGitlabCommitStatus name: "${env.STAGE_NAME}", state: 'failed'
-                        Common.SendMsgTestFailed()
+                        // updateGitlabCommitStatus name: "${env.STAGE_NAME}", state: 'failed'
+                        // Common.SendMsgTestFailed()
                     }
                 }
             } // post
@@ -124,9 +124,9 @@ pipeline {
                                         // echo "end: ${build_info.getResult()}"
 
                                         if (build_info.getResult() == 'SUCCESS') {
-                                            updateGitlabCommitStatus name: "${JobConfig['platform']}", state: 'success'
+                                            // updateGitlabCommitStatus name: "${JobConfig['platform']}", state: 'success'
                                         } else {
-                                            updateGitlabCommitStatus name: "${JobConfig['platform']}", state: 'failed'
+                                            // updateGitlabCommitStatus name: "${JobConfig['platform']}", state: 'failed'
                                         }
 
                                         // currentBuild.result = build_info.getResult()
@@ -203,14 +203,14 @@ pipeline {
         success {
             script {
                 echo 'success'
-                updateGitlabCommitStatus name: 'Jenkins', state: 'success'
+                // updateGitlabCommitStatus name: 'Jenkins', state: 'success'
             }
         }
         failure {
             script {
                 echo 'failure'
-                updateGitlabCommitStatus name: 'Jenkins', state: 'failed'
-                Common.SendMsgBuildFailed()
+                // updateGitlabCommitStatus name: 'Jenkins', state: 'failed'
+                // Common.SendMsgBuildFailed()
             }
         }
         changed {
