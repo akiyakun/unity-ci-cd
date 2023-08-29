@@ -33,20 +33,20 @@ pipeline {
     //     // gitlabBuilds(builds: ['Test', 'Android', 'iOS'])
     // }
 
-    triggers {
-        // ここに記述された設定がジョブ設定で優先・上書きされます
-        // gitlab(
-        //     triggerOnPush: true,
-        //     triggerOnMergeRequest: true,
-        //     addNoteOnMergeRequest: true,
-        //     addCiMessage: true,
-        //     // branchFilterType: 'All',
-        //     branchFilterType: "NameBasedFilter",
-        //     includeBranchesSpec: "${includeBranchesSpec}",
-        //     excludeBranchesSpec: "${excludeBranchesSpec}",
-        //     pendingBuildName: "Jenkins"
-        // )
-    }
+    // triggers {
+    //     // ここに記述された設定がジョブ設定で優先・上書きされます
+    //     // gitlab(
+    //     //     triggerOnPush: true,
+    //     //     triggerOnMergeRequest: true,
+    //     //     addNoteOnMergeRequest: true,
+    //     //     addCiMessage: true,
+    //     //     // branchFilterType: 'All',
+    //     //     branchFilterType: "NameBasedFilter",
+    //     //     includeBranchesSpec: "${includeBranchesSpec}",
+    //     //     excludeBranchesSpec: "${excludeBranchesSpec}",
+    //     //     pendingBuildName: "Jenkins"
+    //     // )
+    // }
 
     stages {
         stage('Startup'){
