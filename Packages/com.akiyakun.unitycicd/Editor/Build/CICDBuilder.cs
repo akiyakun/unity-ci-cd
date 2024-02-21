@@ -237,6 +237,8 @@ namespace unicicd.Editor.Build
                     {
                         // スタンドアローンビルドはUnityEditorのコンソールにアタッチできる
                         bpo.options = BuildOptions.Development;
+                        // スクリプトデバッガーを有効にしてリモートでプレイヤーにアタッチします
+                        bpo.options = BuildOptions.AllowDebugging;
                     }
                     break;
             }
