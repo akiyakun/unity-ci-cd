@@ -143,7 +143,8 @@ namespace unicicd.Editor.Build
                         // options.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
                         // options.JobName = jobName;
                         Options.OptionStrings.AddRange(optionStrings);
-                        ret = builder.Build(Options);
+                        builder.Initialize(Options);
+                        ret = builder.Build();
 
 #if (UNITY_EDITOR && UNITY_ANDROID)
                         if (install) BuildMenu.AndroidInstallAPK();
@@ -160,7 +161,8 @@ namespace unicicd.Editor.Build
                         // options.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
                         // options.JobName = jobName;
                         Options.OptionStrings.AddRange(optionStrings);
-                        ret = builder.Build(Options);
+                        builder.Initialize(Options);
+                        ret = builder.Build();
 
 #if (UNITY_EDITOR && UNITY_ANDROID)
                         if (install) BuildMenu.AndroidInstallAPK();
