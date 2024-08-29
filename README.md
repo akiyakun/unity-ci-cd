@@ -1,1 +1,8 @@
 # Unity CI-CD
+
+__DEBUG__
+__RELEASE__
+__PUBLISH__
+__INAPPDEBUG__
+__TESTS__
+
