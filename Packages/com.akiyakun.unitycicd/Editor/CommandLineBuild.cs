@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using unicicd.Editor;
 
+#pragma warning disable CS0219
+
 namespace unicicd.Editor.Build
 {
     /*
@@ -50,7 +52,12 @@ namespace unicicd.Editor.Build
             options.BuildTarget = buildTarget;
             options.OptionStrings = new List<string>(optionStrings);
 
-            var ret = builder.Build(options);
+            if (builder.Initialize(options) == false)
+            {
+                EditorApplication.Exit(1);
+            }
+
+            var ret = builder.Build();
             if (ret.BuildSucceeded)
             {
                 EditorApplication.Exit(0);
