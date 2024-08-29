@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f29bcbf8cb256f41ac70c1be73ff81d, type: 3}
+  m_Name: BuildSettings
+  m_EditorClassIdentifier: 
+  RequiredSceneList:
+  - {fileID: 102900000, guid: f351ab691b5fc364fa9d1214ecbce117, type: 3}
+  - {fileID: 102900000, guid: 563beda9f92887241a235ce3f1763855, type: 3}
+  - {fileID: 102900000, guid: 54f958714f738ae43aaa388445fa951b, type: 3}
+  InAppDebugSceneList:
+  - {fileID: 102900000, guid: 50665e037ef60334ab3d72defa4de7c6, type: 3}
+  - {fileID: 102900000, guid: 5b13597e386b2a648a39f629d0e830cf, type: 3}
