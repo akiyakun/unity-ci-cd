@@ -48,7 +48,7 @@ namespace unicicd.Editor.Build
 
             CICDBuilder builder = new CICDBuilder();
             CICDBuildOptions options = new CICDBuildOptions();
-            options.Build = CICDBuildOptions.BuildMode.Debug;
+            options.BuildMode = CICDBuildMode.Debug;
             options.BuildTarget = buildTarget;
             options.OptionStrings = new List<string>(optionStrings);
 

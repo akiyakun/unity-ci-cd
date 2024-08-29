@@ -8,17 +8,17 @@ namespace unicicd.Editor.Build
     //     Auto,
     // }
 
+    public enum CICDBuildMode
+    {
+        Current,       // 現在の設定のままビルド
+        Debug,
+        Release,
+        Publish,
+    }
+
     public class CICDBuildOptions
     {
-        public enum BuildMode
-        {
-            Current,       // 現在の設定のままビルド
-            Debug,
-            Release,
-            Publish,
-        }
-
-        public BuildMode Build = BuildMode.Current;
+        public CICDBuildMode BuildMode = CICDBuildMode.Current;
         public string JobName = "";
         public BuildTarget BuildTarget = BuildTarget.NoTarget;
         // public List<string> Scenes = new List<string>();

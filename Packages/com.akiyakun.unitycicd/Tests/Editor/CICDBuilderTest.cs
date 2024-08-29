@@ -37,9 +37,9 @@ public class CICDBuilderTest
     [Test]
     public void WorkingBuildModeRootDirectoryTest()
     {
-        foreach (object value in System.Enum.GetValues(typeof(CICDBuildOptions.BuildMode)))
+        foreach (object value in System.Enum.GetValues(typeof(CICDBuildMode)))
         {
-            var str = CICDBuilder.GetWorkingBuildModeRootDirectory((CICDBuildOptions.BuildMode)value);
+            var str = CICDBuilder.GetWorkingBuildModeRootDirectory((CICDBuildMode)value);
             Assert.IsFalse(string.IsNullOrEmpty(str), $"BuildMode.{value.ToString()} is Null or Empty");
         }
     }

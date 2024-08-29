@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if __USE_UNICICD_BUILDMENU__
+using UnityEditor;
 
 namespace unicicd.Editor.Build
 {
@@ -18,22 +19,59 @@ namespace unicicd.Editor.Build
         public const int PriorityTests = 2000;
 
         #region Builds
-#if __USE_UNICICD_BUILDMENU__
-        [MenuItem(BuildsMenu + "Debug Build", false, PriorityBuilds + 0)]
-#endif
-        static void DebugBuild()
+        // [MenuItem(BuildsMenu + "Debug Build", false, PriorityBuilds + 0)]
+        // static void DebugBuild()
+        // {
+        //     var window = EditorWindow.GetWindow<BuildWindow>(true);
+        //     CICDBuildOptions options = new CICDBuildOptions();
+        //     options.SetupDefaultSettings();
+        //     options.Build = CICDBuildOptions.BuildMode.Debug;
+        //     window.Initialize(options);
+        // }
+
+        // [MenuItem(BuildsMenu + "Release Build", false, PriorityBuilds + 1)]
+        // static void ReleaseBuild()
+        // {
+        //     var window = EditorWindow.GetWindow<BuildWindow>(true);
+        //     CICDBuildOptions options = new CICDBuildOptions();
+        //     options.SetupDefaultSettings();
+        //     options.Build = CICDBuildOptions.BuildMode.Release;
+        //     window.Initialize(options);
+        // }
+
+#if UNITY_STANDALONE_WIN
+        [MenuItem(BuildsMenu + "Win Build...", false, PriorityBuilds + 11)]
+        static void WinBuild()
         {
-            var window = EditorWindow.GetWindow<BuildWindow>(true);
-            CICDBuildOptions options = new CICDBuildOptions();
-            options.SetupDefaultSettings();
-            options.Build = CICDBuildOptions.BuildMode.Debug;
-            window.Initialize(options);
+            var window = EditorWindow.GetWindow<WinBuildWindowGUI>(true);
+            window.Initialize();
         }
 
-#if __USE_UNICICD_BUILDMENU__
-        [MenuItem(BuildsMenu + "Release Build", false, PriorityBuilds + 1)]
+        [MenuItem(BuildsMenu + "Win Build [Debug Preset]", false, PriorityBuilds + 12)]
+        static void WinDebugBuild()
+        {
+            var window = EditorWindow.GetWindow<WinBuildWindowGUI>(true);
+            window.Initialize(BuildOptionPreset.Debug);
+        }
+
+        [MenuItem(BuildsMenu + "Win Build [Release Preset]", false, PriorityBuilds + 13)]
+        static void WinReleaseBuild()
+        {
+            var window = EditorWindow.GetWindow<WinBuildWindowGUI>(true);
+            window.Initialize(BuildOptionPreset.Release);
+        }
+
+        [MenuItem(BuildsMenu + "Win Build [Publish Preset]", false, PriorityBuilds + 14)]
+        static void WinPublishBuild()
+        {
+            var window = EditorWindow.GetWindow<WinBuildWindowGUI>(true);
+            window.Initialize(BuildOptionPreset.Publish);
+        }
 #endif
-        static void ReleaseBuild()
+
+#if UNITY_SWITCH
+        [MenuItem(BuildsMenu + "Switch", false, PriorityBuilds + 2)]
+        static void SwitchBuild()
         {
             var window = EditorWindow.GetWindow<BuildWindow>(true);
             CICDBuildOptions options = new CICDBuildOptions();
@@ -41,6 +79,27 @@ namespace unicicd.Editor.Build
             options.Build = CICDBuildOptions.BuildMode.Release;
             window.Initialize(options);
         }
+#endif
+
+#if UNITY_PS4
+        [MenuItem(BuildsMenu + "PS4 Build...", false, PriorityBuilds + 3)]
+        static void SwitchBuild()
+        {
+            var window = EditorWindow.GetWindow<BuildWindowGUIBase>(true);
+            window.Initialize();
+            // CICDBuildOptions options = new CICDBuildOptions();
+            // options.SetupDefaultSettings();
+            // options.Build = CICDBuildOptions.BuildMode.Release;
+            // window.Initialize(options);
+        }
+
+        [MenuItem(BuildsMenu + "PS4 Build [Release Preset]", false, PriorityBuilds + 4)]
+        static void SwitchReleaseBuild()
+        {
+            var window = EditorWindow.GetWindow<BuildWindowGUIBase>(true);
+            window.Initialize(BuildOptionPreset.Release);
+        }
+#endif
 
         /*
         #if (UNITY_EDITOR && UNITY_ANDROID)
@@ -94,9 +153,7 @@ namespace unicicd.Editor.Build
         //         }
         // #endif
 
-#if __USE_UNICICD_BUILDMENU__
         [MenuItem(BuildsMenu + "Cleanup", false, PriorityBuilds + 990)]
-#endif
         static void Build_Cleanup()
         {
             CICDBuilder.CleanupAllBuildDirectory();
@@ -106,9 +163,7 @@ namespace unicicd.Editor.Build
         #endregion
 
         #region Tests
-#if __USE_UNICICD_BUILDMENU__
         [MenuItem(BuildsMenu + "Tests Run...", false, PriorityTests + 0)]
-#endif
         static void Tests_Run()
         {
             // SymbolEditor.AddSymbol("__TESTS__", BuildTargetGroup.Standalone);
@@ -118,3 +173,4 @@ namespace unicicd.Editor.Build
         #endregion
     }
 }
+#endif

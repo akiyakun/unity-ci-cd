@@ -45,7 +45,7 @@ namespace unicicd.Editor.Build
         }
 
         // ビルドモードのルートビルドディレクトリを削除します
-        public static void CleanupBuildModeRootDirectory(CICDBuildOptions.BuildMode buildMode)
+        public static void CleanupBuildModeRootDirectory(CICDBuildMode buildMode)
         {
             string path = GetWorkingBuildModeRootDirectory(buildMode);
             BuildUtility.DeleteDirectory(path);
@@ -59,17 +59,17 @@ namespace unicicd.Editor.Build
         }
 
         // ビルドモード別のディレクトリパスを取得
-        public static string GetWorkingBuildModeRootDirectory(CICDBuildOptions.BuildMode buildMode)
+        public static string GetWorkingBuildModeRootDirectory(CICDBuildMode buildMode)
         {
             switch (buildMode)
             {
-                case CICDBuildOptions.BuildMode.Current:
+                case CICDBuildMode.Current:
                     return $"{BuildRootDirectory}/current/";
-                case CICDBuildOptions.BuildMode.Debug:
+                case CICDBuildMode.Debug:
                     return $"{BuildRootDirectory}/debug/";
-                case CICDBuildOptions.BuildMode.Release:
+                case CICDBuildMode.Release:
                     return $"{BuildRootDirectory}/release/";
-                case CICDBuildOptions.BuildMode.Publish:
+                case CICDBuildMode.Publish:
                     return $"{BuildRootDirectory}/publish/";
             }
 
@@ -80,19 +80,30 @@ namespace unicicd.Editor.Build
         void CreateWorkingBuildDirectory(IPlatformBuild platformBuild)
         {
             WorkingBuildDirectory = BuildUtility.PathCombine(
-                GetWorkingBuildModeRootDirectory(platformBuild.BuildOptions.Build),
+                GetWorkingBuildModeRootDirectory(platformBuild.BuildOptions.BuildMode),
                 platformBuild.GetBuildDirectoryName()
             );
         }
 
-        IPlatformBuild platformBuild;
+        IPlatformBuild platformBuild = null;
 
         public bool Initialize(CICDBuildOptions options)
         {
             Debug.Assert(options != null);
             buildOptions = options;
 
+#if __TEST__
             platformBuild = new MockPlatformBuild();
+#elif UNITY_STANDALONE_WIN
+            platformBuild = new WinPlatformBuild();
+#elif UNITY_SWITCH
+            platformBuild = new SwitchPlatformBuild();
+#elif UNITY_PS4
+            platformBuild = new PS4PlatformBuild();
+#endif
+
+            if (platformBuild == null) return false;
+
             if (platformBuild.Initialize(options) == false) return false;
             CreateWorkingBuildDirectory(platformBuild);
 
@@ -125,9 +136,9 @@ namespace unicicd.Editor.Build
             }
             finally
             {
-                switch (buildOptions.Build)
+                switch (buildOptions.BuildMode)
                 {
-                    case CICDBuildOptions.BuildMode.Current:
+                    case CICDBuildMode.Current:
                         break;
                     default:
                         // Defineを元に戻す
@@ -154,19 +165,19 @@ namespace unicicd.Editor.Build
                 SymbolEditor.RemoveSymbol("__INAPPDEBUG__");
             }
 
-            switch (buildOptions.Build)
+            switch (buildOptions.BuildMode)
             {
-                case CICDBuildOptions.BuildMode.Current:
+                case CICDBuildMode.Current:
                     Log("[Build] Current Build.");
                     break;
-                case CICDBuildOptions.BuildMode.Debug:
+                case CICDBuildMode.Debug:
                     Log("[Build] Debug Build.");
                     SymbolEditor.AddSymbol("__DEBUG__");
                     SymbolEditor.RemoveSymbol("__RELEASE__");
                     SymbolEditor.RemoveSymbol("__TESTS__");
                     SymbolEditor.RemoveSymbol("__PUBLISH__");
                     break;
-                case CICDBuildOptions.BuildMode.Release:
+                case CICDBuildMode.Release:
                     Log("[Build] Release Build.");
                     SymbolEditor.RemoveSymbol("__DEBUG__");
                     SymbolEditor.RemoveSymbol("__TESTS__");
@@ -349,7 +360,7 @@ namespace unicicd.Editor.Build
             if (app_name.Length <= 0)
             {
                 // アプリファイル名の設定なし
-                string mode = options.Build.ToString();
+                string mode = options.BuildMode.ToString();
 
 #if (UNITY_EDITOR && UNITY_ANDROID)
             if (PreprocessorBuild.AndroidMonoBuild) mode += "(Mono)";
@@ -363,7 +374,7 @@ namespace unicicd.Editor.Build
                 ret = string.Format("{0}{1}", app_name, extension);
             }
 
-            return workPath + ret;
+            return BuildUtility.PathCombine(workPath, ret);
         }
 
         // PreprocessorBuild.csで処理するように変更されました
