@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using UnityEditor.Build.Reporting;
 
 namespace unicicd.Editor.Build
 {
@@ -17,6 +16,40 @@ namespace unicicd.Editor.Build
         public static string GetRootPath()
         {
             return Path.GetDirectoryName(Application.dataPath) + "/";
+        }
+
+        /// <summary>
+        /// パス文字列の正規化
+		/// "\\" > "/"
+        /// </summary>
+        public static string GetPathNormalization(string path)
+        {
+            return path.Replace("\\", "/");
+        }
+
+        /// <summary>
+        /// パスの結合
+        /// https://sassembla.github.io/Public/2015:02:24%200-32-46/2015:02:24%200-32-46.html
+        /// https://light11.hatenadiary.com/entry/2021/09/21/200054
+        /// </summary>
+        public static string PathCombine(string path1, string path2, bool normalization = false)
+        {
+            if (normalization)
+            {
+                path1 = GetPathNormalization(path1);
+                path2 = GetPathNormalization(path2);
+            }
+
+            path1 = path1.TrimEnd('/');
+
+            if (path2.StartsWith('/'))
+            {
+                return path1 + path2;
+            }
+            else
+            {
+                return path1 + "/" + path2;
+            }
         }
         #endregion
 
