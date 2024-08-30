@@ -70,6 +70,37 @@ namespace unicicd.Editor.Build
 #endif
 
 
+#if UNITY_STANDALONE_OSX
+        [MenuItem(BuildsMenu + "macOS Build...", false, PriorityBuilds + 1)]
+        static void WinBuild()
+        {
+            var window = EditorWindow.GetWindow<macOSBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Current);
+        }
+
+        [MenuItem(BuildsMenu + "macOS Build [Debug Preset]", false, PriorityBuilds + 2)]
+        static void WinDebugBuild()
+        {
+            var window = EditorWindow.GetWindow<macOSBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Debug);
+        }
+
+        [MenuItem(BuildsMenu + "macOS Build [Release Preset]", false, PriorityBuilds + 3)]
+        static void WinReleaseBuild()
+        {
+            var window = EditorWindow.GetWindow<macOSBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Release);
+        }
+
+        [MenuItem(BuildsMenu + "macOS Build [Publish Preset]", false, PriorityBuilds + 4)]
+        static void WinPublishBuild()
+        {
+            var window = EditorWindow.GetWindow<macOSBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Publish);
+        }
+#endif
+
+
 #if UNITY_WEBGL
         [MenuItem(BuildsMenu + "WebGL Build...", false, PriorityBuilds + 1)]
         static void WinBuild()

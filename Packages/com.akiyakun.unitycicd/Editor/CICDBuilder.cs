@@ -92,6 +92,8 @@ namespace unicicd.Editor.Build
             platformBuild = new MockPlatformBuild();
 #elif UNITY_STANDALONE_WIN
             platformBuild = new WindowsPlatformBuild();
+#elif UNITY_STANDALONE_OSX
+            platformBuild = new macOSPlatformBuild();
 #elif UNITY_WEBGL
             platformBuild = new WebGLPlatformBuild();
 #elif UNITY_ANDROID
