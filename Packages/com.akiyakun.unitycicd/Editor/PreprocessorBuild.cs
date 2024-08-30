@@ -43,6 +43,8 @@ namespace unicicd.Editor.Build
                     break;
                 case BuildTarget.Switch:
                     break;
+                case BuildTarget.PS4:
+                    break;
                 default:
                     Console.WriteLine("[Build] Unknown BuildTarget is " + buildTarget.ToString());
                     Debug.Assert(false);

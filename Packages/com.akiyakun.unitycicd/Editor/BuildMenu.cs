@@ -225,6 +225,35 @@ namespace unicicd.Editor.Build
 #endif
 
 
+#if UNITY_PS4
+        [MenuItem(BuildsMenu + "PS4 Build...", false, PriorityBuilds + 1)]
+        static void WinBuild()
+        {
+            var window = EditorWindow.GetWindow<PS4BuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Current);
+        }
+
+        [MenuItem(BuildsMenu + "PS4 Build [Debug Preset]", false, PriorityBuilds + 2)]
+        static void WinDebugBuild()
+        {
+            var window = EditorWindow.GetWindow<PS4BuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Debug);
+        }
+
+        [MenuItem(BuildsMenu + "PS4 Build [Release Preset]", false, PriorityBuilds + 3)]
+        static void WinReleaseBuild()
+        {
+            var window = EditorWindow.GetWindow<PS4BuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Release);
+        }
+
+        [MenuItem(BuildsMenu + "PS4 Build [Publish Preset]", false, PriorityBuilds + 4)]
+        static void WinPublishBuild()
+        {
+            var window = EditorWindow.GetWindow<PS4BuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Publish);
+        }
+#endif
 
         /*
         #if (UNITY_EDITOR && UNITY_ANDROID)
