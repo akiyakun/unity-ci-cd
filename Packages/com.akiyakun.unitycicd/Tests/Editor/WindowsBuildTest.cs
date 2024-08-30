@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using unicicd.Editor.Build;
 
-public class WindowsBuildTest : PlatformBuildTestBase<WinPlatformBuild>
+public class WindowsBuildTest : PlatformBuildTestBase<WindowsPlatformBuild>
 {
     [Test]
     public override void PlatformName()

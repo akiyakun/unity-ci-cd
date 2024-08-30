@@ -88,7 +88,8 @@ namespace unicicd.Editor.Build
             Debug.Assert(options != null);
             BuildOptions = options;
 
-#if __TEST__
+// #if __TEST__
+#if UNITY_INCLUDE_TESTS
             platformBuild = new MockPlatformBuild();
 #elif UNITY_STANDALONE_WIN
             platformBuild = new WindowsPlatformBuild();
