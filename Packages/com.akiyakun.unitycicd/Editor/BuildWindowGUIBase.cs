@@ -122,16 +122,16 @@ namespace unicicd.Editor.Build
             isInAppDebug = EditorGUILayout.Toggle("In App Debug", isInAppDebug);
             isCleanBuild = EditorGUILayout.Toggle("Clean Build", isCleanBuild);
 
-#if (UNITY_EDITOR && UNITY_ANDROID)
-            if (BuildMode == BuildMenu.BuildMode.AndroidMono) install = true;
+// #if (UNITY_EDITOR && UNITY_ANDROID)
+//             if (BuildMode == BuildMenu.BuildMode.AndroidMono) install = true;
 
-            foldout = EditorGUILayout.Foldout(foldout, "Android");
-            if (foldout)
-            {
-                install = EditorGUILayout.Toggle("APKインストール", install);
-            }
-            EditorGUILayout.Space();
-#endif
+//             foldout = EditorGUILayout.Foldout(foldout, "Android");
+//             if (foldout)
+//             {
+//                 install = EditorGUILayout.Toggle("APKインストール", install);
+//             }
+//             EditorGUILayout.Space();
+// #endif
 
             incrementBuildNumber = EditorGUILayout.Toggle("ビルド番号を加算", incrementBuildNumber);
 
@@ -200,9 +200,9 @@ namespace unicicd.Editor.Build
                         builder.Initialize(options);
                         ret = builder.Build();
 
-#if (UNITY_EDITOR && UNITY_ANDROID)
-                        if (install) BuildMenu.AndroidInstallAPK();
-#endif
+// #if (UNITY_EDITOR && UNITY_ANDROID)
+//                         if (install) BuildMenu.AndroidInstallAPK();
+// #endif
                     }
                     break;
 
@@ -217,9 +217,9 @@ namespace unicicd.Editor.Build
                         builder.Initialize(options);
                         ret = builder.Build();
 
-#if (UNITY_EDITOR && UNITY_ANDROID)
-                        if (install) BuildMenu.AndroidInstallAPK();
-#endif
+// #if (UNITY_EDITOR && UNITY_ANDROID)
+//                         if (install) BuildMenu.AndroidInstallAPK();
+// #endif
                     }
                     break;
 
@@ -247,7 +247,6 @@ namespace unicicd.Editor.Build
         protected virtual void OnLoadSettings()
         {
             buildMode = int.Parse(EditorUserSettings.GetConfigValue($"{PlatformName}_buildMode"));
-            Debug.Log("Load"+buildMode.ToString());
 
             isDevelopmentBuild = GetConfigBool($"{PlatformName}_isDevelopmentBuild");
             isWaitForManagedDebugger = GetConfigBool($"{PlatformName}_isWaitForManagedDebugger");
@@ -258,7 +257,6 @@ namespace unicicd.Editor.Build
         // 設定の保存
         protected virtual void OnSaveSettings()
         {
-            Debug.Log("Save"+buildMode.ToString());
             EditorUserSettings.SetConfigValue($"{PlatformName}_buildMode", buildMode.ToString());
 
             SetConfigBool($"{PlatformName}_isDevelopmentBuild", isDevelopmentBuild);

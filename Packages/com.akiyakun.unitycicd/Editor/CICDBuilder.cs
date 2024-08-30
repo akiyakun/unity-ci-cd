@@ -98,6 +98,8 @@ namespace unicicd.Editor.Build
             platformBuild = new WindowsPlatformBuild();
 #elif UNITY_WEBGL
             platformBuild = new WebGLPlatformBuild();
+#elif UNITY_ANDROID
+            platformBuild = new AndroidPlatformBuild();
 #elif UNITY_SWITCH
             platformBuild = new SwitchPlatformBuild();
 #elif UNITY_PS4
