@@ -96,13 +96,19 @@ namespace unicicd.Editor.Build
             platformBuild = new MockPlatformBuild();
 #elif UNITY_STANDALONE_WIN
             platformBuild = new WindowsPlatformBuild();
+#elif UNITY_WEBGL
+            platformBuild = new WebGLPlatformBuild();
 #elif UNITY_SWITCH
             platformBuild = new SwitchPlatformBuild();
 #elif UNITY_PS4
             platformBuild = new PS4PlatformBuild();
 #endif
 
-            if (platformBuild == null) return false;
+            if (platformBuild == null)
+            {
+                Debug.Assert(false, "Unknown platform.");
+                return false;
+            }
 
             if (platformBuild.Initialize(options) == false) return false;
             CreateWorkingBuildDirectory(platformBuild);
@@ -340,7 +346,11 @@ namespace unicicd.Editor.Build
 
             if (string.IsNullOrEmpty(options.JobName))
             {
-                app_name = config.jobs.Find(obj => obj.platform == platform).application_filename;
+                var job = config.jobs.Find(obj => obj.platform == platform);
+                if (job != null)
+                {
+                    app_name = job.application_filename;
+                }
             }
             else
             {

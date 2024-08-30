@@ -30,22 +30,26 @@ namespace unicicd.Editor.Build
 
         public void Initialize(CICDBuildMode mode = CICDBuildMode.Current)
         {
-            buildMode = (int)mode;
-
             switch (mode)
             {
+                case CICDBuildMode.Current:
+                    if (buildMode <= 0) buildMode = 1;
+                    break;
                 case CICDBuildMode.Debug:
                     showBuildMode = false;
+                    buildMode = (int)mode;
                     isDevelopmentBuild = true;
                     isInAppDebug = true;
                     break;
                 case CICDBuildMode.Release:
                     showBuildMode = false;
+                    buildMode = (int)mode;
                     isDevelopmentBuild = false;
                     isInAppDebug = true;
                     break;
                 case CICDBuildMode.Publish:
                     showBuildMode = false;
+                    buildMode = (int)mode;
                     isDevelopmentBuild = false;
                     isWaitForManagedDebugger = false;
                     isInAppDebug = false;
@@ -96,7 +100,7 @@ namespace unicicd.Editor.Build
                     label: new UnityEngine.GUIContent("Build Mode"),
                     selectedIndex: buildMode - 1,
                     displayedOptions: buildModeDisplayedOptions
-                );
+                ) + 1;
             }
 
             int buildNumber = BuildUtility.GetBuildNumber();
@@ -184,7 +188,7 @@ namespace unicicd.Editor.Build
             switch (buildMode)
             {
                 // Debug
-                case 0:
+                case (int)CICDBuildMode.Debug:
                     {
                         Debug.Log("Debug Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
 
@@ -203,7 +207,7 @@ namespace unicicd.Editor.Build
                     break;
 
                 // Release
-                case 1:
+                case (int)CICDBuildMode.Release:
                     {
                         Debug.Log("Release Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
 
@@ -220,7 +224,7 @@ namespace unicicd.Editor.Build
                     break;
 
                 // Publish
-                case 2:
+                case (int)CICDBuildMode.Publish:
                     {
                         Debug.Log("Publish Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
 
@@ -231,6 +235,9 @@ namespace unicicd.Editor.Build
                         ret = builder.Build();
                     }
                     break;
+                default:
+                    Debug.Assert(false);
+                    break;
             }
 
             return ret;
@@ -240,6 +247,7 @@ namespace unicicd.Editor.Build
         protected virtual void OnLoadSettings()
         {
             buildMode = int.Parse(EditorUserSettings.GetConfigValue($"{PlatformName}_buildMode"));
+            Debug.Log("Load"+buildMode.ToString());
 
             isDevelopmentBuild = GetConfigBool($"{PlatformName}_isDevelopmentBuild");
             isWaitForManagedDebugger = GetConfigBool($"{PlatformName}_isWaitForManagedDebugger");
@@ -250,6 +258,7 @@ namespace unicicd.Editor.Build
         // 設定の保存
         protected virtual void OnSaveSettings()
         {
+            Debug.Log("Save"+buildMode.ToString());
             EditorUserSettings.SetConfigValue($"{PlatformName}_buildMode", buildMode.ToString());
 
             SetConfigBool($"{PlatformName}_isDevelopmentBuild", isDevelopmentBuild);

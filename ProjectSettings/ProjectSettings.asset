@@ -833,6 +833,7 @@ PlayerSettings:
     Android: __TESTS__;__DEBUG__
     PS4: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
     Standalone: __DEBUG__;__USE_UNICICD_BUILDMENU__
+    WebGL: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
     iPhone: __TESTS__
   additionalCompilerArguments: {}
   platformArchitecture:

@@ -1,3 +1,4 @@
+#if UNITY_STANDALONE_WIN
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -29,3 +30,4 @@ namespace unicicd.Editor.Build
 
     }
 }
+#endif
