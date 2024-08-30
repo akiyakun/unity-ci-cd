@@ -162,7 +162,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.akiyakun.unitycicd
-    Standalone: com.AQUALIA.unitycicd
+    Standalone: com.akiyakun.unitycicd
     iPhone: com.akiyakun.unitycicd
   buildNumber:
     Standalone: 0
@@ -831,8 +831,9 @@ PlayerSettings:
   webGLPowerPreference: 2
   scriptingDefineSymbols:
     Android: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
+    Nintendo Switch: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
     PS4: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
-    Standalone: __DEBUG__;__USE_UNICICD_BUILDMENU__
+    Standalone: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
     WebGL: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
     iPhone: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
   additionalCompilerArguments: {}

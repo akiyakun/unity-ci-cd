@@ -195,36 +195,36 @@ namespace unicicd.Editor.Build
 
 
 #if UNITY_SWITCH
-        [MenuItem(BuildsMenu + "Switch", false, PriorityBuilds + 2)]
-        static void SwitchBuild()
+        [MenuItem(BuildsMenu + "Switch Build...", false, PriorityBuilds + 1)]
+        static void WinBuild()
         {
-            var window = EditorWindow.GetWindow<BuildWindow>(true);
-            CICDBuildOptions options = new CICDBuildOptions();
-            options.SetupDefaultSettings();
-            options.Build = CICDBuildOptions.BuildMode.Release;
-            window.Initialize(options);
+            var window = EditorWindow.GetWindow<SwitchBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Current);
+        }
+
+        [MenuItem(BuildsMenu + "Switch Build [Debug Preset]", false, PriorityBuilds + 2)]
+        static void WinDebugBuild()
+        {
+            var window = EditorWindow.GetWindow<SwitchBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Debug);
+        }
+
+        [MenuItem(BuildsMenu + "Switch Build [Release Preset]", false, PriorityBuilds + 3)]
+        static void WinReleaseBuild()
+        {
+            var window = EditorWindow.GetWindow<SwitchBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Release);
+        }
+
+        [MenuItem(BuildsMenu + "Switch Build [Publish Preset]", false, PriorityBuilds + 4)]
+        static void WinPublishBuild()
+        {
+            var window = EditorWindow.GetWindow<SwitchBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Publish);
         }
 #endif
 
-#if UNITY_PS4
-        [MenuItem(BuildsMenu + "PS4 Build...", false, PriorityBuilds + 3)]
-        static void SwitchBuild()
-        {
-            var window = EditorWindow.GetWindow<BuildWindowGUIBase>(true);
-            window.Initialize();
-            // CICDBuildOptions options = new CICDBuildOptions();
-            // options.SetupDefaultSettings();
-            // options.Build = CICDBuildOptions.BuildMode.Release;
-            // window.Initialize(options);
-        }
 
-        [MenuItem(BuildsMenu + "PS4 Build [Release Preset]", false, PriorityBuilds + 4)]
-        static void SwitchReleaseBuild()
-        {
-            var window = EditorWindow.GetWindow<BuildWindowGUIBase>(true);
-            window.Initialize(BuildOptionPreset.Release);
-        }
-#endif
 
         /*
         #if (UNITY_EDITOR && UNITY_ANDROID)

@@ -41,6 +41,8 @@ namespace unicicd.Editor.Build
                     break;
                 case BuildTarget.WebGL:
                     break;
+                case BuildTarget.Switch:
+                    break;
                 default:
                     Console.WriteLine("[Build] Unknown BuildTarget is " + buildTarget.ToString());
                     Debug.Assert(false);
