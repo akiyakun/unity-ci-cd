@@ -95,7 +95,7 @@ namespace unicicd.Editor.Build
 #if __TEST__
             platformBuild = new MockPlatformBuild();
 #elif UNITY_STANDALONE_WIN
-            platformBuild = new WinPlatformBuild();
+            platformBuild = new WindowsPlatformBuild();
 #elif UNITY_SWITCH
             platformBuild = new SwitchPlatformBuild();
 #elif UNITY_PS4

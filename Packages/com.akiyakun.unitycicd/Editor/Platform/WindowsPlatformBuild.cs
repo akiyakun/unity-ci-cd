@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace unicicd.Editor.Build
 {
-    public class WinPlatformBuild : IPlatformBuild
+    public class WindowsPlatformBuild : IPlatformBuild
     {
         public string PlatformName => "Win";
         public CICDBuildOptions BuildOptions { get; protected set; }

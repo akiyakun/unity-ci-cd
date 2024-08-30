@@ -40,32 +40,32 @@ namespace unicicd.Editor.Build
         // }
 
 #if UNITY_STANDALONE_WIN
-        [MenuItem(BuildsMenu + "Win Build...", false, PriorityBuilds + 11)]
+        [MenuItem(BuildsMenu + "Windows Build...", false, PriorityBuilds + 1)]
         static void WinBuild()
         {
-            var window = EditorWindow.GetWindow<WinBuildWindowGUI>(true);
-            window.Initialize();
+            var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Current);
         }
 
-        [MenuItem(BuildsMenu + "Win Build [Debug Preset]", false, PriorityBuilds + 12)]
+        [MenuItem(BuildsMenu + "Windows Build [Debug Preset]", false, PriorityBuilds + 2)]
         static void WinDebugBuild()
         {
-            var window = EditorWindow.GetWindow<WinBuildWindowGUI>(true);
-            window.Initialize(BuildOptionPreset.Debug);
+            var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Debug);
         }
 
-        [MenuItem(BuildsMenu + "Win Build [Release Preset]", false, PriorityBuilds + 13)]
+        [MenuItem(BuildsMenu + "Windows Build [Release Preset]", false, PriorityBuilds + 3)]
         static void WinReleaseBuild()
         {
-            var window = EditorWindow.GetWindow<WinBuildWindowGUI>(true);
-            window.Initialize(BuildOptionPreset.Release);
+            var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Release);
         }
 
-        [MenuItem(BuildsMenu + "Win Build [Publish Preset]", false, PriorityBuilds + 14)]
+        [MenuItem(BuildsMenu + "Windows Build [Publish Preset]", false, PriorityBuilds + 4)]
         static void WinPublishBuild()
         {
-            var window = EditorWindow.GetWindow<WinBuildWindowGUI>(true);
-            window.Initialize(BuildOptionPreset.Publish);
+            var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Publish);
         }
 #endif
 

@@ -5,7 +5,7 @@ using unicicd.Editor;
 
 namespace unicicd.Editor.Build
 {
-    public class WinBuildWindowGUI : BuildWindowGUIBase
+    public class WindowsBuildWindowGUI : BuildWindowGUIBase
     {
     }
 }

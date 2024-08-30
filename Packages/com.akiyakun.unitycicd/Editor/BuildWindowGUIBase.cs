@@ -5,14 +5,6 @@ using unicicd.Editor;
 
 namespace unicicd.Editor.Build
 {
-    public enum BuildOptionPreset
-    {
-        None,
-        Debug,
-        Release,
-        Publish,
-    }
-
     public class BuildWindowGUIBase : EditorWindow
     {
         public string PlatformName { get; protected set; }
@@ -36,24 +28,23 @@ namespace unicicd.Editor.Build
         public System.Action OnBuildBegin;
         public System.Action<CICDBuildResult> OnBuildEnd;
 
-        public void Initialize(BuildOptionPreset preset = BuildOptionPreset.None)
+        public void Initialize(CICDBuildMode mode = CICDBuildMode.Current)
         {
-            switch (preset)
+            buildMode = (int)mode;
+
+            switch (mode)
             {
-                case BuildOptionPreset.Debug:
+                case CICDBuildMode.Debug:
                     showBuildMode = false;
-                    buildMode = 0;
                     isDevelopmentBuild = true;
                     isInAppDebug = true;
                     break;
-                case BuildOptionPreset.Release:
+                case CICDBuildMode.Release:
                     showBuildMode = false;
-                    buildMode = 1;
                     isDevelopmentBuild = false;
                     isInAppDebug = true;
                     break;
-                case BuildOptionPreset.Publish:
-                    buildMode = 2;
+                case CICDBuildMode.Publish:
                     showBuildMode = false;
                     isDevelopmentBuild = false;
                     isWaitForManagedDebugger = false;
@@ -103,7 +94,7 @@ namespace unicicd.Editor.Build
             {
                 buildMode = UnityEditor.EditorGUILayout.Popup(
                     label: new UnityEngine.GUIContent("Build Mode"),
-                    selectedIndex: buildMode,
+                    selectedIndex: buildMode - 1,
                     displayedOptions: buildModeDisplayedOptions
                 );
             }
@@ -119,8 +110,11 @@ namespace unicicd.Editor.Build
 #endif
             EditorGUILayout.LabelField("");
 
+            EditorGUI.BeginDisabledGroup(true);
             isDevelopmentBuild = EditorGUILayout.Toggle("Development Build", isDevelopmentBuild);
             isWaitForManagedDebugger = EditorGUILayout.Toggle("Wait For Managed Debugger", isWaitForManagedDebugger);
+            EditorGUI.EndDisabledGroup();
+
             isInAppDebug = EditorGUILayout.Toggle("In App Debug", isInAppDebug);
             isCleanBuild = EditorGUILayout.Toggle("Clean Build", isCleanBuild);
 

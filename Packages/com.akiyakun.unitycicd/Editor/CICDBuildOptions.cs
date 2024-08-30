@@ -10,9 +10,20 @@ namespace unicicd.Editor.Build
 
     public enum CICDBuildMode
     {
-        Current,       // 現在の設定のままビルド
+        // 現在の設定のままビルド
+        Current = 0,
+
+        // デバッグビルド
+        // __DEBUG__ が定義される
+        // DevelopmentBuild フラグが強制ON
         Debug,
+
+        // リリースビルド
+        // __RELEASE__ が定義される
         Release,
+
+        // パブリッシュビルド
+        // __PUBLISH__ が定義される
         Publish,
     }
 
