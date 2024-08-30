@@ -20,6 +20,14 @@ namespace unicicd.Editor.Build
 
         public string GetBuildDirectoryName() => PlatformName;
 
+        public bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
+        {
+            return true;
+        }
+
+        public void OnAfterBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
+        {
+        }
     }
 }
 #endif

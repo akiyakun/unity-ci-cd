@@ -3,10 +3,6 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-#if UNITY_IOS
-using UnityEditor.iOS.Xcode;
-#endif
-
 namespace unicicd.Editor.Build
 {
     /*
@@ -22,7 +18,7 @@ namespace unicicd.Editor.Build
         public string WorkingBuildDirectory { get; private set; }
 
         public CICDConfig Config { get; private set; }
-        CICDBuildOptions buildOptions;
+        public CICDBuildOptions BuildOptions { get; private set; }
 
         public CICDBuilder()
         {
@@ -90,7 +86,7 @@ namespace unicicd.Editor.Build
         public bool Initialize(CICDBuildOptions options)
         {
             Debug.Assert(options != null);
-            buildOptions = options;
+            BuildOptions = options;
 
 #if __TEST__
             platformBuild = new MockPlatformBuild();
@@ -100,6 +96,8 @@ namespace unicicd.Editor.Build
             platformBuild = new WebGLPlatformBuild();
 #elif UNITY_ANDROID
             platformBuild = new AndroidPlatformBuild();
+#elif UNITY_IOS
+            platformBuild = new iOSPlatformBuild();
 #elif UNITY_SWITCH
             platformBuild = new SwitchPlatformBuild();
 #elif UNITY_PS4
@@ -125,12 +123,12 @@ namespace unicicd.Editor.Build
             var result = new CICDBuildResult();
             if (Initialized == false) return result;
 
-            if (buildOptions.BuildTarget == BuildTarget.NoTarget)
+            if (BuildOptions.BuildTarget == BuildTarget.NoTarget)
             {
-                buildOptions.ApplyCurrentBuildTarget();
+                BuildOptions.ApplyCurrentBuildTarget();
             }
 
-            if (buildOptions.CleanupBuildDirectory)
+            if (BuildOptions.CleanupBuildDirectory)
             {
                 CleanupBuildTargetDirectory();
             }
@@ -144,7 +142,7 @@ namespace unicicd.Editor.Build
             }
             finally
             {
-                switch (buildOptions.BuildMode)
+                switch (BuildOptions.BuildMode)
                 {
                     case CICDBuildMode.Current:
                         break;
@@ -164,7 +162,7 @@ namespace unicicd.Editor.Build
         {
             var result = new CICDBuildResult();
 
-            if (buildOptions.InAppDebug == true)
+            if (BuildOptions.InAppDebug == true)
             {
                 SymbolEditor.AddSymbol("__INAPPDEBUG__");
             }
@@ -173,7 +171,7 @@ namespace unicicd.Editor.Build
                 SymbolEditor.RemoveSymbol("__INAPPDEBUG__");
             }
 
-            switch (buildOptions.BuildMode)
+            switch (BuildOptions.BuildMode)
             {
                 case CICDBuildMode.Current:
                     Log("[Build] Current Build.");
@@ -197,7 +195,7 @@ namespace unicicd.Editor.Build
             }
 
             // ビルドターゲットを変更
-            if (!SwitchBuildTarget(buildOptions.BuildTarget))
+            if (!SwitchBuildTarget(BuildOptions.BuildTarget))
             {
                 Log("[Build] SwitchBuildTarget() failed.");
                 return result;
@@ -206,13 +204,13 @@ namespace unicicd.Editor.Build
             // ビルドプレイヤーオプションの設定
             BuildPlayerOptions bpo = new BuildPlayerOptions();
             {
-                SettingBuildPlayerOptions(buildOptions, out bpo);
+                SettingBuildPlayerOptions(BuildOptions, out bpo);
 
                 result.BuildDirectory = WorkingBuildDirectory;
 
                 // ロケーションパスの設定はココで…
                 bpo.locationPathName = CreateLocationPathName(
-                    Config, result.BuildDirectory, buildOptions);
+                    Config, result.BuildDirectory, BuildOptions);
 
                 // BuildPipeline.BuildPlayer()はフォルダが無いとエラーが出る
                 Debug.Log("Location: " + bpo.locationPathName);
@@ -220,12 +218,25 @@ namespace unicicd.Editor.Build
             }
 
             // ビルド前処理
-            if (buildOptions.OnBeforeBuildProcess != null)
             {
-                if (buildOptions.OnBeforeBuildProcess.Invoke(this, bpo) == false)
+                Log("[Build] Platform OnBeforeBuildProcess().");
+                bool success = platformBuild.OnBeforeBuildProcess(this, bpo);
+
+                if (success == true && BuildOptions.OnBeforeBuildProcess != null)
                 {
-                    // ビルド後処理を呼んでおく
-                    buildOptions.OnAfterBuildProcess?.Invoke(this);
+                    Log("[Build] BuildOptions OnBeforeBuildProcess().");
+                    success = BuildOptions.OnBeforeBuildProcess.Invoke(this, bpo);
+                }
+
+                // キャンセルの場合、ビルド後処理を実行する
+                if (success == false)
+                {
+                    Log("[Build] Platform OnAfterBuildProcess().");
+                    platformBuild.OnAfterBuildProcess(this, bpo);
+
+                    Log("[Build] BuildOptions OnAfterBuildProcess().");
+                    BuildOptions.OnAfterBuildProcess?.Invoke(this, bpo);
+
                     return result;
                 }
             }
@@ -237,8 +248,8 @@ namespace unicicd.Editor.Build
                 report = BuildPipeline.BuildPlayer(bpo);
                 Log("[Build] Finished BuildPlayer().");
 
-                PostprocessBuild(bpo, buildOptions);
-                Log("[Build] Finished PostprocessBuild().");
+                // PostprocessBuild(bpo, buildOptions);
+                // Log("[Build] Finished PostprocessBuild().");
             }
             // catch (Exception e)
             // {
@@ -262,7 +273,13 @@ namespace unicicd.Editor.Build
             }
 
             // ビルド後処理
-            buildOptions.OnAfterBuildProcess?.Invoke(this);
+            {
+                Log("[Build] Platform OnAfterBuildProcess().");
+                platformBuild.OnAfterBuildProcess(this, bpo);
+
+                Log("[Build] BuildOptions OnAfterBuildProcess().");
+                BuildOptions.OnAfterBuildProcess?.Invoke(this, bpo);
+            }
 
             return result;
         }
@@ -272,7 +289,7 @@ namespace unicicd.Editor.Build
         {
             bpo = new BuildPlayerOptions();
             bpo.target = options.BuildTarget;
-            bpo.options = BuildOptions.None;
+            bpo.options = UnityEditor.BuildOptions.None;
 
             // if (options.Scenes.Count <= 0)
             // {
@@ -290,7 +307,7 @@ namespace unicicd.Editor.Build
                 scenes.AddRange(Config.BuildSettings.GetRequiredScenePathArray());
 
                 // InAppDebugシーンをリストに追加
-                if (buildOptions.InAppDebug == true)
+                if (BuildOptions.InAppDebug == true)
                 {
                     scenes.AddRange(Config.BuildSettings.GetInAppDebugScenePathArray());
                 }
@@ -320,7 +337,9 @@ namespace unicicd.Editor.Build
                     break;
                 case BuildTarget.iOS:
                     platform = "iOS";
-                    break;
+                    // return BuildUtility.PathCombine(workPath, ret);
+                    return workPath;
+                    // break;
                 case BuildTarget.StandaloneWindows:
                 case BuildTarget.StandaloneWindows64:
                     extension = ".exe";
@@ -470,33 +489,5 @@ namespace unicicd.Editor.Build
             return EditorUserBuildSettings.SwitchActiveBuildTarget(group, buildTarget);
         }
 
-        void PostprocessBuild(BuildPlayerOptions bpo, CICDBuildOptions options)
-        {
-            string workPath = BuildUtility.GetRootPath() + WorkingBuildDirectory;
-
-            switch (bpo.target)
-            {
-                case BuildTarget.iOS:
-#if UNITY_IOS
-                    {
-                        string plistPath = Path.Combine(workPath, "Info.plist");
-                        // Log(plistPath);
-                        PlistDocument plist = new PlistDocument();
-                        plist.ReadFromFile(plistPath);
-
-                        // 輸出コンプライアンスの設定
-                        // trueでUploadしようとするとエラーになる
-                        if (options.OptionStrings.Contains("ITSAppUsesNonExemptEncryption-false"))
-                        {
-                            // Log("ITSAppUsesNonExemptEncryption-false");
-                            plist.root.SetString("ITSAppUsesNonExemptEncryption", "false");
-                        }
-
-                        plist.WriteToFile(plistPath);
-                    }
-#endif
-                    break;
-            }
-        }
     }
 }

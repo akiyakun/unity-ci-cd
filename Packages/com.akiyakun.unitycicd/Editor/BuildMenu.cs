@@ -132,6 +132,37 @@ namespace unicicd.Editor.Build
 #endif
 
 
+#if UNITY_IOS
+        [MenuItem(BuildsMenu + "iOS Build...", false, PriorityBuilds + 1)]
+        static void WinBuild()
+        {
+            var window = EditorWindow.GetWindow<iOSBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Current);
+        }
+
+        [MenuItem(BuildsMenu + "iOS Build [Debug Preset]", false, PriorityBuilds + 2)]
+        static void WinDebugBuild()
+        {
+            var window = EditorWindow.GetWindow<iOSBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Debug);
+        }
+
+        [MenuItem(BuildsMenu + "iOS Build [Release Preset]", false, PriorityBuilds + 3)]
+        static void WinReleaseBuild()
+        {
+            var window = EditorWindow.GetWindow<iOSBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Release);
+        }
+
+        [MenuItem(BuildsMenu + "iOS Build [Publish Preset]", false, PriorityBuilds + 4)]
+        static void WinPublishBuild()
+        {
+            var window = EditorWindow.GetWindow<iOSBuildWindowGUI>(true);
+            window.Initialize(CICDBuildMode.Publish);
+        }
+#endif
+
+
 #if UNITY_SWITCH
         [MenuItem(BuildsMenu + "Switch", false, PriorityBuilds + 2)]
         static void SwitchBuild()

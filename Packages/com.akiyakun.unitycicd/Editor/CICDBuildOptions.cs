@@ -51,7 +51,7 @@ namespace unicicd.Editor.Build
         // return false is cancel build.
         public System.Func<CICDBuilder, BuildPlayerOptions, bool> OnBeforeBuildProcess;
 
-        public System.Action<CICDBuilder> OnAfterBuildProcess;
+        public System.Action<CICDBuilder, BuildPlayerOptions> OnAfterBuildProcess;
 
         // デフォルト設定でセットアップ
         public void SetupDefaultSettings()

@@ -19,7 +19,9 @@ namespace unicicd.Editor.Build
         // ビルドディレクトリ名の取得
         string GetBuildDirectoryName();
 
-        // void OnBeforeBuildProcess();
-        // void OnAfterBuildProcess();
+        // return false is cancel build.
+        bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo);
+
+        void OnAfterBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo);
     }
 }

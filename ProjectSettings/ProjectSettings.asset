@@ -163,11 +163,11 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.akiyakun.unitycicd
     Standalone: com.AQUALIA.unitycicd
-    iPhone: com.aqualia.namaco.unitycicd
+    iPhone: com.akiyakun.unitycicd
   buildNumber:
     Standalone: 0
     VisionOS: 0
-    iPhone: 0
+    iPhone: 2
     tvOS: 0
   overrideDefaultApplicationIdentifier: 0
   AndroidBundleVersionCode: 3
@@ -834,7 +834,7 @@ PlayerSettings:
     PS4: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
     Standalone: __DEBUG__;__USE_UNICICD_BUILDMENU__
     WebGL: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
-    iPhone: __TESTS__
+    iPhone: __DEBUG__;__INAPPDEBUG__;__USE_UNICICD_BUILDMENU__
   additionalCompilerArguments: {}
   platformArchitecture:
     iPhone: 1
@@ -871,7 +871,7 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform:
     Android: 6
     Standalone: 6
-    iPhone: 3
+    iPhone: 6
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: Template_3D
