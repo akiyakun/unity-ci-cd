@@ -8,6 +8,7 @@ namespace unicicd.Editor.Build
 {
     public class SwitchBuildWindowGUI : BuildWindowGUIBase
     {
+        public override string PlatformName => "Switch";
     }
 }
 #endif

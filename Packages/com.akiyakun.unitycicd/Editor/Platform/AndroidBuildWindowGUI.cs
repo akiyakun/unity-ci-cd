@@ -8,6 +8,7 @@ namespace unicicd.Editor.Build
 {
     public class AndroidBuildWindowGUI : BuildWindowGUIBase
     {
+        public override string PlatformName => "Android";
     }
 }
 #endif

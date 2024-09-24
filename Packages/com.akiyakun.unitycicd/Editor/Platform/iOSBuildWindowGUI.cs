@@ -8,6 +8,7 @@ namespace unicicd.Editor.Build
 {
     public class iOSBuildWindowGUI : BuildWindowGUIBase
     {
+        public override string PlatformName => "iOS";
     }
 }
 #endif

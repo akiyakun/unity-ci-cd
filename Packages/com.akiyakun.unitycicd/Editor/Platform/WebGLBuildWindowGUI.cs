@@ -8,6 +8,7 @@ namespace unicicd.Editor.Build
 {
     public class WebGLBuildWindowGUI : BuildWindowGUIBase
     {
+        public override string PlatformName => "WebGL";
     }
 }
 #endif

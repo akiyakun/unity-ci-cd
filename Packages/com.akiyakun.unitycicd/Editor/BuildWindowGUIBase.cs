@@ -5,9 +5,9 @@ using unicicd.Editor;
 
 namespace unicicd.Editor.Build
 {
-    public class BuildWindowGUIBase : EditorWindow
+    public abstract class BuildWindowGUIBase : EditorWindow
     {
-        public string PlatformName { get; protected set; }
+        public abstract string PlatformName { get; }
 
         bool initialized = false;
         bool showBuildMode = true;
@@ -246,33 +246,24 @@ namespace unicicd.Editor.Build
         // 設定の読み込み
         protected virtual void OnLoadSettings()
         {
-            buildMode = int.Parse(EditorUserSettings.GetConfigValue($"{PlatformName}_buildMode"));
+            buildMode = EUserSettings.GetConfigInt("buildMode", (int)CICDBuildMode.Current);
 
-            isDevelopmentBuild = GetConfigBool($"{PlatformName}_isDevelopmentBuild");
-            isWaitForManagedDebugger = GetConfigBool($"{PlatformName}_isWaitForManagedDebugger");
-            isInAppDebug = GetConfigBool($"{PlatformName}_isInAppDebug");
-            isCleanBuild = GetConfigBool($"{PlatformName}_isCleanBuild");
+            isDevelopmentBuild = EUserSettings.GetConfigBool("isDevelopmentBuild", true);
+            isWaitForManagedDebugger = EUserSettings.GetConfigBool("isWaitForManagedDebugger", false);
+            isInAppDebug = EUserSettings.GetConfigBool("isInAppDebug", true);
+            isCleanBuild = EUserSettings.GetConfigBool("isCleanBuild", false);
         }
 
         // 設定の保存
         protected virtual void OnSaveSettings()
         {
-            EditorUserSettings.SetConfigValue($"{PlatformName}_buildMode", buildMode.ToString());
+            EUserSettings.SetConfigInt("buildMode", buildMode);
 
-            SetConfigBool($"{PlatformName}_isDevelopmentBuild", isDevelopmentBuild);
-            SetConfigBool($"{PlatformName}_isWaitForManagedDebugger", isWaitForManagedDebugger);
-            SetConfigBool($"{PlatformName}_isInAppDebug", isInAppDebug);
-            SetConfigBool($"{PlatformName}_isCleanBuild", isCleanBuild);
+            EUserSettings.SetConfigBool("isDevelopmentBuild", isDevelopmentBuild);
+            EUserSettings.SetConfigBool("isWaitForManagedDebugger", isWaitForManagedDebugger);
+            EUserSettings.SetConfigBool("isInAppDebug", isInAppDebug);
+            EUserSettings.SetConfigBool("isCleanBuild", isCleanBuild);
         }
 
-        protected bool GetConfigBool(string key)
-        {
-            return EditorUserSettings.GetConfigValue(key) == "True" ? true : false;
-        }
-
-        protected void SetConfigBool(string key, bool value)
-        {
-            EditorUserSettings.SetConfigValue(key, value.ToString());
-        }
     }
 }

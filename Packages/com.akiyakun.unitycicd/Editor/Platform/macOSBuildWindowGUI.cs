@@ -8,6 +8,7 @@ namespace unicicd.Editor.Build
 {
     public class macOSBuildWindowGUI : BuildWindowGUIBase
     {
+        public override string PlatformName => "macOS";
     }
 }
 #endif

@@ -8,6 +8,7 @@ namespace unicicd.Editor.Build
 {
     public class PS4BuildWindowGUI : BuildWindowGUIBase
     {
+        public override string PlatformName => "PS4";
     }
 }
 #endif
