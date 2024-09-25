@@ -8,17 +8,22 @@ namespace unicicd.Editor.Build
     public class PS4PlatformBuild : IPlatformBuild
     {
         public string PlatformName => "PS4";
+        public string ExtensionName => "";
         public CICDBuildOptions BuildOptions { get; protected set; }
 
-        public bool Initialize(CICDBuildOptions options)
+        public bool Initialize(CICDBuildOptions buildOptions)
         {
-            if (options == null) return false;
-            BuildOptions = options;
+            if (buildOptions == null) return false;
+            BuildOptions = buildOptions;
+
+            buildOptions.BuildTarget = BuildTarget.PS4;
 
             return true;
         }
 
         public string GetBuildDirectoryName() => PlatformName;
+
+        public string CreateLocationPathName() => CICDBuilder.CreateLocationPathName(this);
 
         public bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
         {

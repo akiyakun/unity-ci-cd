@@ -8,17 +8,22 @@ namespace unicicd.Editor.Build
     public class macOSPlatformBuild : IPlatformBuild
     {
         public string PlatformName => "macOS";
+        public string ExtensionName => ".app";
         public CICDBuildOptions BuildOptions { get; protected set; }
 
-        public bool Initialize(CICDBuildOptions options)
+        public bool Initialize(CICDBuildOptions buildOptions)
         {
-            if (options == null) return false;
-            BuildOptions = options;
+            if (buildOptions == null) return false;
+            BuildOptions = buildOptions;
+
+            buildOptions.BuildTarget = BuildTarget.StandaloneOSX;
 
             return true;
         }
 
         public string GetBuildDirectoryName() => PlatformName;
+
+        public string CreateLocationPathName() => "";
 
         public bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
         {

@@ -7,14 +7,18 @@ namespace unicicd.Editor.Build
     public class MockPlatformBuild : IPlatformBuild
     {
         public string PlatformName => "Mock";
+        public string ExtensionName => ".exe";
         public CICDBuildOptions BuildOptions { get; protected set; }
 
         string buildDirectoryName;
 
-        public bool Initialize(CICDBuildOptions options)
+        public bool Initialize(CICDBuildOptions buildOptions)
         {
-            if (options == null) return false;
-            BuildOptions = options;
+            if (buildOptions == null) return false;
+            BuildOptions = buildOptions;
+
+            // 現在の設定を反映
+            buildOptions.ApplyCurrentBuildTarget();
 
             // ビルドディレクトリ名の生成
             buildDirectoryName = $"Mock_Test";
@@ -23,6 +27,8 @@ namespace unicicd.Editor.Build
         }
 
         public string GetBuildDirectoryName() => buildDirectoryName;
+
+        public string CreateLocationPathName() => CICDBuilder.CreateLocationPathName(this);
 
         public bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
         {

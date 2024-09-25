@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using unicicd.Editor;
 
 namespace unicicd.Editor.Build
 {
@@ -11,22 +10,14 @@ namespace unicicd.Editor.Build
 
         bool initialized = false;
         bool showBuildMode = true;
-        // CICDBuildOptions.BuildMode buildMode;
         int buildMode;
 
-        bool incrementBuildNumber = true;
-
+        // protected CICDBuildOptions buildOptions = new();
         bool isDevelopmentBuild = true;
         bool isWaitForManagedDebugger = false;
         bool isInAppDebug = true;
         bool isCleanBuild = true;
-
-        // BuildMenu.BuildMode BuildMode { get; set; }
-        // string jobName;
-        // public CICDBuildOptions Options { get; private set; }
-
-        public System.Action OnBuildBegin;
-        public System.Action<CICDBuildResult> OnBuildEnd;
+        bool incrementBuildNumber = true;
 
         public void Initialize(CICDBuildMode mode = CICDBuildMode.Current)
         {
@@ -144,6 +135,8 @@ namespace unicicd.Editor.Build
                 EditorGUILayout.LabelField(string.Format("[{2}] v{0}", currentBuildVersion, nextBuildVersion, titleContent.text));
             }
 
+            OnPlatformGUI();
+
             // EditorGUI.BeginDisabledGroup(true);
             if (GUILayout.Button("ビルド開始"))
             {
@@ -158,32 +151,45 @@ namespace unicicd.Editor.Build
                     Debug.Log(string.Format("{1} Start v{0}", currentBuildVersion, titleContent.text));
                 }
 
-                var ret = new CICDBuildResult();
+                CICDBuildOptions buildOptions = new();
+
                 try
                 {
-                    OnBuildBegin?.Invoke();
-                    ret = Build(install);
+                    var ret = Build(buildOptions, install);
                 }
                 finally
                 {
-                    OnBuildEnd?.Invoke(ret);
+                    OnBuildEnd(buildOptions);
                 }
 
                 Close();
+
+                GUIUtility.ExitGUI();
             }
 
         }
 
-        CICDBuildResult Build(bool install)
+        protected virtual void OnPlatformGUI()
         {
-            var options = new CICDBuildOptions();
+        }
+
+        protected virtual void OnBuildBegin(CICDBuildOptions buildOptions)
+        {
+        }
+
+        protected virtual void OnBuildEnd(CICDBuildOptions buildOptions)
+        {
+        }
+
+        CICDBuildResult Build(CICDBuildOptions buildOptions, bool install)
+        {
             var builder = new CICDBuilder();
             List<string> optionStrings = new List<string>();
             var ret = new CICDBuildResult();
 
-            options.UnityDevelopmentBuild = isDevelopmentBuild;
-            options.WaitForManagedDebugger = isWaitForManagedDebugger;
-            options.InAppDebug = isInAppDebug;
+            buildOptions.UnityDevelopmentBuild = isDevelopmentBuild;
+            buildOptions.WaitForManagedDebugger = isWaitForManagedDebugger;
+            buildOptions.InAppDebug = isInAppDebug;
 
             switch (buildMode)
             {
@@ -194,10 +200,12 @@ namespace unicicd.Editor.Build
 
                         optionStrings.Add("ITSAppUsesNonExemptEncryption-false");
 
-                        options.SetupDefaultSettings();
-                        options.BuildMode = CICDBuildMode.Debug;
-                        options.OptionStrings.AddRange(optionStrings);
-                        builder.Initialize(options);
+                        buildOptions.SetupDefaultSettings();
+                        buildOptions.BuildMode = CICDBuildMode.Debug;
+                        buildOptions.OptionStrings.AddRange(optionStrings);
+                        OnBuildBegin(buildOptions);
+
+                        builder.Initialize(buildOptions);
                         ret = builder.Build();
 
 // #if (UNITY_EDITOR && UNITY_ANDROID)
@@ -211,10 +219,12 @@ namespace unicicd.Editor.Build
                     {
                         Debug.Log("Release Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
 
-                        options.SetupDefaultSettings();
-                        options.BuildMode = CICDBuildMode.Release;
-                        options.OptionStrings.AddRange(optionStrings);
-                        builder.Initialize(options);
+                        buildOptions.SetupDefaultSettings();
+                        buildOptions.BuildMode = CICDBuildMode.Release;
+                        buildOptions.OptionStrings.AddRange(optionStrings);
+                        OnBuildBegin(buildOptions);
+
+                        builder.Initialize(buildOptions);
                         ret = builder.Build();
 
 // #if (UNITY_EDITOR && UNITY_ANDROID)
@@ -228,10 +238,12 @@ namespace unicicd.Editor.Build
                     {
                         Debug.Log("Publish Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
 
-                        options.SetupDefaultSettings();
-                        options.BuildMode = CICDBuildMode.Publish;
-                        options.OptionStrings.AddRange(optionStrings);
-                        builder.Initialize(options);
+                        buildOptions.SetupDefaultSettings();
+                        buildOptions.BuildMode = CICDBuildMode.Publish;
+                        buildOptions.OptionStrings.AddRange(optionStrings);
+                        OnBuildBegin(buildOptions);
+
+                        builder.Initialize(buildOptions);
                         ret = builder.Build();
                     }
                     break;
@@ -252,6 +264,9 @@ namespace unicicd.Editor.Build
             isWaitForManagedDebugger = EUserSettings.GetConfigBool("isWaitForManagedDebugger", false);
             isInAppDebug = EUserSettings.GetConfigBool("isInAppDebug", true);
             isCleanBuild = EUserSettings.GetConfigBool("isCleanBuild", false);
+
+            incrementBuildNumber = EUserSettings.GetConfigBool("incrementBuildNumber", false);
+
         }
 
         // 設定の保存
@@ -263,6 +278,9 @@ namespace unicicd.Editor.Build
             EUserSettings.SetConfigBool("isWaitForManagedDebugger", isWaitForManagedDebugger);
             EUserSettings.SetConfigBool("isInAppDebug", isInAppDebug);
             EUserSettings.SetConfigBool("isCleanBuild", isCleanBuild);
+
+            EUserSettings.SetConfigBool("incrementBuildNumber", incrementBuildNumber);
+
         }
 
     }

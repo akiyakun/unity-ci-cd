@@ -8,17 +8,22 @@ namespace unicicd.Editor.Build
     public class AndroidPlatformBuild : IPlatformBuild
     {
         public string PlatformName => "Android";
+        public string ExtensionName => ".apk";
         public CICDBuildOptions BuildOptions { get; protected set; }
 
-        public bool Initialize(CICDBuildOptions options)
+        public bool Initialize(CICDBuildOptions buildOptions)
         {
-            if (options == null) return false;
-            BuildOptions = options;
+            if (buildOptions == null) return false;
+            BuildOptions = buildOptions;
+
+            buildOptions.BuildTarget = BuildTarget.Android;
 
             return true;
         }
 
         public string GetBuildDirectoryName() => PlatformName;
+
+        public string CreateLocationPathName() => CICDBuilder.CreateLocationPathName(this);
 
         public bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
         {

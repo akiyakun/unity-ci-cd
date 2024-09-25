@@ -53,14 +53,13 @@ namespace unicicd.Editor.Build
             // if (new Version(CurrentVersion) != new Version(ret.version))
             if (CurrentVersion != ret.version)
             {
-                Debug.Log(String.Format("{0} : Current v{1}, File v{2}", ConfigFile, CurrentVersion, ret.version));
-                Debug.Assert(false);
+                Debug.LogError(String.Format("{0} : Current v{1}, File v{2}", ConfigFile, CurrentVersion, ret.version));
             }
 
             // BuildSettings読み込み
             {
                 var buildSettings = AssetDatabase.LoadAssetAtPath<BuildSettings>(ret.environment.build_settings_path);
-                Debug.Assert(buildSettings != null);
+                Debug.Assert(buildSettings != null, "BuildSettings.asset ScriptableObjectを作成してください。");
 
                 // 必須シーンチェック
                 Debug.Assert(buildSettings.RequiredSceneList != null);

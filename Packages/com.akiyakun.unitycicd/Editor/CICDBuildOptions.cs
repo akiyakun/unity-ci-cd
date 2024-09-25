@@ -30,7 +30,6 @@ namespace unicicd.Editor.Build
     public class CICDBuildOptions
     {
         public CICDBuildMode BuildMode = CICDBuildMode.Current;
-        public string JobName = "";
         public BuildTarget BuildTarget = BuildTarget.NoTarget;
         // public List<string> Scenes = new List<string>();
         public List<string> OptionStrings = new List<string>();
@@ -43,10 +42,14 @@ namespace unicicd.Editor.Build
         public bool UnityDevelopmentBuild = false;
         public bool WaitForManagedDebugger = false;
 
-        public Dictionary<string, int> PlatformIntOptions = new Dictionary<string, int>();
-        public Dictionary<string, string> PlatformStringOptions = new Dictionary<string, string>();
+        // public Dictionary<string, int> PlatformIntOptions = new Dictionary<string, int>();
+        // public Dictionary<string, string> PlatformStringOptions = new Dictionary<string, string>();
 
         public bool InAppDebug = false;
+
+        // MEMO:
+        // Windowsビルドだけどビューワー用ビルドをしたいときなどに
+        public string JobName = "";
 
         // return false is cancel build.
         public System.Func<CICDBuilder, BuildPlayerOptions, bool> OnBeforeBuildProcess;
@@ -70,5 +73,11 @@ namespace unicicd.Editor.Build
         // {
         //     Scenes = BuildUtility.GetBuildSettingsScene();
         // }
+
+        public bool HasOption(string option)
+        {
+            return OptionStrings.Contains(option);
+        }
+
     }
 }

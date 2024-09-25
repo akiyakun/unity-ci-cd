@@ -10,18 +10,23 @@ namespace unicicd.Editor.Build
     public interface IPlatformBuild
     {
         // プラットフォーム名
-        string PlatformName { get; }
+        public string PlatformName { get; }
 
-        CICDBuildOptions BuildOptions { get; }
+        // 拡張子
+        public string ExtensionName { get; }
 
-        bool Initialize(CICDBuildOptions options);
+        public CICDBuildOptions BuildOptions { get; }
+
+        public bool Initialize(CICDBuildOptions buildOptions);
 
         // ビルドディレクトリ名の取得
-        string GetBuildDirectoryName();
+        public string GetBuildDirectoryName();
+
+        public string CreateLocationPathName();
 
         // return false is cancel build.
-        bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo);
+        public bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo);
 
-        void OnAfterBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo);
+        public void OnAfterBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo);
     }
 }
