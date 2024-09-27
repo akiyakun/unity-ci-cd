@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
-using unicicd.Editor.Build;
+using unicicd.Editor;
 using UnityEngine;
 using UnityEngine.TestTools;
 

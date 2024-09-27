@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     public abstract class BuildWindowGUIBase : EditorWindow
     {

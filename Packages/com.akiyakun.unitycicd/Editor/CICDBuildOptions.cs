@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     // public enum CICDBuildDirectory
     // {

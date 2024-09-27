@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     [CreateAssetMenu(menuName = "App/CICD/BuildSettings")]
     [System.Serializable]

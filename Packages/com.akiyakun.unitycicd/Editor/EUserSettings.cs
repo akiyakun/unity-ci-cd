@@ -1,7 +1,7 @@
 using UnityEditor;
 using System.Runtime.CompilerServices;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     // UnityEditor.EditorUserSettings のラッパークラス
     // UnityEditor のnamespaceと重複するのでEUserSettingsとしています。

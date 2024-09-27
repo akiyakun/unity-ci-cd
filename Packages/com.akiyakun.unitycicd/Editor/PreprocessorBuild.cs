@@ -4,7 +4,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     // .NET プロファイルについて
     // https://docs.unity3d.com/ja/2021.3/Manual/dotnetProfileSupport.html

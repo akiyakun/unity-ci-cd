@@ -4,7 +4,7 @@ using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEditor.iOS.Xcode;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     public class iOSPlatformBuild : IPlatformBuild
     {

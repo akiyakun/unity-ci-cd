@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using unicicd.Editor.Build;
+using unicicd.Editor;
 
 public class WindowsBuildTest : PlatformBuildTestBase<WindowsPlatformBuild>
 {

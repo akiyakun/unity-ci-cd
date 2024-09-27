@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using unicicd.Editor;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     public class iOSBuildWindowGUI : BuildWindowGUIBase
     {

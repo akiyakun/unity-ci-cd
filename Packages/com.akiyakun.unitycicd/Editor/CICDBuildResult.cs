@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     public class CICDBuildResult
     {

@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.TestTools;
-using unicicd.Editor.Build;
+using unicicd.Editor;
 
 public class CICDBuilderTest
 {

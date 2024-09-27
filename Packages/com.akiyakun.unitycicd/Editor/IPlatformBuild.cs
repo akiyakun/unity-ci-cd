@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     /*
         プラットフォームの毎のビルドインターフェース
