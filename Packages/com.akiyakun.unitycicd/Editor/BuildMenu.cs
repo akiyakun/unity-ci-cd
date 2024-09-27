@@ -1,7 +1,7 @@
 ﻿#if __USE_UNICICD_BUILDMENU__
 using UnityEditor;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     public class BuildMenu
     {
@@ -17,6 +17,7 @@ namespace unicicd.Editor.Build
 
         public const int PriorityBuilds = 1000;
         public const int PriorityTests = 2000;
+        public const int PriorityBottom = 9999;
 
         #region Builds
         // [MenuItem(BuildsMenu + "Debug Build", false, PriorityBuilds + 0)]
@@ -325,6 +326,20 @@ namespace unicicd.Editor.Build
 
         }
         #endregion
+
+#if false
+        // 作業用
+        [MenuItem(BuildsMenu + "CommandLine Build", false, PriorityBottom)]
+        static void CommandLineBuild()
+        {
+            CI.EditorDebug = true;
+            CommandLineHelper.AddCommandLineArgs("--platform", "StandaloneWindows64");
+            CommandLineHelper.AddCommandLineArgs("--buildmode", "Debug");
+            CommandLineHelper.AddCommandLineArgs("--inappdebug");
+            CI.Build();
+        }
+#endif
+
     }
 }
 #endif

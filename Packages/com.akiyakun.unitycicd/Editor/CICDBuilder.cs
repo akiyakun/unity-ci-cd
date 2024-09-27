@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace unicicd.Editor.Build
+namespace unicicd.Editor
 {
     /*
         Unityのビルドを処理するクラスです。
@@ -31,6 +31,15 @@ namespace unicicd.Editor.Build
             Debug.Log(msg);
 #else
             Console.WriteLine(msg);
+#endif
+        }
+
+        private static void LogError(string msg)
+        {
+#if UNITY_EDITOR
+            Debug.LogError(msg);
+#else
+            Console.SetError(msg);
 #endif
         }
 
@@ -258,7 +267,7 @@ namespace unicicd.Editor.Build
 
             // ビルドを実行
             BuildReport report = null;
-            // try
+            try
             {
                 report = BuildPipeline.BuildPlayer(bpo);
                 Log("[Build] Finished BuildPlayer().");
@@ -266,10 +275,10 @@ namespace unicicd.Editor.Build
                 // PostprocessBuild(bpo, buildOptions);
                 // Log("[Build] Finished PostprocessBuild().");
             }
-            // catch (Exception e)
-            // {
-            //     Log("[Build] Exception:" + e.Message);
-            // }
+            catch (System.Exception e)
+            {
+                LogError("[Build] Exception:" + e.Message);
+            }
             // finally
             // {
             // }
@@ -278,7 +287,7 @@ namespace unicicd.Editor.Build
 
             if (report.summary.result != BuildResult.Succeeded)
             {
-                Log("[Build] Build error.");
+                LogError("[Build] Build error.");
                 result.BuildSucceeded = false;
             }
             else
@@ -304,7 +313,7 @@ namespace unicicd.Editor.Build
         {
             // SwitchBuildTarget()のほうで設定される
             // bpo.target = options.BuildTarget;
-            // bpo.targetGroup 
+            // bpo.targetGroup
 
             bpo.options = UnityEditor.BuildOptions.None;
 
