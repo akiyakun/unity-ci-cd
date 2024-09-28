@@ -18,6 +18,19 @@ public static class CI
 
     public static void Build()
     {
+        try
+        {
+            _Build();
+        }
+        catch (Exception e)
+        {
+            Print(e.Message);
+            Exit(1);
+        }
+    }
+
+    static void _Build()
+    {
         CICDBuildOptions buildOptions = new CICDBuildOptions();
         buildOptions.SetupDefaultSettings();
 
@@ -34,9 +47,7 @@ public static class CI
                         var platform = args[i + 1];
                         if (!Enum.TryParse<BuildTarget>(platform, out buildOptions.BuildTarget))
                         {
-                            Print("[Build] Unknown platform is " + platform);
-                            Exit(0);
-                            return;
+                            throw new Exception("Unknown platform is " + platform);
                         }
                         Print($"--platform {buildOptions.BuildTarget.ToString()}");
                     }
@@ -46,9 +57,7 @@ public static class CI
                         var buildmode = args[i + 1];
                         if (!Enum.TryParse<CICDBuildMode>(buildmode, out buildOptions.BuildMode))
                         {
-                            Print("[Build] Unknown buildmode is " + buildmode);
-                            Exit(0);
-                            return;
+                            throw new Exception("Unknown buildmode is " + buildmode);
                         }
                         Print($"--buildmode {buildOptions.BuildMode.ToString()}");
                     }
