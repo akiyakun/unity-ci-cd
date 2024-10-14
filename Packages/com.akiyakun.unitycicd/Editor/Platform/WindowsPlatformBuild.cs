@@ -14,7 +14,7 @@ namespace unicicd.Editor
 
     public class WindowsPlatformBuild : IPlatformBuild
     {
-        public string PlatformName => "Win";
+        public string PlatformName => "Windows";
         public string ExtensionName => ".exe";
         public CICDBuildOptions BuildOptions { get; protected set; }
 
