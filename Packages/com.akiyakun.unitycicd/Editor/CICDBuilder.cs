@@ -382,19 +382,26 @@ namespace unicicd.Editor
             if (string.IsNullOrEmpty(app_name))
             {
                 // アプリファイル名の設定なし
-                string mode = options.BuildMode.ToString();
+                // string mode = options.BuildMode.ToString();
 
-#if (UNITY_EDITOR && UNITY_ANDROID)
-                if (PreprocessorBuild.AndroidMonoBuild) mode += "(Mono)";
-#endif
-                string info = string.Format(" - {0} v{1}({2})", mode, Application.version, BuildUtility.GetBuildNumber());
-                ret = string.Format("{0}{1}{2}", Application.productName, info, platformBuild.ExtensionName);
+// #if (UNITY_EDITOR && UNITY_ANDROID)
+//                 if (PreprocessorBuild.AndroidMonoBuild) mode += "(Mono)";
+// #endif
+                // MEMO: ビルドの度にファイル名が変わるのは自動化観点からも好ましくない
+                // string info = string.Format(" - {0} v{1}({2})", mode, Application.version, BuildUtility.GetBuildNumber());
+                // ret = string.Format("{0}{1}{2}", Application.productName, info, platformBuild.ExtensionName);
+
+                ret = $"{Application.productName}{platformBuild.ExtensionName}";
             }
             // else
             // {
             //     // アプリファイル名が設定されている
             //     ret = string.Format("{0}{1}", app_name, platformBuild.ExtensionName);
             // }
+            else
+            {
+                ret = $"{app_name}{platformBuild.ExtensionName}";
+            }
 
             // return BuildUtility.PathCombine(platformBuild.GetBuildDirectoryName(), ret);
             return ret;

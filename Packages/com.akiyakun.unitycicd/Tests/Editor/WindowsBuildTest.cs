@@ -11,7 +11,7 @@ public class WindowsBuildTest : PlatformBuildTestBase<WindowsPlatformBuild>
     public override void PlatformName()
     {
         var test = CreatePlatformBuild();
-        Assert.That(test.PlatformName, Is.EqualTo("Win"));
+        Assert.That(test.PlatformName, Is.EqualTo("Windows"));
     }
 
 }

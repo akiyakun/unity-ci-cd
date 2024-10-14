@@ -17,7 +17,7 @@ namespace unicicd.Editor
         bool isWaitForManagedDebugger = false;
         bool isInAppDebug = true;
         bool isCleanBuild = true;
-        bool incrementBuildNumber = true;
+        bool isIncrementBuildNumber = true;
 
         public void Initialize(CICDBuildMode mode = CICDBuildMode.Current)
         {
@@ -94,7 +94,7 @@ namespace unicicd.Editor
                 ) + 1;
             }
 
-            int buildNumber = BuildUtility.GetBuildNumber();
+            int buildNumber = GetBuildNumber();
             string currentBuildVersion = string.Format("{0}({1})", Application.version, buildNumber);
             string nextBuildVersion = string.Format("{0}({1})", Application.version, buildNumber + 1);
 
@@ -124,9 +124,9 @@ namespace unicicd.Editor
 //             EditorGUILayout.Space();
 // #endif
 
-            incrementBuildNumber = EditorGUILayout.Toggle("ビルド番号を加算", incrementBuildNumber);
+            isIncrementBuildNumber = EditorGUILayout.Toggle("ビルド番号を加算", isIncrementBuildNumber);
 
-            if (incrementBuildNumber)
+            if (isIncrementBuildNumber)
             {
                 EditorGUILayout.LabelField(string.Format("[{2}] v{0} > v{1}", currentBuildVersion, nextBuildVersion, titleContent.text));
             }
@@ -141,9 +141,9 @@ namespace unicicd.Editor
             if (GUILayout.Button("ビルド開始"))
             {
                 // ビルド番号の自動更新
-                if (incrementBuildNumber)
+                if (isIncrementBuildNumber)
                 {
-                    BuildUtility.IncrementBuildNumber();
+                    IncrementBuildNumber();
                     Debug.Log(string.Format("{1} Start v{0}", nextBuildVersion, titleContent.text));
                 }
                 else
@@ -255,6 +255,44 @@ namespace unicicd.Editor
             return ret;
         }
 
+        // ビルド番号を取得
+        public static int GetBuildNumber()
+        {
+#if UNITY_ANDROID
+            return PlayerSettings.Android.bundleVersionCode;
+#elif UNITY_IOS
+            return int.Parse(PlayerSettings.iOS.buildNumber);
+#elif UNITY_STANDALONE_OSX
+            return int.Parse(PlayerSettings.macOS.buildNumber);
+#else
+            // MEMO: WindowsとかbuildNumberが無いのでローカルに保存した値を返す
+            return EUserSettings.GetConfigInt("incrementBuildNumber", 0);
+#endif
+        }
+
+        // ストア等で使用されるビルド番号を +1します
+        public static int IncrementBuildNumber()
+        {
+            int ret = 0;
+
+#if UNITY_ANDROID
+            ret = GetBuildNumber() + 1;
+            PlayerSettings.Android.bundleVersionCode = ret;
+#elif UNITY_IOS
+            ret = GetBuildNumber() + 1;
+            PlayerSettings.iOS.buildNumber = ret.ToString();
+#elif UNITY_STANDALONE_OSX
+            ret = GetBuildNumber() + 1;
+            PlayerSettings.macOS.buildNumber = ret.ToString();
+#else
+            // MEMO: WindowsとかbuildNumberが無いのでローカルに保存した値を使う
+            ret = GetBuildNumber() + 1;
+            EUserSettings.SetConfigInt("incrementBuildNumber", ret);
+#endif
+
+            return ret;
+        }
+
         // 設定の読み込み
         protected virtual void OnLoadSettings()
         {
@@ -265,7 +303,7 @@ namespace unicicd.Editor
             isInAppDebug = EUserSettings.GetConfigBool("isInAppDebug", true);
             isCleanBuild = EUserSettings.GetConfigBool("isCleanBuild", false);
 
-            incrementBuildNumber = EUserSettings.GetConfigBool("incrementBuildNumber", false);
+            isIncrementBuildNumber = EUserSettings.GetConfigBool("isIncrementBuildNumber", false);
 
         }
 
@@ -279,7 +317,7 @@ namespace unicicd.Editor
             EUserSettings.SetConfigBool("isInAppDebug", isInAppDebug);
             EUserSettings.SetConfigBool("isCleanBuild", isCleanBuild);
 
-            EUserSettings.SetConfigBool("incrementBuildNumber", incrementBuildNumber);
+            EUserSettings.SetConfigBool("isIncrementBuildNumber", isIncrementBuildNumber);
 
         }
 

@@ -55,7 +55,7 @@
       "debug_skip": false,
       "agent": "BuildServer2",
       "cleanup_build": false,
-      "application_filename": "",
+      "application_filename": "Game",
       "job_name": "Windows - Build"
     },
     {

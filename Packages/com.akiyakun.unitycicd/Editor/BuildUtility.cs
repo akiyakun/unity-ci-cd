@@ -139,43 +139,6 @@ namespace unicicd.Editor
 
             return scenes;
         }
-
-        // ビルド番号を取得
-        public static int GetBuildNumber()
-        {
-#if UNITY_ANDROID
-            return PlayerSettings.Android.bundleVersionCode;
-#elif UNITY_IOS
-            return int.Parse(PlayerSettings.iOS.buildNumber);
-#elif UNITY_STANDALONE_OSX
-            return int.Parse(PlayerSettings.macOS.buildNumber);
-#else
-            // MEMO: WindowsとかbuildNumberが無いのでとりあえず0を返す・・・
-            return 0;
-#endif
-        }
-
-        // ストア等で使用されるビルド番号を +1します
-        public static int IncrementBuildNumber()
-        {
-            int ret = 0;
-
-#if UNITY_ANDROID
-            ret = GetBuildNumber() + 1;
-            PlayerSettings.Android.bundleVersionCode = ret;
-#elif UNITY_IOS
-            ret = GetBuildNumber() + 1;
-            PlayerSettings.iOS.buildNumber = ret.ToString();
-#elif UNITY_STANDALONE_OSX
-            ret = GetBuildNumber() + 1;
-            PlayerSettings.macOS.buildNumber = ret.ToString();
-#else
-            // MEMO: WindowsとかbuildNumberが無いのでとりあえずそのまま返す
-            ret = GetBuildNumber();
-#endif
-
-            return ret;
-        }
         #endregion
 
         #region Execute

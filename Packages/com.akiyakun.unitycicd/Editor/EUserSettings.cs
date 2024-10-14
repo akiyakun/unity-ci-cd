@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEditor;
 using System.Runtime.CompilerServices;
 
@@ -39,9 +40,21 @@ namespace unicicd.Editor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetConfigInt(string name, int defaultValue = 0)
         {
-            var ret = GetConfigValue(name);
-            if (string.IsNullOrEmpty(ret)) return defaultValue;
-            return int.Parse(ret);
+            var value = GetConfigValue(name);
+            int ret = defaultValue;
+            if (string.IsNullOrEmpty(value)) return ret;
+
+            try
+            {
+                ret = int.Parse(value);
+            }
+            catch
+            {
+                Debug.LogError($"Failed to parse int value: {value}");
+                ret = defaultValue;
+            }
+
+            return ret;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
