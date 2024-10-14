@@ -1,4 +1,5 @@
 ﻿#if __USE_UNICICD_BUILDMENU__
+using UnityEngine;
 using UnityEditor;
 
 namespace unicicd.Editor
@@ -46,6 +47,8 @@ namespace unicicd.Editor
         {
             var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
             window.Initialize(CICDBuildMode.Current);
+
+            EditorUtility.DisplayDialog("確認", "ビルドフォルダを全て削除しますがよろしいですか？", "OK");
         }
 
         [MenuItem(BuildsMenu + "Windows Build [Debug Preset]", false, PriorityBuilds + 2)]
@@ -308,24 +311,44 @@ namespace unicicd.Editor
         //         }
         // #endif
 
-        [MenuItem(BuildsMenu + "Cleanup", false, PriorityBuilds + 990)]
+        [MenuItem(BuildsMenu + "Open Build Directory...", false, PriorityBuilds + 990)]
+        static void OpenBuildDirectory()
+        {
+            System.Diagnostics.Process.Start($"{BuildUtility.GetRootPath()}build");
+        }
+
+        [MenuItem(BuildsMenu + "Cleanup", false, PriorityBuilds + 991)]
         static void Build_Cleanup()
         {
-            CICDBuilder.CleanupAllBuildDirectory();
-            UnityEngine.Debug.Log("Cleanup finished.");
+            if (EditorUtility.DisplayDialog("確認", "ビルドフォルダを全て削除しますがよろしいですか？", "OK", "Cancel"))
+            {
+                CICDBuilder.CleanupAllBuildDirectory();
+                UnityEngine.Debug.Log("Cleanup finished.");
+            }
         }
 
         #endregion
 
-        #region Tests
-        [MenuItem(BuildsMenu + "Tests Run...", false, PriorityTests + 0)]
-        static void Tests_Run()
-        {
-            // SymbolEditor.AddSymbol("__TESTS__", BuildTargetGroup.Standalone);
-            SymbolEditor.AddSymbol("__TESTS__", BuildTargetGroup.Standalone);
+        // FIXME: テストは別に専用メニューを用意するほうがよさそう
+        // #region Tests
+        // [MenuItem(BuildsMenu + "Tests Run...", false, PriorityTests + 0)]
+        // static void Tests_Run()
+        // {
+        //     // SymbolEditor.AddSymbol("__TESTS__", BuildTargetGroup.Standalone);
+        //     // SymbolEditor.AddSymbol("__TESTS__", BuildTargetGroup.Standalone);
 
-        }
-        #endregion
+        //     if (EditorUtility.DisplayDialog("確認", "Test Runner を実行しますがよろしいですか？", "OK", "Cancel"))
+        //     {
+        //         // SymbolEditor.AddSymbol("__TESTS__", BuildTargetGroup.Standalone);
+        //         Debug.Log("OK");
+        //     }
+        //     else
+        //     {
+        //         Debug.Log("Cancel");
+        //     }
+
+        // }
+        // #endregion
 
 #if false
         // 作業用
