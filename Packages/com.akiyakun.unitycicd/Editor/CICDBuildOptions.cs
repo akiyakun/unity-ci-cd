@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using UnityEditor;
+// using UnityEditor;
 
 namespace unicicd.Editor
 {
@@ -30,7 +30,7 @@ namespace unicicd.Editor
     public class CICDBuildOptions
     {
         public CICDBuildMode BuildMode = CICDBuildMode.Current;
-        public BuildTarget BuildTarget = BuildTarget.NoTarget;
+        public UnityEditor.BuildTarget BuildTarget = UnityEditor.BuildTarget.NoTarget;
         // public List<string> Scenes = new List<string>();
         public List<string> OptionStrings = new List<string>();
         // public CICDBuildDirectory BuildDirectory = CICDBuildDirectory.Auto;
@@ -52,9 +52,9 @@ namespace unicicd.Editor
         public string JobName = "";
 
         // return false is cancel build.
-        public System.Func<CICDBuilder, BuildPlayerOptions, bool> OnBeforeBuildProcess;
+        public System.Func<CICDBuilder, UnityEditor.BuildPlayerOptions, bool> OnBeforeBuildProcess;
 
-        public System.Action<CICDBuilder, BuildPlayerOptions> OnAfterBuildProcess;
+        public System.Action<CICDBuilder, UnityEditor.BuildPlayerOptions> OnAfterBuildProcess;
 
         // デフォルト設定でセットアップ
         public void SetupDefaultSettings()
@@ -65,7 +65,7 @@ namespace unicicd.Editor
 
         public void ApplyCurrentBuildTarget()
         {
-            BuildTarget = EditorUserBuildSettings.activeBuildTarget;
+            BuildTarget = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
             // buildTarget = EditorUserBuildSettings.selectedStandaloneTarget;
         }
 

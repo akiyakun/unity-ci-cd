@@ -23,6 +23,8 @@ namespace unicicd.Editor
         public CICDBuilder()
         {
             Config = CICDConfig.Load();
+            Debug.Assert(Config != null);
+            Debug.Assert(Config.BuildSettings.PlatformBuildFactory != null);
         }
 
         private static void Log(string msg)
@@ -97,32 +99,35 @@ namespace unicicd.Editor
             Debug.Assert(options != null);
             BuildOptions = options;
 
-#if UNITY_STANDALONE_WIN
-            Debug.Log("[Build] WindowsPlatformBuild");
-            platformBuild = new WindowsPlatformBuild();
-#elif UNITY_STANDALONE_OSX
-            Debug.Log("[Build] macOSPlatformBuild");
-            platformBuild = new macOSPlatformBuild();
-#elif UNITY_WEBGL
-            Debug.Log("[Build] WebGLPlatformBuild");
-            platformBuild = new WebGLPlatformBuild();
-#elif UNITY_ANDROID
-            Debug.Log("[Build] AndroidPlatformBuild");
-            platformBuild = new AndroidPlatformBuild();
-#elif UNITY_IOS
-            Debug.Log("[Build] iOSPlatformBuild");
-            platformBuild = new iOSPlatformBuild();
-#elif UNITY_SWITCH
-            Debug.Log("[Build] SwitchPlatformBuild");
-            platformBuild = new SwitchPlatformBuild();
-#elif UNITY_PS4
-            Debug.Log("[Build] PS4PlatformBuild");
-            platformBuild = new PS4PlatformBuild();
-// #else
-// UnityEditor上だと UNITY_INCLUDE_TESTS がランタイムでも有効になっている
-// #if UNITY_INCLUDE_TESTS
-            platformBuild = new MockPlatformBuild();
-#endif
+            // platformBuild = Config.BuildSettings.PlatformBuildFactory.Create(options.BuildTarget.ToString());
+            platformBuild = Config.BuildSettings.PlatformBuildFactory.Create();
+
+// #if UNITY_STANDALONE_WIN
+//             Debug.Log("[Build] WindowsPlatformBuild");
+//             platformBuild = new WindowsPlatformBuild();
+// #elif UNITY_STANDALONE_OSX
+//             Debug.Log("[Build] macOSPlatformBuild");
+//             platformBuild = new macOSPlatformBuild();
+// #elif UNITY_WEBGL
+//             Debug.Log("[Build] WebGLPlatformBuild");
+//             platformBuild = new WebGLPlatformBuild();
+// #elif UNITY_ANDROID
+//             Debug.Log("[Build] AndroidPlatformBuild");
+//             platformBuild = new AndroidPlatformBuild();
+// #elif UNITY_IOS
+//             Debug.Log("[Build] iOSPlatformBuild");
+//             platformBuild = new iOSPlatformBuild();
+// #elif UNITY_SWITCH
+//             Debug.Log("[Build] SwitchPlatformBuild");
+//             platformBuild = new SwitchPlatformBuild();
+// #elif UNITY_PS4
+//             Debug.Log("[Build] PS4PlatformBuild");
+//             platformBuild = new PS4PlatformBuild();
+// // #else
+// // UnityEditor上だと UNITY_INCLUDE_TESTS がランタイムでも有効になっている
+// // #if UNITY_INCLUDE_TESTS
+//             platformBuild = new MockPlatformBuild();
+// #endif
 
             if (platformBuild == null)
             {
