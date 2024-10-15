@@ -88,4 +88,5 @@ Thumbs.db
 # VSCode
 /.vscode/
 *.code-workspace
+.vsconfig
 

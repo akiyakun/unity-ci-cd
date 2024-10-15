@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#if UNITY_STANDALONE_WIN
+using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
@@ -15,3 +16,4 @@ public class WindowsBuildTest : PlatformBuildTestBase<WindowsPlatformBuild>
     }
 
 }
+#endif

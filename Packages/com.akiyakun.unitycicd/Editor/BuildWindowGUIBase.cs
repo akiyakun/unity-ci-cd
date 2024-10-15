@@ -11,6 +11,7 @@ namespace unicicd.Editor
         bool initialized = false;
         bool showBuildMode = true;
         int buildMode;
+        bool showResultDialog;
 
         // protected CICDBuildOptions buildOptions = new();
         bool isDevelopmentBuild = true;
@@ -19,8 +20,10 @@ namespace unicicd.Editor
         bool isCleanBuild = true;
         bool isIncrementBuildNumber = true;
 
-        public void Initialize(CICDBuildMode mode = CICDBuildMode.Current)
+        public void Initialize(CICDBuildMode mode = CICDBuildMode.Current, bool showResultDialog = true)
         {
+            this.showResultDialog = showResultDialog;
+
             switch (mode)
             {
                 case CICDBuildMode.Current:
@@ -152,10 +155,11 @@ namespace unicicd.Editor
                 }
 
                 CICDBuildOptions buildOptions = new();
+                CICDBuildResult ret;
 
                 try
                 {
-                    var ret = Build(buildOptions, install);
+                    ret = Build(buildOptions, install);
                 }
                 finally
                 {
@@ -163,6 +167,18 @@ namespace unicicd.Editor
                 }
 
                 Close();
+
+                if (showResultDialog)
+                {
+                    if (ret.BuildSucceeded)
+                    {
+                        EditorUtility.DisplayDialog("Cuccess", "ビルドが完了しました。", "OK");
+                    }
+                    else
+                    {
+                        EditorUtility.DisplayDialog("Error!", "ビルドエラー\nビルドが失敗しました。", "OK");
+                    }
+                }
 
                 GUIUtility.ExitGUI();
             }

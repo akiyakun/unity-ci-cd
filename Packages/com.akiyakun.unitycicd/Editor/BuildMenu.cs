@@ -47,8 +47,6 @@ namespace unicicd.Editor
         {
             var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
             window.Initialize(CICDBuildMode.Current);
-
-            EditorUtility.DisplayDialog("確認", "ビルドフォルダを全て削除しますがよろしいですか？", "OK");
         }
 
         [MenuItem(BuildsMenu + "Windows Build [Debug Preset]", false, PriorityBuilds + 2)]
