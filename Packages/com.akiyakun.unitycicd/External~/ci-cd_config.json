@@ -1,7 +1,7 @@
 {
   "version": "1.1.0",
   "environment": {
-    "build_settings_path": "Assets/Editor/BuildSettings.asset",
+    "build_settings_path": "Assets/Editor/CICDBuildSettings.asset",
     "agent": "BuildServer"
   },
   "notify": {

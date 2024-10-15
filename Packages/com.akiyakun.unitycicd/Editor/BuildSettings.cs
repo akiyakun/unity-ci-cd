@@ -5,10 +5,13 @@ using UnityEditor;
 
 namespace unicicd.Editor
 {
-    [CreateAssetMenu(menuName = "App/CICD/BuildSettings")]
+    [CreateAssetMenu(menuName = "App/CICD/BuildSettings", fileName = "CICDBuildSettings")]
     [System.Serializable]
     public class BuildSettings : ScriptableObject
     {
+        [SerializeField]
+        public PlatformBuildFactory PlatformBuildFactory;
+
         // 必須のシーンリスト
         // どのビルドでも必ず含まれるシーン
         [SerializeField]
@@ -44,6 +47,15 @@ namespace unicicd.Editor
             }
             return ret;
         }
+
+#if UNITY_EDITOR
+        void Reset()
+        {
+            // 新規作成時にデフォルトのPlatformBuildFactoryを設定
+            PlatformBuildFactory = AssetDatabase.LoadAssetAtPath<PlatformBuildFactory>(
+                $"{CICDSetup.PackageRootPath}Editor/CICDPlatformBuildFactory.asset");
+        }
+#endif
     }
 }
 
