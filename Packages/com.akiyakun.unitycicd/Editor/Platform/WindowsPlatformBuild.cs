@@ -43,7 +43,7 @@ namespace unicicd.Editor
                 {
                     buildDirectoryName = "Win_IL2CPP";
                     buildOptions.BuildTarget = BuildTarget.StandaloneWindows64;
-                    buildOptions.OptionStrings.Add(WindowsPlatformBuildOptions.IL2CPPBuild);
+                    buildOptions.Options.Add(WindowsPlatformBuildOptions.IL2CPPBuild, null);
                     Debug.Log("IL2CPPBuild");
                 }
             }
@@ -71,7 +71,7 @@ namespace unicicd.Editor
             }
             else if (BuildOptions.HasOption(WindowsPlatformBuildOptions.IL2CPPBuild))
             {
-                Debug.Log("IL2CPPBuild 2");
+                // Debug.Log("IL2CPPBuild 2");
                 oldScriptingBackend = PlayerSettings.GetScriptingBackend(bpo.targetGroup);
                 PlayerSettings.SetScriptingBackend(bpo.targetGroup, ScriptingImplementation.IL2CPP);
 

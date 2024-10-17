@@ -66,25 +66,19 @@ namespace unicicd.Editor
 
         public virtual System.Type GetEditorGUIType()
         {
-// #if UNITY_STANDALONE_WIN
-//             Debug.Log("PlatformBuildFactory: WindowsPlatformBuild");
-//             platformBuild = new WindowsPlatformBuild();
-// #elif UNITY_STANDALONE_OSX
-//             Debug.Log("PlatformBuildFactory: macOSPlatformBuild");
-//             platformBuild = new macOSPlatformBuild();
-// #elif UNITY_WEBGL
-//             Debug.Log("PlatformBuildFactory: WebGLPlatformBuild");
-//             platformBuild = new WebGLPlatformBuild();
-// #elif UNITY_ANDROID
-//             Debug.Log("PlatformBuildFactory: AndroidPlatformBuild");
-//             platformBuild = new AndroidPlatformBuild();
-// #elif UNITY_IOS
-//             Debug.Log("PlatformBuildFactory: iOSPlatformBuild");
-//             platformBuild = new iOSPlatformBuild();
-// #elif UNITY_SWITCH
-//             Debug.Log("PlatformBuildFactory: SwitchPlatformBuild");
-//             platformBuild = new SwitchPlatformBuild();
-#if UNITY_PS4
+#if UNITY_STANDALONE_WIN
+            return typeof(WindowsBuildWindowGUI);
+#elif UNITY_STANDALONE_OSX
+            return typeof(macOSBuildWindowGUI);
+#elif UNITY_WEBGL
+            return typeof(WebGLBuildWindowGUI);
+#elif UNITY_ANDROID
+            return typeof(AndroidBuildWindowGUI);
+#elif UNITY_IOS
+            return typeof(iOSBuildWindowGUI);
+#elif UNITY_SWITCH
+            return typeof(SwitchBuildWindowGUI);
+#elif UNITY_PS4
             return typeof(PS4BuildWindowGUI);
 #endif
         }

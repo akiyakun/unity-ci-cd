@@ -26,12 +26,14 @@ namespace unicicd.Editor
 
         }
 
-        protected override void OnBuildBegin(CICDBuildOptions buildOptions)
+        protected override bool OnBuildStart()
         {
             if (isMonoBuild)
             {
-                buildOptions.OptionStrings.Add(WindowsPlatformBuildOptions.MonoBuild);
+                buildOptions.Options.Add(WindowsPlatformBuildOptions.MonoBuild, null);
             }
+
+            return true;
         }
 
         // protected override void OnBuildEnd(CICDBuildOptions buildOptions)

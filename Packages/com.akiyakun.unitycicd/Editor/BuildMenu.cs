@@ -16,9 +16,9 @@ namespace unicicd.Editor
         public const string TopMenu = "App/";
         public const string BuildsMenu = TopMenu + "Builds/";
 
-        public const int PriorityBuilds = 1000;
-        public const int PriorityTests = 2000;
-        public const int PriorityBottom = 9999;
+        public const int PriorityBuilds = 1000000;
+        public const int PriorityTests  = 1000100;
+        public const int PriorityBottom = 1001000;
 
         #region Builds
 #if UNITY_STANDALONE_WIN

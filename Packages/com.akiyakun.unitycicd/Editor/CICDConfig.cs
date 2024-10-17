@@ -66,9 +66,9 @@ namespace unicicd.Editor
                 if( buildSettings.RequiredSceneList != null)
                 {
                     Debug.Assert(buildSettings.RequiredSceneList.Count > 0);
-                    foreach (var scene in buildSettings.RequiredSceneList)
+                    foreach (var sceneInfo in buildSettings.RequiredSceneList)
                     {
-                        Debug.Assert(scene != null, "Required scene is null reference");
+                        Debug.Assert(sceneInfo.SceneAsset != null, "Required scene is null reference");
                     }
                 }
 
@@ -77,9 +77,9 @@ namespace unicicd.Editor
                 if( buildSettings.InAppDebugSceneList != null)
                 {
                     Debug.Assert(buildSettings.InAppDebugSceneList.Count > 0);
-                    foreach (var scene in buildSettings.InAppDebugSceneList)
+                    foreach (var sceneInfo in buildSettings.InAppDebugSceneList)
                     {
-                        Debug.Assert(scene != null, "InAppDebug scene is null reference");
+                        Debug.Assert(sceneInfo.SceneAsset != null, "InAppDebug scene is null reference");
                     }
                 }
 
