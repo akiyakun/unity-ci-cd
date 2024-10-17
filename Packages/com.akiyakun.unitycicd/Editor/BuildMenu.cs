@@ -21,240 +21,81 @@ namespace unicicd.Editor
         public const int PriorityBottom = 9999;
 
         #region Builds
-        // [MenuItem(BuildsMenu + "Debug Build", false, PriorityBuilds + 0)]
-        // static void DebugBuild()
-        // {
-        //     var window = EditorWindow.GetWindow<BuildWindow>(true);
-        //     CICDBuildOptions options = new CICDBuildOptions();
-        //     options.SetupDefaultSettings();
-        //     options.Build = CICDBuildOptions.BuildMode.Debug;
-        //     window.Initialize(options);
-        // }
-
-        // [MenuItem(BuildsMenu + "Release Build", false, PriorityBuilds + 1)]
-        // static void ReleaseBuild()
-        // {
-        //     var window = EditorWindow.GetWindow<BuildWindow>(true);
-        //     CICDBuildOptions options = new CICDBuildOptions();
-        //     options.SetupDefaultSettings();
-        //     options.Build = CICDBuildOptions.BuildMode.Release;
-        //     window.Initialize(options);
-        // }
-
 #if UNITY_STANDALONE_WIN
         [MenuItem(BuildsMenu + "Windows Build...", false, PriorityBuilds + 1)]
-        static void WinBuild()
-        {
-            var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Current);
-        }
-
+        static void Windows_Build() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Current);
         [MenuItem(BuildsMenu + "Windows Build [Debug Preset]", false, PriorityBuilds + 2)]
-        static void WinDebugBuild()
-        {
-            var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Debug);
-        }
-
+        static void Windows_DebugBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Debug);
         [MenuItem(BuildsMenu + "Windows Build [Release Preset]", false, PriorityBuilds + 3)]
-        static void WinReleaseBuild()
-        {
-            var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Release);
-        }
-
+        static void Windows_ReleaseBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Release);
         [MenuItem(BuildsMenu + "Windows Build [Publish Preset]", false, PriorityBuilds + 4)]
-        static void WinPublishBuild()
-        {
-            var window = EditorWindow.GetWindow<WindowsBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Publish);
-        }
+        static void Windows_PublishBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Publish);
 #endif
-
 
 #if UNITY_STANDALONE_OSX
         [MenuItem(BuildsMenu + "macOS Build...", false, PriorityBuilds + 1)]
-        static void WinBuild()
-        {
-            var window = EditorWindow.GetWindow<macOSBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Current);
-        }
-
+        static void macOS_Build() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Current);
         [MenuItem(BuildsMenu + "macOS Build [Debug Preset]", false, PriorityBuilds + 2)]
-        static void WinDebugBuild()
-        {
-            var window = EditorWindow.GetWindow<macOSBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Debug);
-        }
-
+        static void macOS_DebugBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Debug);
         [MenuItem(BuildsMenu + "macOS Build [Release Preset]", false, PriorityBuilds + 3)]
-        static void WinReleaseBuild()
-        {
-            var window = EditorWindow.GetWindow<macOSBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Release);
-        }
-
+        static void macOS_ReleaseBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Release);
         [MenuItem(BuildsMenu + "macOS Build [Publish Preset]", false, PriorityBuilds + 4)]
-        static void WinPublishBuild()
-        {
-            var window = EditorWindow.GetWindow<macOSBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Publish);
-        }
+        static void macOS_PublishBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Publish);
 #endif
-
 
 #if UNITY_WEBGL
         [MenuItem(BuildsMenu + "WebGL Build...", false, PriorityBuilds + 1)]
-        static void WinBuild()
-        {
-            var window = EditorWindow.GetWindow<WebGLBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Current);
-        }
-
+        static void WebGL_Build() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Current);
         [MenuItem(BuildsMenu + "WebGL Build [Debug Preset]", false, PriorityBuilds + 2)]
-        static void WinDebugBuild()
-        {
-            var window = EditorWindow.GetWindow<WebGLBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Debug);
-        }
-
+        static void WebGL_DebugBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Debug);
         [MenuItem(BuildsMenu + "WebGL Build [Release Preset]", false, PriorityBuilds + 3)]
-        static void WinReleaseBuild()
-        {
-            var window = EditorWindow.GetWindow<WebGLBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Release);
-        }
-
+        static void WebGL_ReleaseBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Release);
         [MenuItem(BuildsMenu + "WebGL Build [Publish Preset]", false, PriorityBuilds + 4)]
-        static void WinPublishBuild()
-        {
-            var window = EditorWindow.GetWindow<WebGLBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Publish);
-        }
+        static void WebGL_PublishBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Publish);
 #endif
-
 
 #if UNITY_ANDROID
         [MenuItem(BuildsMenu + "Android Build...", false, PriorityBuilds + 1)]
-        static void WinBuild()
-        {
-            var window = EditorWindow.GetWindow<AndroidBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Current);
-        }
-
+        static void Android_Build() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Current);
         [MenuItem(BuildsMenu + "Android Build [Debug Preset]", false, PriorityBuilds + 2)]
-        static void WinDebugBuild()
-        {
-            var window = EditorWindow.GetWindow<AndroidBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Debug);
-        }
-
+        static void Android_DebugBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Debug);
         [MenuItem(BuildsMenu + "Android Build [Release Preset]", false, PriorityBuilds + 3)]
-        static void WinReleaseBuild()
-        {
-            var window = EditorWindow.GetWindow<AndroidBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Release);
-        }
-
+        static void Android_ReleaseBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Release);
         [MenuItem(BuildsMenu + "Android Build [Publish Preset]", false, PriorityBuilds + 4)]
-        static void WinPublishBuild()
-        {
-            var window = EditorWindow.GetWindow<AndroidBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Publish);
-        }
+        static void Android_PublishBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Publish);
 #endif
-
 
 #if UNITY_IOS
         [MenuItem(BuildsMenu + "iOS Build...", false, PriorityBuilds + 1)]
-        static void WinBuild()
-        {
-            var window = EditorWindow.GetWindow<iOSBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Current);
-        }
-
+        static void iOS_Build() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Current);
         [MenuItem(BuildsMenu + "iOS Build [Debug Preset]", false, PriorityBuilds + 2)]
-        static void WinDebugBuild()
-        {
-            var window = EditorWindow.GetWindow<iOSBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Debug);
-        }
-
+        static void iOS_DebugBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Debug);
         [MenuItem(BuildsMenu + "iOS Build [Release Preset]", false, PriorityBuilds + 3)]
-        static void WinReleaseBuild()
-        {
-            var window = EditorWindow.GetWindow<iOSBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Release);
-        }
-
+        static void iOS_ReleaseBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Release);
         [MenuItem(BuildsMenu + "iOS Build [Publish Preset]", false, PriorityBuilds + 4)]
-        static void WinPublishBuild()
-        {
-            var window = EditorWindow.GetWindow<iOSBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Publish);
-        }
+        static void iOS_PublishBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Publish);
 #endif
-
 
 #if UNITY_SWITCH
         [MenuItem(BuildsMenu + "Switch Build...", false, PriorityBuilds + 1)]
-        static void WinBuild()
-        {
-            var window = EditorWindow.GetWindow<SwitchBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Current);
-        }
-
+        static void Switch_Build() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Current);
         [MenuItem(BuildsMenu + "Switch Build [Debug Preset]", false, PriorityBuilds + 2)]
-        static void WinDebugBuild()
-        {
-            var window = EditorWindow.GetWindow<SwitchBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Debug);
-        }
-
+        static void Switch_DebugBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Debug);
         [MenuItem(BuildsMenu + "Switch Build [Release Preset]", false, PriorityBuilds + 3)]
-        static void WinReleaseBuild()
-        {
-            var window = EditorWindow.GetWindow<SwitchBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Release);
-        }
-
+        static void Switch_ReleaseBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Release);
         [MenuItem(BuildsMenu + "Switch Build [Publish Preset]", false, PriorityBuilds + 4)]
-        static void WinPublishBuild()
-        {
-            var window = EditorWindow.GetWindow<SwitchBuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Publish);
-        }
+        static void Switch_PublishBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Publish);
 #endif
-
 
 #if UNITY_PS4
         [MenuItem(BuildsMenu + "PS4 Build...", false, PriorityBuilds + 1)]
-        static void WinBuild()
-        {
-            var window = EditorWindow.GetWindow<PS4BuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Current);
-        }
-
+        static void PS4_Build() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Current);
         [MenuItem(BuildsMenu + "PS4 Build [Debug Preset]", false, PriorityBuilds + 2)]
-        static void WinDebugBuild()
-        {
-            var window = EditorWindow.GetWindow<PS4BuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Debug);
-        }
-
+        static void PS4_DebugBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Debug);
         [MenuItem(BuildsMenu + "PS4 Build [Release Preset]", false, PriorityBuilds + 3)]
-        static void WinReleaseBuild()
-        {
-            var window = EditorWindow.GetWindow<PS4BuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Release);
-        }
-
+        static void PS4_ReleaseBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Release);
         [MenuItem(BuildsMenu + "PS4 Build [Publish Preset]", false, PriorityBuilds + 4)]
-        static void WinPublishBuild()
-        {
-            var window = EditorWindow.GetWindow<PS4BuildWindowGUI>(true);
-            window.Initialize(CICDBuildMode.Publish);
-        }
+        static void PS4_PublishBuild() => PlatformBuildFactory.GetWindow().Initialize(CICDBuildMode.Publish);
 #endif
 
         /*

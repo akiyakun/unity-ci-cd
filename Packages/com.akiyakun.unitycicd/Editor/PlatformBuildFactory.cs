@@ -56,5 +56,38 @@ namespace unicicd.Editor
 
             return platformBuild;
         }
+
+#if UNITY_EDITOR
+        public static BuildWindowGUIBase GetWindow()
+        {
+            var config = CICDConfig.Load();
+            return (BuildWindowGUIBase)EditorWindow.GetWindow(config.BuildSettings.PlatformBuildFactory.GetEditorGUIType(), false);
+        }
+
+        public virtual System.Type GetEditorGUIType()
+        {
+// #if UNITY_STANDALONE_WIN
+//             Debug.Log("PlatformBuildFactory: WindowsPlatformBuild");
+//             platformBuild = new WindowsPlatformBuild();
+// #elif UNITY_STANDALONE_OSX
+//             Debug.Log("PlatformBuildFactory: macOSPlatformBuild");
+//             platformBuild = new macOSPlatformBuild();
+// #elif UNITY_WEBGL
+//             Debug.Log("PlatformBuildFactory: WebGLPlatformBuild");
+//             platformBuild = new WebGLPlatformBuild();
+// #elif UNITY_ANDROID
+//             Debug.Log("PlatformBuildFactory: AndroidPlatformBuild");
+//             platformBuild = new AndroidPlatformBuild();
+// #elif UNITY_IOS
+//             Debug.Log("PlatformBuildFactory: iOSPlatformBuild");
+//             platformBuild = new iOSPlatformBuild();
+// #elif UNITY_SWITCH
+//             Debug.Log("PlatformBuildFactory: SwitchPlatformBuild");
+//             platformBuild = new SwitchPlatformBuild();
+#if UNITY_PS4
+            return typeof(PS4BuildWindowGUI);
+#endif
+        }
+#endif
     }
 }
