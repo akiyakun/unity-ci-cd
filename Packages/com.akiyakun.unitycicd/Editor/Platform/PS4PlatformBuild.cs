@@ -7,11 +7,11 @@ namespace unicicd.Editor
 {
     public class PS4PlatformBuild : IPlatformBuild
     {
-        public string PlatformName => "PS4";
-        public string ExtensionName => "";
-        public CICDBuildOptions BuildOptions { get; protected set; }
+        public virtual string PlatformName => "PS4";
+        public virtual string ExtensionName => "";
+        public virtual CICDBuildOptions BuildOptions { get; protected set; }
 
-        public bool Initialize(CICDBuildOptions buildOptions)
+        public virtual bool Initialize(CICDBuildOptions buildOptions)
         {
             if (buildOptions == null) return false;
             BuildOptions = buildOptions;
@@ -21,16 +21,16 @@ namespace unicicd.Editor
             return true;
         }
 
-        public string GetBuildDirectoryName() => PlatformName;
+        public virtual string GetBuildDirectoryName() => PlatformName;
 
-        public string CreateLocationPathName() => CICDBuilder.CreateLocationPathName(this);
+        public virtual string CreateLocationPathName() => CICDBuilder.CreateLocationPathName(this);
 
-        public bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
+        public virtual bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
         {
             return true;
         }
 
-        public void OnAfterBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
+        public virtual void OnAfterBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
         {
         }
     }
