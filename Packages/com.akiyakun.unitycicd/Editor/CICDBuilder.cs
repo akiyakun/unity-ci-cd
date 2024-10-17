@@ -20,6 +20,14 @@ namespace unicicd.Editor
         public CICDConfig Config { get; private set; }
         public CICDBuildOptions BuildOptions { get; private set; }
 
+        // ビルド前の元設定を戻すため用
+        class OriginalSetting
+        {
+            public List<string> Symbols;
+            public StackTraceLogType[] StackTraces = new StackTraceLogType[System.Enum.GetNames(typeof(LogType)).Length];
+        }
+        OriginalSetting originalSetting = new OriginalSetting();
+
         public CICDBuilder()
         {
             Config = CICDConfig.Load();
@@ -102,32 +110,32 @@ namespace unicicd.Editor
             // platformBuild = Config.BuildSettings.PlatformBuildFactory.Create(options.BuildTarget.ToString());
             platformBuild = Config.BuildSettings.PlatformBuildFactory.Create();
 
-// #if UNITY_STANDALONE_WIN
-//             Debug.Log("[Build] WindowsPlatformBuild");
-//             platformBuild = new WindowsPlatformBuild();
-// #elif UNITY_STANDALONE_OSX
-//             Debug.Log("[Build] macOSPlatformBuild");
-//             platformBuild = new macOSPlatformBuild();
-// #elif UNITY_WEBGL
-//             Debug.Log("[Build] WebGLPlatformBuild");
-//             platformBuild = new WebGLPlatformBuild();
-// #elif UNITY_ANDROID
-//             Debug.Log("[Build] AndroidPlatformBuild");
-//             platformBuild = new AndroidPlatformBuild();
-// #elif UNITY_IOS
-//             Debug.Log("[Build] iOSPlatformBuild");
-//             platformBuild = new iOSPlatformBuild();
-// #elif UNITY_SWITCH
-//             Debug.Log("[Build] SwitchPlatformBuild");
-//             platformBuild = new SwitchPlatformBuild();
-// #elif UNITY_PS4
-//             Debug.Log("[Build] PS4PlatformBuild");
-//             platformBuild = new PS4PlatformBuild();
-// // #else
-// // UnityEditor上だと UNITY_INCLUDE_TESTS がランタイムでも有効になっている
-// // #if UNITY_INCLUDE_TESTS
-//             platformBuild = new MockPlatformBuild();
-// #endif
+            // #if UNITY_STANDALONE_WIN
+            //             Debug.Log("[Build] WindowsPlatformBuild");
+            //             platformBuild = new WindowsPlatformBuild();
+            // #elif UNITY_STANDALONE_OSX
+            //             Debug.Log("[Build] macOSPlatformBuild");
+            //             platformBuild = new macOSPlatformBuild();
+            // #elif UNITY_WEBGL
+            //             Debug.Log("[Build] WebGLPlatformBuild");
+            //             platformBuild = new WebGLPlatformBuild();
+            // #elif UNITY_ANDROID
+            //             Debug.Log("[Build] AndroidPlatformBuild");
+            //             platformBuild = new AndroidPlatformBuild();
+            // #elif UNITY_IOS
+            //             Debug.Log("[Build] iOSPlatformBuild");
+            //             platformBuild = new iOSPlatformBuild();
+            // #elif UNITY_SWITCH
+            //             Debug.Log("[Build] SwitchPlatformBuild");
+            //             platformBuild = new SwitchPlatformBuild();
+            // #elif UNITY_PS4
+            //             Debug.Log("[Build] PS4PlatformBuild");
+            //             platformBuild = new PS4PlatformBuild();
+            // // #else
+            // // UnityEditor上だと UNITY_INCLUDE_TESTS がランタイムでも有効になっている
+            // // #if UNITY_INCLUDE_TESTS
+            //             platformBuild = new MockPlatformBuild();
+            // #endif
 
             if (platformBuild == null)
             {
@@ -159,26 +167,14 @@ namespace unicicd.Editor
                 CleanupBuildTargetDirectory();
             }
 
-            // 現在のDefineを一時保存
-            var saveSymbols = SymbolEditor.GetSymbols();
-
             try
             {
                 result = _Build();
             }
             finally
             {
-                switch (BuildOptions.BuildMode)
-                {
-                    case CICDBuildMode.Current:
-                        break;
-                    default:
-                        // Defineを元に戻す
-                        SymbolEditor.SetSymbols(saveSymbols);
-                        SymbolEditor.RemoveSymbol("__TESTS__");
-                        SymbolEditor.RemoveSymbol("__PUBLISH__");
-                        break;
-                }
+                // 後処理
+                PostBuilderProcess();
             }
 
             return result;
@@ -188,37 +184,8 @@ namespace unicicd.Editor
         {
             var result = new CICDBuildResult();
 
-            if (BuildOptions.InAppDebug == true)
-            {
-                SymbolEditor.AddSymbol("__INAPPDEBUG__");
-            }
-            else
-            {
-                SymbolEditor.RemoveSymbol("__INAPPDEBUG__");
-            }
-
-            switch (BuildOptions.BuildMode)
-            {
-                case CICDBuildMode.Current:
-                    Log("[Build] Current Build.");
-                    break;
-                case CICDBuildMode.Debug:
-                    Log("[Build] Debug Build.");
-                    SymbolEditor.AddSymbol("__DEBUG__");
-                    SymbolEditor.RemoveSymbol("__RELEASE__");
-                    SymbolEditor.RemoveSymbol("__TESTS__");
-                    SymbolEditor.RemoveSymbol("__PUBLISH__");
-                    break;
-                case CICDBuildMode.Release:
-                    Log("[Build] Release Build.");
-                    SymbolEditor.RemoveSymbol("__DEBUG__");
-                    SymbolEditor.RemoveSymbol("__TESTS__");
-                    SymbolEditor.RemoveSymbol("__PUBLISH__");
-                    SymbolEditor.AddSymbol("__RELEASE__");
-                    break;
-                default:
-                    return result;
-            }
+            // 前処理
+            PreBuilderProcess();
 
             BuildPlayerOptions bpo = new BuildPlayerOptions();
 
@@ -248,13 +215,29 @@ namespace unicicd.Editor
 
             // ビルド前処理
             {
-                Log("[Build] Platform OnBeforeBuildProcess().");
-                bool success = platformBuild.OnBeforeBuildProcess(this, bpo);
+                bool success = false;
+
+                try
+                {
+                    Log("[Build] Platform OnBeforeBuildProcess().");
+                    success = platformBuild.OnBeforeBuildProcess(this, bpo);
+                }
+                catch (System.Exception e)
+                {
+                    LogError("[Build] Exception:" + e.Message);
+                }
 
                 if (success == true && BuildOptions.OnBeforeBuildProcess != null)
                 {
-                    Log("[Build] BuildOptions OnBeforeBuildProcess().");
-                    success = BuildOptions.OnBeforeBuildProcess.Invoke(this, bpo);
+                    try
+                    {
+                        Log("[Build] BuildOptions OnBeforeBuildProcess().");
+                        success = BuildOptions.OnBeforeBuildProcess.Invoke(this, bpo);
+                    }
+                    catch (System.Exception e)
+                    {
+                        LogError("[Build] Exception:" + e.Message);
+                    }
                 }
 
                 // キャンセルの場合、ビルド後処理を実行する
@@ -301,16 +284,124 @@ namespace unicicd.Editor
                 result.BuildSucceeded = true;
             }
 
-            // ビルド後処理
+            // IPlatformBuildのビルド後処理
+            try
             {
                 Log("[Build] Platform OnAfterBuildProcess().");
                 platformBuild.OnAfterBuildProcess(this, bpo);
+            }
+            catch (System.Exception e)
+            {
+                LogError("[Build] Exception:" + e.Message);
+            }
 
+            // CICDBuildOptions のビルド後処理
+            try
+            {
                 Log("[Build] BuildOptions OnAfterBuildProcess().");
                 BuildOptions.OnAfterBuildProcess?.Invoke(this, bpo);
             }
+            catch (System.Exception e)
+            {
+                LogError("[Build] Exception:" + e.Message);
+            }
 
             return result;
+        }
+
+        void PreBuilderProcess()
+        {
+            // 現在の設定を一時保存
+            {
+                // 現在のDefineを一時保存
+                originalSetting.Symbols = SymbolEditor.GetSymbols();
+
+                // スタックトレースの設定を一時保存
+                for (int i = 0; i < originalSetting.StackTraces.Length; i++)
+                {
+                    originalSetting.StackTraces[i] = PlayerSettings.GetStackTraceLogType((LogType)i);
+                }
+            }
+
+            int stackTrace = 0;
+
+            if (BuildOptions.InAppDebug == true)
+            {
+                stackTrace = 1;
+                SymbolEditor.AddSymbol("__INAPPDEBUG__");
+            }
+            else
+            {
+                SymbolEditor.RemoveSymbol("__INAPPDEBUG__");
+            }
+
+            switch (BuildOptions.BuildMode)
+            {
+                case CICDBuildMode.Current:
+                    // Log("[Build] Current Build.");
+                    stackTrace = 2;
+                    break;
+                case CICDBuildMode.Debug:
+                    // Log("[Build] Debug Build.");
+                    stackTrace = 1;
+                    SymbolEditor.AddSymbol("__DEBUG__");
+                    SymbolEditor.RemoveSymbol("__RELEASE__");
+                    SymbolEditor.RemoveSymbol("__TESTS__");
+                    SymbolEditor.RemoveSymbol("__PUBLISH__");
+                    break;
+                case CICDBuildMode.Release:
+                    // Log("[Build] Release Build.");
+                    stackTrace = 0;
+                    SymbolEditor.RemoveSymbol("__DEBUG__");
+                    SymbolEditor.RemoveSymbol("__TESTS__");
+                    SymbolEditor.RemoveSymbol("__PUBLISH__");
+                    SymbolEditor.AddSymbol("__RELEASE__");
+                    break;
+                case CICDBuildMode.Publish:
+                    // Log("[Build] Release Build.");
+                    stackTrace = 0;
+                    break;
+                default:
+                    Debug.Assert(false);
+                    break;
+            }
+
+            if (stackTrace == 0)
+            {
+                // スタックトレース無効化
+                PlayerSettings.SetStackTraceLogType(LogType.Error, StackTraceLogType.None);
+                PlayerSettings.SetStackTraceLogType(LogType.Assert, StackTraceLogType.None);
+                PlayerSettings.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+                PlayerSettings.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+                PlayerSettings.SetStackTraceLogType(LogType.Exception, StackTraceLogType.None);
+            }
+            else if (stackTrace == 1)
+            {
+                // スタックトレース有効化
+                PlayerSettings.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
+                PlayerSettings.SetStackTraceLogType(LogType.Assert, StackTraceLogType.ScriptOnly);
+                PlayerSettings.SetStackTraceLogType(LogType.Warning, StackTraceLogType.ScriptOnly);
+                PlayerSettings.SetStackTraceLogType(LogType.Log, StackTraceLogType.ScriptOnly);
+                PlayerSettings.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
+            }
+        }
+
+        void PostBuilderProcess()
+        {
+            // 設定を元に戻す
+            {
+                // スタックトレースの設定を元に戻す
+                for (int i = 0; i < originalSetting.StackTraces.Length; i++)
+                {
+                    PlayerSettings.SetStackTraceLogType((LogType)i, originalSetting.StackTraces[i]);
+                }
+
+                // Defineを元に戻す
+                SymbolEditor.SetSymbols(originalSetting.Symbols);
+            }
+
+            // 戻した設定を保存
+            AssetDatabase.SaveAssets();
         }
 
         // ターゲット毎のビルドプレイヤーオプション設定
@@ -389,9 +480,9 @@ namespace unicicd.Editor
                 // アプリファイル名の設定なし
                 // string mode = options.BuildMode.ToString();
 
-// #if (UNITY_EDITOR && UNITY_ANDROID)
-//                 if (PreprocessorBuild.AndroidMonoBuild) mode += "(Mono)";
-// #endif
+                // #if (UNITY_EDITOR && UNITY_ANDROID)
+                //                 if (PreprocessorBuild.AndroidMonoBuild) mode += "(Mono)";
+                // #endif
                 // MEMO: ビルドの度にファイル名が変わるのは自動化観点からも好ましくない
                 // string info = string.Format(" - {0} v{1}({2})", mode, Application.version, BuildUtility.GetBuildNumber());
                 // ret = string.Format("{0}{1}{2}", Application.productName, info, platformBuild.ExtensionName);

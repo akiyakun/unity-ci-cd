@@ -8,5 +8,13 @@ namespace unicicd.Editor
     {
         public bool BuildSucceeded = false;
         public string BuildDirectory = "";
+
+        public static CICDBuildResult CreateFailed()
+        {
+            return new CICDBuildResult
+            {
+                BuildSucceeded = false,
+            };
+        }
     }
 }

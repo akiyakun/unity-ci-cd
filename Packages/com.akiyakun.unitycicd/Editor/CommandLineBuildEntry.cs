@@ -81,9 +81,9 @@ public static class CI
         // buildOptions.InAppDebug = true;
         // buildOptions.OptionStrings.AddRange(optionStrings);
 
-        if (optionStrings != null)
+        foreach (var option in optionStrings ?? new string[0])
         {
-            buildOptions.OptionStrings = new List<string>(optionStrings);
+            buildOptions.Options.Add(option, null);
         }
 
         if (builder.Initialize(buildOptions) == false)

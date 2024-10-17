@@ -33,6 +33,7 @@ namespace unicicd.Editor
 
         public bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
         {
+            // optionStrings.Add("ITSAppUsesNonExemptEncryption-false");
             return true;
         }
 

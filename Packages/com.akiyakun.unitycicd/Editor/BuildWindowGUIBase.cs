@@ -8,19 +8,29 @@ namespace unicicd.Editor
     {
         public abstract string PlatformName { get; }
 
+        protected EUserSettings userSettings;
+        protected CICDBuildOptions buildOptions;
+
         bool initialized = false;
         bool showBuildMode = true;
         int buildMode;
         bool showResultDialog;
 
-        // protected CICDBuildOptions buildOptions = new();
-        bool isDevelopmentBuild = true;
-        bool isWaitForManagedDebugger = false;
-        bool isInAppDebug = true;
-        bool isCleanBuild = true;
-        bool isIncrementBuildNumber = true;
+        bool isDevelopmentBuild;
+        bool isWaitForManagedDebugger;
+        bool isInAppDebug;
+        bool isCleanBuild;
+        bool isIncrementBuildNumber;
 
-        public void Initialize(CICDBuildMode mode = CICDBuildMode.Current, bool showResultDialog = true)
+        public BuildWindowGUIBase()
+        {
+            userSettings = new EUserSettings();
+            userSettings.Prefix += PlatformName;
+
+            buildOptions = new();
+        }
+
+        public virtual void Initialize(CICDBuildMode mode = CICDBuildMode.Current, bool showResultDialog = true)
         {
             this.showResultDialog = showResultDialog;
 
@@ -56,12 +66,12 @@ namespace unicicd.Editor
 
         void OnEnable()
         {
-            OnLoadSettings();
+            InnerLoadSettings();
         }
 
         void OnDestroy()
         {
-            OnSaveSettings();
+            InnerSaveSettings();
         }
 
 #pragma warning disable 0414
@@ -101,15 +111,19 @@ namespace unicicd.Editor
             string currentBuildVersion = string.Format("{0}({1})", Application.version, buildNumber);
             string nextBuildVersion = string.Format("{0}({1})", Application.version, buildNumber + 1);
 
-#if (UNITY_EDITOR && UNITY_STANDALONE_WIN)
-            EditorGUILayout.LabelField("注意: WindowsはVersion番号の更新に対応していません");
-#else
+// #if (UNITY_EDITOR && UNITY_STANDALONE_WIN)
+//             EditorGUILayout.LabelField("注意: WindowsはVersion番号の更新に対応していません");
+// #else
             EditorGUILayout.LabelField("Hint: Version番号の更新はapp_config.json");
-#endif
+// #endif
             EditorGUILayout.LabelField("");
 
-            EditorGUI.BeginDisabledGroup(true);
             isDevelopmentBuild = EditorGUILayout.Toggle("Development Build", isDevelopmentBuild);
+            if (isDevelopmentBuild == false)
+            {
+                isWaitForManagedDebugger = false;
+            }
+            EditorGUI.BeginDisabledGroup(isDevelopmentBuild == false);
             isWaitForManagedDebugger = EditorGUILayout.Toggle("Wait For Managed Debugger", isWaitForManagedDebugger);
             EditorGUI.EndDisabledGroup();
 
@@ -147,23 +161,21 @@ namespace unicicd.Editor
                 if (isIncrementBuildNumber)
                 {
                     IncrementBuildNumber();
-                    Debug.Log(string.Format("{1} Start v{0}", nextBuildVersion, titleContent.text));
+                    // Debug.Log(string.Format("{1} Start v{0}", nextBuildVersion, titleContent.text));
                 }
                 else
                 {
-                    Debug.Log(string.Format("{1} Start v{0}", currentBuildVersion, titleContent.text));
+                    // Debug.Log(string.Format("{1} Start v{0}", currentBuildVersion, titleContent.text));
                 }
 
-                CICDBuildOptions buildOptions = new();
                 CICDBuildResult ret;
 
                 try
                 {
-                    ret = Build(buildOptions, install);
+                    ret = Build(install);
                 }
                 finally
                 {
-                    OnBuildEnd(buildOptions);
                 }
 
                 Close();
@@ -185,22 +197,22 @@ namespace unicicd.Editor
 
         }
 
+        // プラットフォーム固有のGUI
+        // OnGUI()内から毎回呼ばれます。
         protected virtual void OnPlatformGUI()
         {
         }
 
-        protected virtual void OnBuildBegin(CICDBuildOptions buildOptions)
+        /// ビルド開始直前に呼ばれる
+        /// <returns>falseを返すとビルドが失敗します。</returns>
+        protected virtual bool OnBuildStart()
         {
+            return true;
         }
 
-        protected virtual void OnBuildEnd(CICDBuildOptions buildOptions)
-        {
-        }
-
-        CICDBuildResult Build(CICDBuildOptions buildOptions, bool install)
+        CICDBuildResult Build(bool install)
         {
             var builder = new CICDBuilder();
-            List<string> optionStrings = new List<string>();
             var ret = new CICDBuildResult();
 
             buildOptions.UnityDevelopmentBuild = isDevelopmentBuild;
@@ -214,13 +226,10 @@ namespace unicicd.Editor
                     {
                         Debug.Log("Debug Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
 
-                        optionStrings.Add("ITSAppUsesNonExemptEncryption-false");
-
                         buildOptions.SetupDefaultSettings();
                         buildOptions.BuildMode = CICDBuildMode.Debug;
-                        buildOptions.OptionStrings.AddRange(optionStrings);
-                        OnBuildBegin(buildOptions);
 
+                        if (OnBuildStart() == false) return CICDBuildResult.CreateFailed();
                         builder.Initialize(buildOptions);
                         ret = builder.Build();
 
@@ -237,9 +246,8 @@ namespace unicicd.Editor
 
                         buildOptions.SetupDefaultSettings();
                         buildOptions.BuildMode = CICDBuildMode.Release;
-                        buildOptions.OptionStrings.AddRange(optionStrings);
-                        OnBuildBegin(buildOptions);
 
+                        if (OnBuildStart() == false) return CICDBuildResult.CreateFailed();
                         builder.Initialize(buildOptions);
                         ret = builder.Build();
 
@@ -256,9 +264,8 @@ namespace unicicd.Editor
 
                         buildOptions.SetupDefaultSettings();
                         buildOptions.BuildMode = CICDBuildMode.Publish;
-                        buildOptions.OptionStrings.AddRange(optionStrings);
-                        OnBuildBegin(buildOptions);
 
+                        if (OnBuildStart() == false) return CICDBuildResult.CreateFailed();
                         builder.Initialize(buildOptions);
                         ret = builder.Build();
                     }
@@ -272,7 +279,7 @@ namespace unicicd.Editor
         }
 
         // ビルド番号を取得
-        public static int GetBuildNumber()
+        public int GetBuildNumber()
         {
 #if UNITY_ANDROID
             return PlayerSettings.Android.bundleVersionCode;
@@ -282,12 +289,12 @@ namespace unicicd.Editor
             return int.Parse(PlayerSettings.macOS.buildNumber);
 #else
             // MEMO: WindowsとかbuildNumberが無いのでローカルに保存した値を返す
-            return EUserSettings.GetConfigInt("incrementBuildNumber", 0);
+            return userSettings.GetConfigInt("incrementBuildNumber", 0);
 #endif
         }
 
         // ストア等で使用されるビルド番号を +1します
-        public static int IncrementBuildNumber()
+        public int IncrementBuildNumber()
         {
             int ret = 0;
 
@@ -303,38 +310,48 @@ namespace unicicd.Editor
 #else
             // MEMO: WindowsとかbuildNumberが無いのでローカルに保存した値を使う
             ret = GetBuildNumber() + 1;
-            EUserSettings.SetConfigInt("incrementBuildNumber", ret);
+            userSettings.SetConfigInt("incrementBuildNumber", ret);
 #endif
 
             return ret;
         }
 
+        protected void InnerLoadSettings()
+        {
+            buildMode = userSettings.GetConfigInt("buildMode", (int)CICDBuildMode.Current);
+
+            isDevelopmentBuild = userSettings.GetConfigBool("isDevelopmentBuild", true);
+            isWaitForManagedDebugger = userSettings.GetConfigBool("isWaitForManagedDebugger", false);
+            isInAppDebug = userSettings.GetConfigBool("isInAppDebug", true);
+            isCleanBuild = userSettings.GetConfigBool("isCleanBuild", false);
+
+            isIncrementBuildNumber = userSettings.GetConfigBool("isIncrementBuildNumber", false);
+
+            OnLoadSettings();
+        }
+
         // 設定の読み込み
         protected virtual void OnLoadSettings()
         {
-            buildMode = EUserSettings.GetConfigInt("buildMode", (int)CICDBuildMode.Current);
+        }
 
-            isDevelopmentBuild = EUserSettings.GetConfigBool("isDevelopmentBuild", true);
-            isWaitForManagedDebugger = EUserSettings.GetConfigBool("isWaitForManagedDebugger", false);
-            isInAppDebug = EUserSettings.GetConfigBool("isInAppDebug", true);
-            isCleanBuild = EUserSettings.GetConfigBool("isCleanBuild", false);
+        protected void InnerSaveSettings()
+        {
+            userSettings.SetConfigInt("buildMode", buildMode);
 
-            isIncrementBuildNumber = EUserSettings.GetConfigBool("isIncrementBuildNumber", false);
+            userSettings.SetConfigBool("isDevelopmentBuild", isDevelopmentBuild);
+            userSettings.SetConfigBool("isWaitForManagedDebugger", isWaitForManagedDebugger);
+            userSettings.SetConfigBool("isInAppDebug", isInAppDebug);
+            userSettings.SetConfigBool("isCleanBuild", isCleanBuild);
 
+            userSettings.SetConfigBool("isIncrementBuildNumber", isIncrementBuildNumber);
+
+            OnSaveSettings();
         }
 
         // 設定の保存
         protected virtual void OnSaveSettings()
         {
-            EUserSettings.SetConfigInt("buildMode", buildMode);
-
-            EUserSettings.SetConfigBool("isDevelopmentBuild", isDevelopmentBuild);
-            EUserSettings.SetConfigBool("isWaitForManagedDebugger", isWaitForManagedDebugger);
-            EUserSettings.SetConfigBool("isInAppDebug", isInAppDebug);
-            EUserSettings.SetConfigBool("isCleanBuild", isCleanBuild);
-
-            EUserSettings.SetConfigBool("isIncrementBuildNumber", isIncrementBuildNumber);
-
         }
 
     }

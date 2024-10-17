@@ -7,24 +7,33 @@ namespace unicicd.Editor
     // UnityEditor.EditorUserSettings のラッパークラス
     // UnityEditor のnamespaceと重複するのでEUserSettingsとしています。
     [System.Serializable]
-    public static class EUserSettings
+    public class EUserSettings
     {
-        const string Prefix = "unicicd_";
+        public string Prefix { get; set; } = "unicicd_";
+
+        public EUserSettings()
+        {
+        }
+
+        public EUserSettings(string prefix)
+        {
+            Prefix = prefix;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static string GetConfigValue(string name)
+        public string GetConfigValue(string name)
         {
             return EditorUserSettings.GetConfigValue($"{Prefix}{name}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static void SetConfigValue(string name, string value)
+        public void SetConfigValue(string name, string value)
         {
             EditorUserSettings.SetConfigValue($"{Prefix}{name}", value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string GetConfigString(string name, string defaultValue = null)
+        public string GetConfigString(string name, string defaultValue = null)
         {
             var ret = GetConfigValue(name);
             if (string.IsNullOrEmpty(ret) && defaultValue != null) return defaultValue;
@@ -32,13 +41,13 @@ namespace unicicd.Editor
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetConfigString(string name, string value)
+        public void SetConfigString(string name, string value)
         {
             SetConfigValue(name, value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int GetConfigInt(string name, int defaultValue = 0)
+        public int GetConfigInt(string name, int defaultValue = 0)
         {
             var value = GetConfigValue(name);
             int ret = defaultValue;
@@ -58,13 +67,13 @@ namespace unicicd.Editor
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetConfigInt(string name, int value)
+        public void SetConfigInt(string name, int value)
         {
             SetConfigValue(name, value.ToString());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool GetConfigBool(string name, bool defaultValue)
+        public bool GetConfigBool(string name, bool defaultValue)
         {
             var ret = GetConfigValue(name);
             if (string.IsNullOrEmpty(ret)) return defaultValue;
@@ -72,7 +81,7 @@ namespace unicicd.Editor
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetConfigBool(string name, bool value)
+        public void SetConfigBool(string name, bool value)
         {
             SetConfigValue(name, value ? "True" : "False");
         }

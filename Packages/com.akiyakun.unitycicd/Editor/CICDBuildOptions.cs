@@ -27,14 +27,22 @@ namespace unicicd.Editor
         Publish,
     }
 
+    public class CICDOptionData
+    {
+        public int Int;
+        public string String;
+    }
+
     public class CICDBuildOptions
     {
         public CICDBuildMode BuildMode = CICDBuildMode.Current;
         public UnityEditor.BuildTarget BuildTarget = UnityEditor.BuildTarget.NoTarget;
         // public List<string> Scenes = new List<string>();
-        public List<string> OptionStrings = new List<string>();
+        // public List<string> OptionStrings = new List<string>();
         // public CICDBuildDirectory BuildDirectory = CICDBuildDirectory.Auto;
 
+        // ValueのCICDOptionDataはnull許容です
+        public Dictionary<string, CICDOptionData> Options = new Dictionary<string, CICDOptionData>();
 
         public bool CleanupBuildDirectory = true;
 
@@ -42,8 +50,6 @@ namespace unicicd.Editor
         public bool UnityDevelopmentBuild = false;
         public bool WaitForManagedDebugger = false;
 
-        // public Dictionary<string, int> PlatformIntOptions = new Dictionary<string, int>();
-        // public Dictionary<string, string> PlatformStringOptions = new Dictionary<string, string>();
 
         public bool InAppDebug = false;
 
@@ -74,9 +80,9 @@ namespace unicicd.Editor
         //     Scenes = BuildUtility.GetBuildSettingsScene();
         // }
 
-        public bool HasOption(string option)
+        public bool HasOption(string key)
         {
-            return OptionStrings.Contains(option);
+            return Options.ContainsKey(key);
         }
 
     }
