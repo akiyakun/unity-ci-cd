@@ -62,7 +62,8 @@ namespace unicicd.Editor
                 Debug.Assert(buildSettings != null, "BuildSettings.asset ScriptableObjectを作成してください。");
 
                 // 必須シーンチェック
-                Debug.Assert(buildSettings.RequiredSceneList != null);
+                Debug.Assert(buildSettings.RequiredSceneList != null || buildSettings.RequiredSceneList.Count > 0,
+                    "BuildSettingsスクリプタブルオブジェクトにRequiredSceneListを設定してください。");
                 if( buildSettings.RequiredSceneList != null)
                 {
                     Debug.Assert(buildSettings.RequiredSceneList.Count > 0);
@@ -76,7 +77,8 @@ namespace unicicd.Editor
                 Debug.Assert(buildSettings.InAppDebugSceneList != null);
                 if( buildSettings.InAppDebugSceneList != null)
                 {
-                    Debug.Assert(buildSettings.InAppDebugSceneList.Count > 0);
+                    // Count 0でも許容
+                    // Debug.Assert(buildSettings.InAppDebugSceneList.Count > 0);
                     foreach (var sceneInfo in buildSettings.InAppDebugSceneList)
                     {
                         Debug.Assert(sceneInfo.SceneAsset != null, "InAppDebug scene is null reference");
