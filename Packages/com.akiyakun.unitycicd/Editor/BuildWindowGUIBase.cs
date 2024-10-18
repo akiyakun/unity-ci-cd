@@ -168,11 +168,11 @@ namespace unicicd.Editor
                     // Debug.Log(string.Format("{1} Start v{0}", currentBuildVersion, titleContent.text));
                 }
 
-                CICDBuildResult ret;
+                CICDBuildResult result;
 
                 try
                 {
-                    ret = Build(install);
+                    result = Build(install);
                 }
                 finally
                 {
@@ -182,9 +182,16 @@ namespace unicicd.Editor
 
                 if (showResultDialog)
                 {
-                    if (ret.BuildSucceeded)
+                    if (result.BuildSucceeded)
                     {
-                        EditorUtility.DisplayDialog("Cuccess", "ビルドが完了しました。", "OK");
+                        var dialogResult = EditorUtility.DisplayDialog(
+                            "Cuccess", "ビルドが完了しました。",
+                            "OK", "フォルダを開く"
+                        );
+                        if (dialogResult == false)
+                        {
+                            System.Diagnostics.Process.Start($"{BuildUtility.GetRootPath()}{result.BuildDirectory}");
+                        }
                     }
                     else
                     {
