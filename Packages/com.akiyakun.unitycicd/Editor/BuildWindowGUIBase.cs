@@ -22,6 +22,14 @@ namespace unicicd.Editor
         bool isCleanBuild;
         bool isIncrementBuildNumber;
 
+
+#pragma warning disable 0414
+        bool foldout = false;
+#pragma warning restore 0414
+
+        bool install = false;
+
+
         public BuildWindowGUIBase()
         {
             userSettings = new EUserSettings();
@@ -30,7 +38,7 @@ namespace unicicd.Editor
             buildOptions = new();
         }
 
-        public virtual void Initialize(CICDBuildMode mode = CICDBuildMode.Current, bool showResultDialog = true)
+        public void Initialize(CICDBuildMode mode = CICDBuildMode.Current, bool showResultDialog = true)
         {
             this.showResultDialog = showResultDialog;
 
@@ -61,6 +69,8 @@ namespace unicicd.Editor
                     break;
             }
 
+            OnInitialize(mode);
+
             initialized = true;
         }
 
@@ -74,10 +84,6 @@ namespace unicicd.Editor
             InnerSaveSettings();
         }
 
-#pragma warning disable 0414
-        bool foldout = false;
-#pragma warning restore 0414
-
         private UnityEngine.GUIContent[] buildModeDisplayedOptions = new[]
         {
             new UnityEngine.GUIContent("Debug"),
@@ -86,7 +92,6 @@ namespace unicicd.Editor
         };
 
 
-        bool install = false;
         private void OnGUI()
         {
             if (initialized == false) return;
@@ -202,6 +207,11 @@ namespace unicicd.Editor
                 GUIUtility.ExitGUI();
             }
 
+        }
+
+        // 初期化
+        protected virtual void OnInitialize(CICDBuildMode mode)
+        {
         }
 
         // プラットフォーム固有のGUI
