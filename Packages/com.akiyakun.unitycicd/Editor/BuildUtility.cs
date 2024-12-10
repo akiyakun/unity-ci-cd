@@ -142,6 +142,42 @@ namespace unicicd.Editor
         #endregion
 
         #region Execute
+        public static string DoConsoleCommand(string cmd, string arg = "", string workDir = "")
+        {
+            // Debug.Log("WorkDir: " + workDir);
+            // Debug.Log("Command: " + cmd);
+
+            var process = new System.Diagnostics.Process();
+            if (workDir == null) workDir = GetRootPath();
+            process.StartInfo.WorkingDirectory = workDir;
+
+            process.StartInfo.FileName = cmd;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.Arguments = arg;
+            process.StartInfo.CreateNoWindow = true;
+
+            string output = "";
+
+            try
+            {
+                process.Start();
+                output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError(e.Message);
+            }
+            finally
+            {
+                process.Close();
+            }
+
+            return output;
+        }
+        /*
         public static int DoConsoleCommand(string cmd, string workDir = "")
         {
             Debug.Log("WorkDir: " + workDir);
@@ -185,6 +221,7 @@ namespace unicicd.Editor
 
             return exitCode;
         }
+        //*/
         #endregion
     }
 }

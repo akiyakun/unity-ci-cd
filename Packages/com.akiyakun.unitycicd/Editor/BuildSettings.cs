@@ -5,10 +5,24 @@ using UnityEditor;
 
 namespace unicicd.Editor
 {
+    /*
+        // アクセス方法は以下のように
+        CICDConfig.Load().BuildSettings.AdditionalInfoSettings;
+     */
     [CreateAssetMenu(menuName = "App/CICD/BuildSettings", fileName = "CICDBuildSettings")]
     [System.Serializable]
     public class BuildSettings : ScriptableObject
     {
+        [System.Serializable]
+        public class AdditionalInfo
+        {
+            // gitのタイムスタンプ等の情報を含むビルド情報テキストファイルを出力するか
+            public bool EnableOutputBuildInfoText;
+
+            // 出力するビルド情報テキストファイルのパス
+            public string BuildInfoTextPath = "Assets/StreamingAssets/build_info.txt";
+        }
+
         [System.Serializable]
         public struct SceneInfo
         {
@@ -16,8 +30,13 @@ namespace unicicd.Editor
             public SceneAsset SceneAsset;
         }
 
+
         [SerializeField]
         public PlatformBuildFactory PlatformBuildFactory;
+
+        // 追加情報設定
+        [SerializeField]
+        public AdditionalInfo AdditionalInfoSettings;
 
         // 必須のシーンリスト
         // どのビルドでも必ず含まれるシーン

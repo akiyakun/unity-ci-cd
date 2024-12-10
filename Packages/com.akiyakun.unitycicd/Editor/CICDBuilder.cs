@@ -340,6 +340,7 @@ namespace unicicd.Editor
                 case CICDBuildMode.Current:
                     // Log("[Build] Current Build.");
                     stackTrace = 2;
+                    Git.WriteBuildInfoText();
                     break;
                 case CICDBuildMode.Debug:
                     // Log("[Build] Debug Build.");
@@ -348,6 +349,7 @@ namespace unicicd.Editor
                     SymbolEditor.RemoveSymbol("__RELEASE__");
                     SymbolEditor.RemoveSymbol("__TESTS__");
                     SymbolEditor.RemoveSymbol("__PUBLISH__");
+                    Git.WriteBuildInfoText();
                     break;
                 case CICDBuildMode.Release:
                     // Log("[Build] Release Build.");
@@ -356,6 +358,7 @@ namespace unicicd.Editor
                     SymbolEditor.RemoveSymbol("__TESTS__");
                     SymbolEditor.RemoveSymbol("__PUBLISH__");
                     SymbolEditor.AddSymbol("__RELEASE__");
+                    Git.WriteBuildInfoText();
                     break;
                 case CICDBuildMode.Publish:
                     // Log("[Build] Release Build.");
@@ -398,6 +401,9 @@ namespace unicicd.Editor
 
                 // Defineを元に戻す
                 SymbolEditor.SetSymbols(originalSetting.Symbols);
+
+                // BuildInfoTextを消す
+                Git.DeleteBuildInfoText();
             }
 
             // 戻した設定を保存
