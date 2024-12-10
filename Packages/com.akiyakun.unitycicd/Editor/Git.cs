@@ -73,7 +73,7 @@ namespace unicicd.Editor
         }
 
         // デバッグテスト用
-#if true
+#if false
         [UnityEditor.MenuItem("App/GitTest/GetCommitInfo")]
         public static void Test_GetCommitInfo()
         {
