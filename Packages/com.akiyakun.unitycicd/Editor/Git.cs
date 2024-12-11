@@ -58,17 +58,26 @@ namespace unicicd.Editor
         public static void WriteBuildInfoText()
         {
             var config = CICDConfig.Load();
+
+            BuildUtility.CreateDirectory(config.BuildSettings.AdditionalInfoSettings.BuildInfoTextPath);
+
             File.WriteAllText(
                 config.BuildSettings.AdditionalInfoSettings.BuildInfoTextPath,
                 GetCommitInfo()
             );
+
             AssetDatabase.Refresh();
         }
 
         public static void DeleteBuildInfoText()
         {
             var config = CICDConfig.Load();
-            File.Delete(config.BuildSettings.AdditionalInfoSettings.BuildInfoTextPath);
+
+            if (File.Exists(config.BuildSettings.AdditionalInfoSettings.BuildInfoTextPath))
+            {
+                File.Delete(config.BuildSettings.AdditionalInfoSettings.BuildInfoTextPath);
+            }
+
             AssetDatabase.Refresh();
         }
 
