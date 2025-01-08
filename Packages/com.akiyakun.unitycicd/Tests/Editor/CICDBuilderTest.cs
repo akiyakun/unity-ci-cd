@@ -62,7 +62,7 @@ public class CICDBuilderTest
         var options = CreateTestBuildOptions();
         bool isCalled = false;
 
-        options.InAppDebug = false;
+        // options.Options.Add(CICDPlatformBuildOptions.InAppDebug, null);
 
         options.OnBeforeBuildProcess += (CICDBuilder builder, BuildPlayerOptions bpo) => {
             // Debug.Log("OnBeforeBuildProcess");
@@ -92,7 +92,7 @@ public class CICDBuilderTest
         var options = CreateTestBuildOptions();
         bool isCalled = false;
 
-        options.InAppDebug = true;
+        options.Options.Add(CICDPlatformBuildOptions.InAppDebug, null);
 
         options.OnBeforeBuildProcess += (CICDBuilder builder, BuildPlayerOptions bpo) =>
         {

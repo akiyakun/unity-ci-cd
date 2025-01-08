@@ -325,7 +325,7 @@ namespace unicicd.Editor
 
             int stackTrace = 0;
 
-            if (BuildOptions.InAppDebug == true)
+            if (BuildOptions.HasOption(CICDPlatformBuildOptions.InAppDebug))
             {
                 stackTrace = 1;
                 SymbolEditor.AddSymbol("__INAPPDEBUG__");
@@ -410,24 +410,25 @@ namespace unicicd.Editor
             AssetDatabase.SaveAssets();
         }
 
-        // ターゲット毎のビルドプレイヤーオプション設定
-        public /*static*/ void SettingBuildPlayerOptions(CICDBuildOptions options, ref BuildPlayerOptions bpo)
+        // ビルドプレイヤーオプション設定
+        public void SettingBuildPlayerOptions(CICDBuildOptions options, ref BuildPlayerOptions bpo)
         {
-            // SwitchBuildTarget()のほうで設定される
-            // bpo.target = options.BuildTarget;
-            // bpo.targetGroup
+            // CICDPlatformBuildOptions
+            {
+                // 一度リセット
+                bpo.options = UnityEditor.BuildOptions.None;
 
-            bpo.options = UnityEditor.BuildOptions.None;
+                // デバッグまわり
+                if (options.HasOption(CICDPlatformBuildOptions.ScriptDebugging))
+                {
+                    // Development Build
+                    bpo.options |= UnityEditor.BuildOptions.Development;
 
-            // if (options.Scenes.Count <= 0)
-            // {
-            //     bpo.scenes = BuildUtility.GetBuildSettingsScene().ToArray();
-            //     Debug.Log(bpo.scenes[0]);
-            // }
-            // else
-            // {
-            //     bpo.scenes = options.Scenes.ToArray();
-            // }
+                    // Script Debugging
+                    bpo.options |= UnityEditor.BuildOptions.AllowDebugging;
+                }
+            }
+
             {
                 List<string> scenes = new List<string>();
 
@@ -435,7 +436,7 @@ namespace unicicd.Editor
                 scenes.AddRange(Config.BuildSettings.GetRequiredScenePathArray());
 
                 // InAppDebugシーンをリストに追加
-                if (BuildOptions.InAppDebug == true)
+                if (BuildOptions.HasOption(CICDPlatformBuildOptions.InAppDebug))
                 {
                     scenes.AddRange(Config.BuildSettings.GetInAppDebugScenePathArray());
                 }

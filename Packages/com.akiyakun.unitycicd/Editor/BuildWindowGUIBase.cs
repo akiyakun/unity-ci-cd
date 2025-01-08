@@ -232,10 +232,6 @@ namespace unicicd.Editor
             var builder = new CICDBuilder();
             var ret = new CICDBuildResult();
 
-            buildOptions.UnityDevelopmentBuild = isDevelopmentBuild;
-            buildOptions.WaitForManagedDebugger = isWaitForManagedDebugger;
-            buildOptions.InAppDebug = isInAppDebug;
-
             switch (buildMode)
             {
                 // Debug

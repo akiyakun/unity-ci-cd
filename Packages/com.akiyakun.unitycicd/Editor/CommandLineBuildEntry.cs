@@ -63,13 +63,13 @@ public static class CI
                     }
                     break;
                 case "--development":
-                    buildOptions.UnityDevelopmentBuild = true;
+                    buildOptions.Options.Add(CICDPlatformBuildOptions.ScriptDebugging, null);
                     break;
                 case "--options":
                     optionStrings = args[i + 1].Split(',');
                     break;
                 case "--inappdebug":
-                    buildOptions.InAppDebug = true;
+                    buildOptions.Options.Add(CICDPlatformBuildOptions.InAppDebug, null);
                     break;
             }
         }

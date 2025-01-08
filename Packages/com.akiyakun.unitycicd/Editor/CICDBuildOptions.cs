@@ -33,6 +33,18 @@ namespace unicicd.Editor
         public string String;
     }
 
+    // 基本の共通ビルドオプション
+    public static class CICDPlatformBuildOptions
+    {
+        // BuildOptions.Development と BuildOptions.AllowDebugging が有効になります
+        // CICDOptionData: null
+        public const string ScriptDebugging = "ScriptDebugging";
+
+        // aflライブラリのInAppDebugが有効になります
+        // CICDOptionData: null
+        public const string InAppDebug = "InAppDebug";
+    }
+
     public class CICDBuildOptions
     {
         public CICDBuildMode BuildMode = CICDBuildMode.Current;
@@ -47,11 +59,10 @@ namespace unicicd.Editor
         public bool CleanupBuildDirectory = true;
 
         // UnityEditor.BuildOptions.Development
-        public bool UnityDevelopmentBuild = false;
-        public bool WaitForManagedDebugger = false;
+        // public bool UnityDevelopmentBuild = false;
+        // public bool WaitForManagedDebugger = false;
 
-
-        public bool InAppDebug = false;
+        // public bool InAppDebug = false;
 
         // MEMO:
         // Windowsビルドだけどビューワー用ビルドをしたいときなどに
