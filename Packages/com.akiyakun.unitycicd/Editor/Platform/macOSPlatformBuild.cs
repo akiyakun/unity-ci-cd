@@ -18,20 +18,26 @@ namespace unicicd.Editor
 
             buildOptions.BuildTarget = BuildTarget.StandaloneOSX;
 
+            // Debug.Log($"macOSPlatformBuild: Initialize() {CreateLocationPathName()}");
+
             return true;
         }
 
         public string GetBuildDirectoryName() => PlatformName;
 
-        public string CreateLocationPathName() => "";
+        // MEMO: macOSビルドはLocationに.app拡張子を付ける必要がある
+        // public string CreateLocationPathName() => ".app";
+        public string CreateLocationPathName() => CICDBuilder.CreateLocationPathName(this);
 
         public bool OnBeforeBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
         {
+            // Debug.Log("macOSPlatformBuild: OnBeforeBuildProcess()");
             return true;
         }
 
         public void OnAfterBuildProcess(CICDBuilder builder, BuildPlayerOptions bpo)
         {
+            // Debug.Log("macOSPlatformBuild: OnAfterBuildProcess()");
         }
     }
 }
