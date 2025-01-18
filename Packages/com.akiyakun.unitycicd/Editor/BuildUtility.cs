@@ -54,6 +54,36 @@ namespace unicicd.Editor
         #endregion
 
         #region File
+        /// <summary>
+        /// ファイルの削除
+        /// 内部でFile.Exists()チェックしているので存在しないファイルを指定してもエラーになりません。
+        /// </summary>
+        public static void DeleteFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+
+        /// <summary>
+        /// ファイルの削除
+        /// .metaファイルも一緒に削除します。
+        /// </summary>
+        public static void DeleteFileAndMeta(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            path = Path.GetFileNameWithoutExtension(path) + ".meta";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+
         public static void CreateDirectory(string path)
         {
             bool isDirectory = Path.GetExtension(path).Length == 0;

@@ -68,7 +68,8 @@ namespace unicicd.Editor
         public static void DeleteBuildInfoText()
         {
             var config = CICDConfig.Load();
-            File.Delete(config.BuildSettings.AdditionalInfoSettings.BuildInfoTextPath);
+            var path = config.BuildSettings.AdditionalInfoSettings.BuildInfoTextPath;
+            BuildUtility.DeleteFileAndMeta(path);
             AssetDatabase.Refresh();
         }
 
