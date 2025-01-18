@@ -116,11 +116,11 @@ namespace unicicd.Editor
             string currentBuildVersion = string.Format("{0}({1})", Application.version, buildNumber);
             string nextBuildVersion = string.Format("{0}({1})", Application.version, buildNumber + 1);
 
-// #if (UNITY_EDITOR && UNITY_STANDALONE_WIN)
-//             EditorGUILayout.LabelField("注意: WindowsはVersion番号の更新に対応していません");
-// #else
+            // #if (UNITY_EDITOR && UNITY_STANDALONE_WIN)
+            //             EditorGUILayout.LabelField("注意: WindowsはVersion番号の更新に対応していません");
+            // #else
             EditorGUILayout.LabelField("Hint: Version番号の更新はapp_config.json");
-// #endif
+            // #endif
             EditorGUILayout.LabelField("");
 
             isDevelopmentBuild = EditorGUILayout.Toggle("Development Build", isDevelopmentBuild);
@@ -135,16 +135,16 @@ namespace unicicd.Editor
             isInAppDebug = EditorGUILayout.Toggle("In App Debug", isInAppDebug);
             isCleanBuild = EditorGUILayout.Toggle("Clean Build", isCleanBuild);
 
-// #if (UNITY_EDITOR && UNITY_ANDROID)
-//             if (BuildMode == BuildMenu.BuildMode.AndroidMono) install = true;
+            // #if (UNITY_EDITOR && UNITY_ANDROID)
+            //             if (BuildMode == BuildMenu.BuildMode.AndroidMono) install = true;
 
-//             foldout = EditorGUILayout.Foldout(foldout, "Android");
-//             if (foldout)
-//             {
-//                 install = EditorGUILayout.Toggle("APKインストール", install);
-//             }
-//             EditorGUILayout.Space();
-// #endif
+            //             foldout = EditorGUILayout.Foldout(foldout, "Android");
+            //             if (foldout)
+            //             {
+            //                 install = EditorGUILayout.Toggle("APKインストール", install);
+            //             }
+            //             EditorGUILayout.Space();
+            // #endif
 
             isIncrementBuildNumber = EditorGUILayout.Toggle("ビルド番号を加算", isIncrementBuildNumber);
 
@@ -173,11 +173,15 @@ namespace unicicd.Editor
                     // Debug.Log(string.Format("{1} Start v{0}", currentBuildVersion, titleContent.text));
                 }
 
-                CICDBuildResult result;
+                CICDBuildResult result = null;
 
                 try
                 {
                     result = Build(install);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError(e);
                 }
                 finally
                 {
@@ -187,7 +191,7 @@ namespace unicicd.Editor
 
                 if (showResultDialog)
                 {
-                    if (result.BuildSucceeded)
+                    if (result != null && result.BuildSucceeded)
                     {
                         var dialogResult = EditorUtility.DisplayDialog(
                             "Cuccess", "ビルドが完了しました。",
@@ -227,6 +231,23 @@ namespace unicicd.Editor
             return true;
         }
 
+        void SetupBuildOptions(CICDBuildMode buildMode)
+        {
+            buildOptions.SetupDefaultSettings();
+            buildOptions.BuildMode = buildMode;
+
+            if (isDevelopmentBuild)
+            {
+                buildOptions.Options.Add(CICDPlatformBuildOptions.ScriptDebugging, null);
+            }
+
+            if (isInAppDebug)
+            {
+                buildOptions.Options.Add(CICDPlatformBuildOptions.InAppDebug, null);
+            }
+
+        }
+
         CICDBuildResult Build(bool install)
         {
             var builder = new CICDBuilder();
@@ -238,17 +259,14 @@ namespace unicicd.Editor
                 case (int)CICDBuildMode.Debug:
                     {
                         Debug.Log("Debug Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
-
-                        buildOptions.SetupDefaultSettings();
-                        buildOptions.BuildMode = CICDBuildMode.Debug;
-
+                        SetupBuildOptions(CICDBuildMode.Debug);
                         if (OnBuildStart() == false) return CICDBuildResult.CreateFailed();
                         builder.Initialize(buildOptions);
                         ret = builder.Build();
 
-// #if (UNITY_EDITOR && UNITY_ANDROID)
-//                         if (install) BuildMenu.AndroidInstallAPK();
-// #endif
+                        // #if (UNITY_EDITOR && UNITY_ANDROID)
+                        //                         if (install) BuildMenu.AndroidInstallAPK();
+                        // #endif
                     }
                     break;
 
@@ -256,17 +274,14 @@ namespace unicicd.Editor
                 case (int)CICDBuildMode.Release:
                     {
                         Debug.Log("Release Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
-
-                        buildOptions.SetupDefaultSettings();
-                        buildOptions.BuildMode = CICDBuildMode.Release;
-
+                        SetupBuildOptions(CICDBuildMode.Release);
                         if (OnBuildStart() == false) return CICDBuildResult.CreateFailed();
                         builder.Initialize(buildOptions);
                         ret = builder.Build();
 
-// #if (UNITY_EDITOR && UNITY_ANDROID)
-//                         if (install) BuildMenu.AndroidInstallAPK();
-// #endif
+                        // #if (UNITY_EDITOR && UNITY_ANDROID)
+                        //                         if (install) BuildMenu.AndroidInstallAPK();
+                        // #endif
                     }
                     break;
 
@@ -274,10 +289,7 @@ namespace unicicd.Editor
                 case (int)CICDBuildMode.Publish:
                     {
                         Debug.Log("Publish Build [" + EditorUserBuildSettings.activeBuildTarget.ToString() + "]");
-
-                        buildOptions.SetupDefaultSettings();
-                        buildOptions.BuildMode = CICDBuildMode.Publish;
-
+                        SetupBuildOptions(CICDBuildMode.Publish);
                         if (OnBuildStart() == false) return CICDBuildResult.CreateFailed();
                         builder.Initialize(buildOptions);
                         ret = builder.Build();

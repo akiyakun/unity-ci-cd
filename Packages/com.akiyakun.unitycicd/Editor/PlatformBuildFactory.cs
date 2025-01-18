@@ -80,6 +80,8 @@ namespace unicicd.Editor
             return typeof(SwitchBuildWindowGUI);
 #elif UNITY_PS4
             return typeof(PS4BuildWindowGUI);
+#else
+            Debug.Assert(false, "Unknown platform");
 #endif
         }
 #endif

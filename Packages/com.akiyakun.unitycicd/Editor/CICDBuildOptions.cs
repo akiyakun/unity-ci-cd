@@ -34,6 +34,7 @@ namespace unicicd.Editor
     }
 
     // 基本の共通ビルドオプション
+    // MEMO: 編集したら BuildWindowsGUIBase.SetupBuildOptions() も修正すること。
     public static class CICDPlatformBuildOptions
     {
         // BuildOptions.Development と BuildOptions.AllowDebugging が有効になります
