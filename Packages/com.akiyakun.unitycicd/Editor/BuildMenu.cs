@@ -15,6 +15,7 @@ namespace unicicd.Editor
 
         public const string TopMenu = "App/";
         public const string BuildsMenu = TopMenu + "Builds/";
+        public const string BuildsToolsMenu = BuildsMenu + "Tools/";
 
         public const int PriorityBuilds = 1000000;
         public const int PriorityTests  = 1000100;
@@ -150,13 +151,13 @@ namespace unicicd.Editor
         //         }
         // #endif
 
-        [MenuItem(BuildsMenu + "Open Build Directory...", false, PriorityBuilds + 990)]
+        [MenuItem(BuildsMenu + "Open Build Directory...", false, PriorityBuilds + 601)]
         static void OpenBuildDirectory()
         {
             System.Diagnostics.Process.Start($"{BuildUtility.GetRootPath()}build");
         }
 
-        [MenuItem(BuildsMenu + "Cleanup", false, PriorityBuilds + 991)]
+        [MenuItem(BuildsMenu + "Cleanup", false, PriorityBuilds + 602)]
         static void Build_Cleanup()
         {
             if (EditorUtility.DisplayDialog("確認", "ビルドフォルダを全て削除しますがよろしいですか？", "OK", "Cancel"))
@@ -167,6 +168,18 @@ namespace unicicd.Editor
         }
 
         #endregion
+
+
+        #region Builds/Tools
+
+        [MenuItem(BuildsToolsMenu + "CommitInfoToClipboard", false, PriorityBuilds + 101)]
+        static void GitCommitInfoToClipboard()
+        {
+            GUIUtility.systemCopyBuffer = Git.GetCommitInfo();
+        }
+
+        #endregion
+
 
         // FIXME: テストは別に専用メニューを用意するほうがよさそう
         // #region Tests

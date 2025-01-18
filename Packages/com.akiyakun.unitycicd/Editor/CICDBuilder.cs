@@ -414,6 +414,10 @@ namespace unicicd.Editor
         public void SettingBuildPlayerOptions(CICDBuildOptions options, ref BuildPlayerOptions bpo)
         {
             // CICDPlatformBuildOptions
+            //
+            // Unityの分かりにくいAPI対応表
+            // https://synamon.hatenablog.com/entry/2022/09/01/171256
+            //
             {
                 // 一度リセット
                 bpo.options = UnityEditor.BuildOptions.None;
