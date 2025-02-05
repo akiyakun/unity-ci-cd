@@ -7,13 +7,9 @@ namespace unicicd.Editor
         IPlatformBuildFactoryのFactory
         拡張する場合は継承してScriptableObjectを作成してください。
      */
-    // public class PlatformBuildFactory : IPlatformBuildFactory
-    // public class PlatformBuildFactory : MonoBehaviour
     // [CreateAssetMenu(menuName = "App/CICD/PlatformBuildFactory", fileName = "PlatformBuildFactory")]
     public class PlatformBuildFactory : ScriptableObject
     {
-        // public IPlatformBuild Create(string platformName)
-        // public IPlatformBuild Create(UnityEditor.BuildTarget buildTarget)
         public virtual IPlatformBuild Create()
         {
             IPlatformBuild platformBuild = null;
@@ -33,24 +29,18 @@ namespace unicicd.Editor
 #elif UNITY_IOS
             Debug.Log("PlatformBuildFactory: iOSPlatformBuild");
             platformBuild = new iOSPlatformBuild();
-#elif UNITY_SWITCH
-            Debug.Log("PlatformBuildFactory: SwitchPlatformBuild");
-            platformBuild = new SwitchPlatformBuild();
-#elif UNITY_PS4
-            Debug.Log("PlatformBuildFactory: PS4PlatformBuild");
-            platformBuild = new PS4PlatformBuild();
-            // #else
+#endif
+/*
+#else
             // UnityEditor上だと UNITY_INCLUDE_TESTS がランタイムでも有効になっている
             // #if UNITY_INCLUDE_TESTS
             platformBuild = new MockPlatformBuild();
-#endif
-
-            // return null;
+*/
 
             if (platformBuild == null)
             {
                 // Debug.Assert(false, $"Unknown platform name={platformName}");
-                Debug.Assert(false, $"Unknown platform");
+                Debug.Assert(false, $"Unknown platform name={Application.platform}");
                 return null;
             }
 
@@ -76,12 +66,9 @@ namespace unicicd.Editor
             return typeof(AndroidBuildWindowGUI);
 #elif UNITY_IOS
             return typeof(iOSBuildWindowGUI);
-#elif UNITY_SWITCH
-            return typeof(SwitchBuildWindowGUI);
-#elif UNITY_PS4
-            return typeof(PS4BuildWindowGUI);
 #else
             Debug.Assert(false, "Unknown platform");
+            return null;
 #endif
         }
 #endif

@@ -17,6 +17,8 @@ namespace unicicd.Editor
 
         public CICDBuildOptions BuildOptions { get; }
 
+        // MEMO:
+        // buildOptionsの設定やExtensionNameの設定はInitialize()のタイミングで行う。
         public bool Initialize(CICDBuildOptions buildOptions);
 
         // ビルドディレクトリ名の取得
