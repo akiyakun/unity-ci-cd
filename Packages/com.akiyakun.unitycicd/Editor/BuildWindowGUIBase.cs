@@ -23,9 +23,9 @@ namespace unicicd.Editor
         bool isIncrementBuildNumber;
 
 
-#pragma warning disable 0414
-        bool foldout = false;
-#pragma warning restore 0414
+// #pragma warning disable 0414
+//         bool foldout = false;
+// #pragma warning restore 0414
 
         bool install = false;
 
@@ -100,8 +100,8 @@ namespace unicicd.Editor
             // EditorGUILayout.LabelField($"現在のサイズ : {position.size}");
             // minSize = EditorGUILayout.Vector2Field("最小サイズ", minSize);
             // maxSize = EditorGUILayout.Vector2Field("最大サイズ", maxSize);
-            minSize = new Vector2(400, 300);
-            maxSize = new Vector2(400, 300);
+            // minSize = new Vector2(400, 300);
+            // maxSize = new Vector2(400, 300);
 
             if (showBuildMode)
             {
@@ -216,6 +216,8 @@ namespace unicicd.Editor
         // 初期化
         protected virtual void OnInitialize(CICDBuildMode mode)
         {
+            minSize = new Vector2(400, 300);
+            maxSize = new Vector2(400, 300);
         }
 
         // プラットフォーム固有のGUI
