@@ -26,7 +26,7 @@ namespace unicicd.Editor
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("[CommitInfo]\n");
+            sb.Append("Commit Info\n");
 
             // ビルド日時
             {
@@ -36,7 +36,7 @@ namespace unicicd.Editor
                     // "BuildDateTime: {0:D4}/{1:D2}/{2:D2} {3:D2}:{4:D2}:{5:D2}\n",
                     // dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second
 
-                    "Date: {0:D4}/{1:D2}/{2:D2} {3:D2}:{4:D2}",
+                    "{0:D4}/{1:D2}/{2:D2} {3:D2}:{4:D2}",
                     dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute
                 );
             }
@@ -45,7 +45,8 @@ namespace unicicd.Editor
 
             try
             {
-                sb.Append($"branch - hash: {Call("rev-parse --abbrev-ref HEAD")} - {Call("rev-parse --short HEAD")}");
+                // sb.Append($"branch - hash: {Call("rev-parse --abbrev-ref HEAD")} - {Call("rev-parse --short HEAD")}");
+                sb.Append($"[{Call("rev-parse --abbrev-ref HEAD")}] {Call("rev-parse --short HEAD")} - {Call("show -s --format=%s HEAD")}");
             }
             catch (Exception e)
             {

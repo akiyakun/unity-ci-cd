@@ -172,7 +172,7 @@ namespace unicicd.Editor
 
         #region Builds/Tools
 
-        [MenuItem(BuildsToolsMenu + "CommitInfoToClipboard", false, PriorityBuilds + 101)]
+        [MenuItem(BuildsToolsMenu + "Commit Info To Clipboard", false, PriorityBuilds + 101)]
         static void GitCommitInfoToClipboard()
         {
             GUIUtility.systemCopyBuffer = Git.GetCommitInfo();
