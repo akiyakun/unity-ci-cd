@@ -41,7 +41,7 @@ namespace unicicd.Editor
         }
         public List<Jobs> jobs;
 
-        public BuildSettings BuildSettings;
+        public BuildSettingsScriptableObject BuildSettings;
 
         public static CICDConfig Load()
         {
@@ -58,8 +58,8 @@ namespace unicicd.Editor
 
             // BuildSettings読み込み
             {
-                var buildSettings = AssetDatabase.LoadAssetAtPath<BuildSettings>(ret.environment.build_settings_path);
-                Debug.Assert(buildSettings != null, "BuildSettings.asset ScriptableObjectを作成してください。");
+                var buildSettings = AssetDatabase.LoadAssetAtPath<BuildSettingsScriptableObject>(ret.environment.build_settings_path);
+                Debug.Assert(buildSettings != null, "BuildSettings.asset ScriptableObjectを作成してください。\n「Assets > Create > App > CICD > BuildSettings」");
 
                 // 必須シーンチェック
                 Debug.Assert(buildSettings.RequiredSceneList != null || buildSettings.RequiredSceneList.Count > 0,

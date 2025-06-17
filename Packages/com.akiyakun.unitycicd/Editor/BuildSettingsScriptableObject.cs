@@ -9,9 +9,9 @@ namespace unicicd.Editor
         // アクセス方法は以下のように
         CICDConfig.Load().BuildSettings.AdditionalInfoSettings;
      */
-    [CreateAssetMenu(menuName = "App/CICD/BuildSettings", fileName = "CICDBuildSettings")]
+    [CreateAssetMenu(menuName = "App/CICD/BuildSettings", fileName = "BuildSettings")]
     [System.Serializable]
-    public class BuildSettings : ScriptableObject
+    public class BuildSettingsScriptableObject : ScriptableObject
     {
         [System.Serializable]
         public class AdditionalInfo
@@ -69,7 +69,7 @@ namespace unicicd.Editor
         // 必須シーンのパスリストを取得(Filter&Sort)
         public List<string> GetRequiredScenePathArraySorted()
         {
-            var sorted = new List<SceneInfo>(RequiredSceneList); 
+            var sorted = new List<SceneInfo>(RequiredSceneList);
             sorted.Sort((a, b) => a.Priority - b.Priority);
 
             var ret = new List<string>(sorted.Count);
@@ -100,7 +100,7 @@ namespace unicicd.Editor
         // InAppDebugシーンのパスリストを取得(Filter&Sort)
         public List<string> GetInAppDebugScenePathArraySorted()
         {
-            var sorted = new List<SceneInfo>(InAppDebugSceneList); 
+            var sorted = new List<SceneInfo>(InAppDebugSceneList);
             sorted.Sort((a, b) => a.Priority - b.Priority);
 
             var ret = new List<string>(sorted.Count);
