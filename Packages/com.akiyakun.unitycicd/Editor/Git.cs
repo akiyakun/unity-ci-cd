@@ -59,6 +59,10 @@ namespace unicicd.Editor
         public static void WriteBuildInfoText()
         {
             var config = CICDConfig.Load();
+
+            // ディレクトリが存在しないとFile.WriteAllText()がエラーになる
+            BuildUtility.CreateDirectory(config.BuildSettings.AdditionalInfoSettings.BuildInfoTextPath);
+
             File.WriteAllText(
                 config.BuildSettings.AdditionalInfoSettings.BuildInfoTextPath,
                 GetCommitInfo()
