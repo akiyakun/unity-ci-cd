@@ -6,6 +6,11 @@ namespace unicicd.Editor
 {
     // UnityEditor.EditorUserSettings のラッパークラス
     // UnityEditor のnamespaceと重複するのでEUserSettingsとしています。
+    //
+    // MEMO:
+    // EditorPrefsはレジストリに保存されますが、EditorUserSettingsはUnityプロジェクトに保存されます。
+    // データは'Library/EditorUserSettings.asset'に保存されています。
+    //
     [System.Serializable]
     public class EUserSettings
     {

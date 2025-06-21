@@ -62,7 +62,7 @@ namespace unicicd.Editor
                 Debug.Assert(buildSettings != null, "BuildSettings.asset ScriptableObjectを作成してください。\n「Assets > Create > App > CICD > BuildSettings」");
 
                 // 必須シーンチェック
-                Debug.Assert(buildSettings.RequiredSceneList != null || buildSettings.RequiredSceneList.Count > 0,
+                Debug.Assert(buildSettings.RequiredSceneList != null && buildSettings.RequiredSceneList.Count > 0,
                     "BuildSettingsスクリプタブルオブジェクトにRequiredSceneListを設定してください。");
                 if( buildSettings.RequiredSceneList != null)
                 {
