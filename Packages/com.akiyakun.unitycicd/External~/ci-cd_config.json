@@ -12,13 +12,13 @@
   "agents": [
     {
       "name": "BuildServer",
-      "unity_path": "/Applications/Unity/Hub/Editor/2019.2.8f1/Unity.app/Contents/MacOS/Unity",
+      "unity_path": "/Applications/Unity/Hub/Editor/6000.0.50f1-x86_64/Unity.app/Contents/MacOS/Unity",
       "xcode_path": "/Applications/Xcode 11.1.app/Contents/Developer",
       "external_output_artifacts": "/Volumes/dev/buildserver/artifacts"
     },
     {
       "name": "BuildServer2",
-      "unity_path": "C:/Program Files/Unity/Hub/Editor/2019.2.8f1/Editor/Unity.exe",
+      "unity_path": "C:/Program Files/Unity/Hub/Editor/6000.0.50f1/Editor/Unity.exe",
       "external_output_artifacts": "//BuildServer2/artifacts"
     }
   ],

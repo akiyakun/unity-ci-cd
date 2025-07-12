@@ -9,7 +9,7 @@ namespace unicicd.Editor
         // アクセス方法は以下のように
         CICDConfig.Load().BuildSettings.AdditionalInfoSettings;
      */
-    [CreateAssetMenu(menuName = "App/CICD/BuildSettings", fileName = "BuildSettings")]
+    [CreateAssetMenu(menuName = "App/CICD/CICDBuildSettings", fileName = "CICBuildSettings")]
     [System.Serializable]
     public class BuildSettingsScriptableObject : ScriptableObject
     {
