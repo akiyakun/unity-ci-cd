@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using unicicd.Editor;
+using UnityCICD.Editor;
 
 #pragma warning disable CS0219
 
-// namespace unicicd.Editor
+// namespace UnityCICD.Editor
 // {
 /*
     ビルド用のコマンドラインを処理するクラス

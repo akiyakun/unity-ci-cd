@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace unicicd.Editor
+namespace UnityCICD.Editor
 {
     [System.Serializable]
     public class CICDSetup

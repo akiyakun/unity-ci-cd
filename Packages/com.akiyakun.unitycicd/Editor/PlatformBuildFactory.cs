@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace unicicd.Editor
+namespace UnityCICD.Editor
 {
     /*
         IPlatformBuildFactoryのFactory

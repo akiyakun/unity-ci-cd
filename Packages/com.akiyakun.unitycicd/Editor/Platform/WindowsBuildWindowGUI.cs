@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using unicicd.Editor;
+using UnityCICD.Editor;
 
-namespace unicicd.Editor
+namespace UnityCICD.Editor
 {
     public class WindowsBuildWindowGUI : BuildWindowGUIBase
     {

@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine.TestTools;
 
 #if __TESTS__
-namespace unicicd.RuntimeTests
+namespace UnityCICD.RuntimeTests
 {
     [Description("説明")]
     public class PlayModeTestSample : MonoBehaviour

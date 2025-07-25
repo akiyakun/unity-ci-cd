@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using UnityEditor;
 
-namespace unicicd.Editor
+namespace UnityCICD.Editor
 {
     public class Git
     {

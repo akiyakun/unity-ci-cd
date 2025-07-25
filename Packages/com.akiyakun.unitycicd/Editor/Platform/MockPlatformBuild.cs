@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace unicicd.Editor
+namespace UnityCICD.Editor
 {
     public class MockPlatformBuild : IPlatformBuild
     {

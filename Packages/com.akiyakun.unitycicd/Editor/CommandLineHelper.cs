@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 
-namespace unicicd.Editor
+namespace UnityCICD.Editor
 {
     public static class CommandLineHelper
     {
@@ -12,7 +12,7 @@ namespace unicicd.Editor
         public static List<string> GetCommandLineArgs()
         {
             List<string> ret = new(System.Environment.GetCommandLineArgs());
-            
+
             if (additiveArgs != null)
             {
                 ret.AddRange(additiveArgs);
