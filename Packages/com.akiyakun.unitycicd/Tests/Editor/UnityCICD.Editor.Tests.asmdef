@@ -1,10 +1,10 @@
 {
-    "name": "com.akiyakun.unitycicd.EditorTests",
-    "rootNamespace": "",
+    "name": "UnityCICD.Editor.Tests",
+    "rootNamespace": "UnityCICD.Editor.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "com.akiyakun.unitycicd.Editor"
+        "UnityCICD.Editor"
     ],
     "includePlatforms": [
         "Editor"

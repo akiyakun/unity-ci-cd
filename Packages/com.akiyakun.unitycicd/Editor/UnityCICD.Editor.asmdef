@@ -1,6 +1,6 @@
 {
-    "name": "com.akiyakun.unitycicd.Editor",
-    "rootNamespace": "",
+    "name": "UnityCICD.Editor",
+    "rootNamespace": "UnityCICD.Editor",
     "references": [],
     "includePlatforms": [
         "Editor"

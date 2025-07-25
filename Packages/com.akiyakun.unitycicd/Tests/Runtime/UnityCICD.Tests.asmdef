@@ -1,6 +1,6 @@
 {
-    "name": "com.akiyakun.unitycicd.RuntimeTests",
-    "rootNamespace": "",
+    "name": "UnityCICD.Tests",
+    "rootNamespace": "UnityCICD.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
