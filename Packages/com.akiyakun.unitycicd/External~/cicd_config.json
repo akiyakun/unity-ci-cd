@@ -1,7 +1,7 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "environment": {
-    "build_settings_path": "Assets/Editor/CICDBuildSettings.asset",
+    "build_settings_path": "Assets/Editor/BuildSettings.asset",
     "agent": "BuildServer"
   },
   "notify": {
@@ -9,15 +9,15 @@
     "channel": "chat_channel",
     "artifacts_url": "/buildserver/artifacts"
   },
-  "agents": [
+  "runners": [
     {
-      "name": "BuildServer",
+      "name": "macOS",
       "unity_path": "/Applications/Unity/Hub/Editor/6000.0.50f1-x86_64/Unity.app/Contents/MacOS/Unity",
       "xcode_path": "/Applications/Xcode 11.1.app/Contents/Developer",
       "external_output_artifacts": "/Volumes/dev/buildserver/artifacts"
     },
     {
-      "name": "BuildServer2",
+      "name": "Windows",
       "unity_path": "C:/Program Files/Unity/Hub/Editor/6000.0.50f1/Editor/Unity.exe",
       "external_output_artifacts": "//BuildServer2/artifacts"
     }
@@ -32,64 +32,64 @@
   },
   "jobs": [
     {
+      "enable": false,
+      "runner": "Windows",
       "platform": "Android",
-      "enable": true,
       "debug_skip": false,
-      "agent": "BuildServer2",
       "cleanup_build": false,
       "application_filename": "",
       "job_name": "Android - Build"
     },
     {
+      "enable": false,
+      "runner": "macOS",
       "platform": "iOS",
-      "enable": true,
       "debug_skip": false,
-      "agent": "MacServer",
       "cleanup_build": false,
       "application_filename": "",
       "job_name": "iOS - Build"
     },
     {
+      "enable": false,
+      "runner": "Windows",
       "platform": "Windows",
-      "enable": true,
       "debug_skip": false,
-      "agent": "BuildServer2",
       "cleanup_build": false,
       "application_filename": "Game",
       "job_name": "Windows - Build"
     },
     {
+      "enable": false,
+      "runner": "macOS",
       "platform": "macOS",
-      "enable": true,
       "debug_skip": false,
-      "agent": "MacServer",
       "cleanup_build": false,
       "application_filename": "",
       "job_name": "macOS - Build"
     },
     {
+      "enable": false,
+      "runner": "Windows",
       "platform": "WebGL",
-      "enable": true,
       "debug_skip": false,
-      "agent": "BuildServer",
       "cleanup_build": false,
       "application_filename": "",
       "job_name": "WebGL - Build"
     },
     {
+      "enable": false,
+      "runner": "Windows",
       "platform": "Switch",
-      "enable": true,
       "debug_skip": false,
-      "agent": "BuildServer2",
       "cleanup_build": false,
       "application_filename": "",
       "job_name": "Switch - Build"
     },
     {
+      "enable": false,
+      "runner": "Windows",
       "platform": "PS4",
-      "enable": true,
       "debug_skip": false,
-      "agent": "BuildServer2",
       "cleanup_build": false,
       "application_filename": "",
       "job_name": "PS4 - Build"

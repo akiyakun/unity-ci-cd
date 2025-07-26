@@ -6,13 +6,13 @@ using UnityEditor;
 namespace UnityCICD.Editor
 {
     /*
-        ci-cd_config.json
+        cicd_config.json
     */
     [System.Serializable]
     public class CICDConfig
     {
-        public const string CurrentVersion = "1.1.0";
-        public const string ConfigFile = "ci-cd_config.json";
+        public const string CurrentVersion = "1.2.0";
+        public const string ConfigFile = "cicd_config.json";
 
         public string version;
 
@@ -30,11 +30,21 @@ namespace UnityCICD.Editor
         public Environment environment;
 
         [System.Serializable]
+        public class Runner
+        {
+            public string name;
+            public string unity_path;
+        }
+        public List<Runner> runners;
+
+        [System.Serializable]
         public class Jobs
         {
-            public string platform;
             public bool enable;
-            public string agent;
+            // public string name;
+            public string runner;
+
+            public string platform;
             public bool cleanup_build;
             public string application_filename;
             public string job_name;

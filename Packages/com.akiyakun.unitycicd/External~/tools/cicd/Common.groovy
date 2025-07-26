@@ -36,7 +36,7 @@ def DoCommand(command) {
 // 専用のコンフィグファイルを読み込み
 def ReadConfig() {
     // Config = readYaml(file: 'jenkins_config.yml')
-    Config = readJSON(file: 'ci-cd_config.json')
+    Config = readJSON(file: 'cicd_config.json')
     if (Config == null)
     {
         error "Do not read config file."
