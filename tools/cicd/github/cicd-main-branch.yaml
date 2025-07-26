@@ -1,0 +1,35 @@
+name: cicd-main-branch
+run-name: ${{ github.actor }} is testing out GitHub Actions
+on:
+  push:
+    branches: [main]
+jobs:
+  cicd-main-branch:
+    runs-on: self-hosted
+
+    steps:
+      - name: Begin
+        run: echo "begin"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          clean: false
+
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+
+      - name: Unity Build
+        shell: cmd
+        run: |
+          "C:\Program Files\Unity\Hub\Editor\6000.0.50f1\Editor\Unity.exe" -projectPath survivors -executeMethod CI.Build -logFile unity.log --platform StandaloneWindows64 --buildmode Debug --inappdebug
+
+      - name: Publish Steam
+        shell: cmd
+        run: |
+          "C:\local\dev\SDK\tools\publish_steam.bat"
+
+      - name: End
+        run: echo "end"

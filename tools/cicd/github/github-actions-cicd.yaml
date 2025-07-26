@@ -1,0 +1,38 @@
+name: CICD
+run-name: ${{ github.actor }} is $GITHUB_ACTION
+on:
+  push:
+    branches: [develop]
+env:
+  PROJECT_NAME: project
+jobs:
+  Setup:
+    runs-on: [self-hosted, Windows]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          clean: false
+
+      - name: Unity Build
+        shell: cmd
+        run: |
+          "C:\Program Files\Unity\Hub\Editor\6000.0.50f1\Editor\Unity.exe" -projectPath survivors -executeMethod CI.Build -logFile unity.log --platform StandaloneWindows64 --buildmode Debug --inappdebug
+
+      # - name: Publish Steam
+      #   shell: cmd
+      #   run: |
+      #     "D:\local\dev\SDK\tools\publish_steam.bat"
+
+      - name: End
+        run: echo "end"
+
+  Tests:
+    runs-on: [self-hosted, Windows]
+    steps:
+      - name: Run Tests
+        shell: cmd
+        run: |
+          "${{ env.PROJECT_NAME }}\tools\cicd\run_test.bat" --runner Windows
+
