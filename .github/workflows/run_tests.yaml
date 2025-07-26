@@ -10,12 +10,12 @@ jobs:
         include:
           - os: Windows
             runs-on: [self-hosted, Windows]
-            condition: ${{ vars.ENABLE_WINDOWS_RUNNER == 'true' }}
+            enable_var: ENABLE_WINDOWS_RUNNER
           - os: macOS
             runs-on: [self-hosted, macOS]
-            condition: ${{ vars.ENABLE_MACOS_RUNNER == 'true' }}
+            enable_var: ENABLE_MACOS_RUNNER
     runs-on: ${{ matrix.runs-on }}
-    if: ${{ matrix.condition }}
+    if: ${{ vars[matrix.enable_var] == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
