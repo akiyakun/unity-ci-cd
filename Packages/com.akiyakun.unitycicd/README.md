@@ -1,10 +1,10 @@
-# Unity CI-CD
+# UnityCICD
 
 # 導入手順
 Packageを導入しUnityを起動します。
 
-プロジェクトルートに`ci-cd_config.json`ファイルが存在するのを確認します。
-存在しない場合はパッケージ側にある `Packages/com.akiyakun.unitycicd/External~/ci-cd_config.json` ファイルを手動でコピーしてください。
+プロジェクトルートに`cicd_config.json`ファイルが存在するのを確認します。
+存在しない場合はパッケージ側にある `Packages/com.akiyakun.unitycicd/External~/cicd_config.json` ファイルを手動でコピーしてください。
 
 Player設定でシンボル`__USE_UNICICD_BUILDMENU__`を追加します。
 

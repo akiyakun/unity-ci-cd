@@ -10,7 +10,7 @@ namespace UnityCICD.Editor
     {
         public const string PackageRootPath = "Packages/com.akiyakun.unitycicd/";
         public const string VersionFile = "tools/ci-cd/version";
-        public const string CICDConfigFile = "ci-cd_config.json";
+        public const string CICDConfigFile = "cicd_config.json";
 
         // string name = "";
         public string version = "";
@@ -55,7 +55,7 @@ namespace UnityCICD.Editor
             string prjRoot = BuildUtility.GetRootPath();
             string externalPath = Path.GetFullPath(PackageRootPath) + "/External~";
 
-            // ci-cd_config.jsonファイルが無ければコピー
+            // cicd_config.jsonファイルが無ければコピー
             string configFile = prjRoot + CICDConfigFile;
             // Debug.Log(configFile);
             if (!File.Exists(configFile))
