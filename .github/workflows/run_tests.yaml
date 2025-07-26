@@ -24,11 +24,11 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: |
-          "${{ vars.PROJECT_DIR_NAME && format('{0}\', vars.PROJECT_DIR_NAME) }}tools\cicd\tests\run_test.bat" PlayMode Project.Tests
+          "${{ vars.PROJECT_DIR_NAME && format('{0}\', vars.PROJECT_DIR_NAME) }}tools\cicd\tests\run_tests.bat" PlayMode Project.Tests
 
       - name: PlayMode Tests (macOS)
         if: runner.os == 'macOS'
         shell: bash
         run: |
-          "${{ vars.PROJECT_DIR_NAME && format('{0}/', vars.PROJECT_DIR_NAME) }}tools/cicd/tests/run_test.command" PlayMode Project.Tests
+          "${{ vars.PROJECT_DIR_NAME && format('{0}/', vars.PROJECT_DIR_NAME) }}tools/cicd/tests/run_testscommand" PlayMode Project.Tests
 
