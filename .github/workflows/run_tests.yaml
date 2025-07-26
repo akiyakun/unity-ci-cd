@@ -5,7 +5,14 @@ on:
     branches: [develop, tests]
 jobs:
   Tests:
-    runs-on: [self-hosted, Windows]
+    strategy:
+      matrix:
+        include:
+          - os: Windows
+            runs-on: [self-hosted, Windows]
+          - os: macOS
+            runs-on: [self-hosted, macOS]
+    runs-on: ${{ matrix.runs-on }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -13,8 +20,15 @@ jobs:
           lfs: true
           clean: false
 
-      - name: PlayMode Tests
+      - name: PlayMode Tests (Windows)
+        if: runner.os == 'Windows'
         shell: cmd
         run: |
-          "${{ vars.PROJECT_DIR_NAME && format('{0}/', vars.PROJECT_DIR_NAME) }}tools/cicd/tests/run_test.bat" PlayMode Project.Tests
+          "${{ vars.PROJECT_DIR_NAME && format('{0}\', vars.PROJECT_DIR_NAME) }}tools\cicd\tests\run_test.bat" PlayMode Project.Tests
+
+      - name: PlayMode Tests (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          "${{ vars.PROJECT_DIR_NAME && format('{0}/', vars.PROJECT_DIR_NAME) }}tools/cicd/tests/run_test.command" PlayMode Project.Tests
 
