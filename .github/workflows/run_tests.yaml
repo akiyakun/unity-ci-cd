@@ -16,5 +16,5 @@ jobs:
       - name: PlayMode Tests
         shell: cmd
         run: |
-          "${{ vars.PROJECT_DIR_NAME }}/tools/cicd/tests/run_test.bat" PlayMode Project.Tests
+          "${{ vars.PROJECT_DIR_NAME && format('{0}/', vars.PROJECT_DIR_NAME) }}tools/cicd/tests/run_test.bat" PlayMode Project.Tests
 
