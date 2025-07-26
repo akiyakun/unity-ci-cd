@@ -15,7 +15,7 @@ jobs:
             runs-on: [self-hosted, macOS]
             condition: ${{ vars.ENABLE_MACOS_RUNNER == 'true' }}
     runs-on: ${{ matrix.runs-on }}
-    if: matrix.condition
+    if: ${{ matrix.condition }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,5 +40,5 @@ jobs:
         shell: bash
         run: |
           "${{ vars.PROJECT_DIR_NAME && format('{0}/', vars.PROJECT_DIR_NAME) || '' }}tools/cicd/tests/run_tests.command" PlayMode Project.Tests
-          if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
+          if [ $? -ne 0 ]; then exit 1; fi
 
