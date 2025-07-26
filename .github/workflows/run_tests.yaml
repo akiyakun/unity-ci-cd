@@ -2,7 +2,7 @@ name: Run Tests
 run-name: ${{ github.actor }} is ${{ github.workflow }} ${{ vars.PROJECT_DIR_NAME }}
 on:
   push:
-    branches: [tests]
+    branches: [develop, tests]
 jobs:
   Tests:
     runs-on: [self-hosted, Windows]
