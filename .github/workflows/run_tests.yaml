@@ -15,7 +15,7 @@ jobs:
             runs-on: [self-hosted, macOS]
             condition: ${{ vars.ENABLE_MACOS_RUNNER == 'true' }}
     runs-on: ${{ matrix.runs-on }}
-    if: ${{ matrix.condition == true }}
+    if: matrix.condition
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,15 +23,22 @@ jobs:
           lfs: true
           clean: false
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
       - name: PlayMode Tests (Windows)
         if: runner.os == 'Windows'
         shell: cmd
         run: |
-          "${{ vars.PROJECT_DIR_NAME && format('{0}\', vars.PROJECT_DIR_NAME) }}tools\cicd\tests\run_tests.bat" PlayMode Project.Tests
+          "${{ vars.PROJECT_DIR_NAME && format('{0}\', vars.PROJECT_DIR_NAME) || '' }}tools\cicd\tests\run_tests.bat" PlayMode Project.Tests
+          if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 
       - name: PlayMode Tests (macOS)
         if: runner.os == 'macOS'
         shell: bash
         run: |
-          "${{ vars.PROJECT_DIR_NAME && format('{0}/', vars.PROJECT_DIR_NAME) }}tools/cicd/tests/run_testscommand" PlayMode Project.Tests
+          "${{ vars.PROJECT_DIR_NAME && format('{0}/', vars.PROJECT_DIR_NAME) || '' }}tools/cicd/tests/run_tests.command" PlayMode Project.Tests
+          if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 
