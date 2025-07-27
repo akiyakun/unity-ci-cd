@@ -71,8 +71,8 @@ if __name__ == "__main__":
       ],
       capture_output=True,  # 標準出力・標準エラー出力を取得
       text=True,            # 出力を文字列として取得
-      check=True,
-      timeout=60*3
+      check=True
+      # , timeout=60*3
     )
     print("return code: {}".format(result.returncode))
     print("captured stdout: {}".format(result.stdout))
