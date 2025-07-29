@@ -183,7 +183,9 @@ namespace UnityCICD.Editor
 
             process.StartInfo.FileName = cmd;
             process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
             process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.Arguments = arg;
             process.StartInfo.CreateNoWindow = true;
