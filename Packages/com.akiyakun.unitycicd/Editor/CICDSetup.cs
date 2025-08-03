@@ -9,7 +9,7 @@ namespace UnityCICD.Editor
     public class CICDSetup
     {
         public const string PackageRootPath = "Packages/com.akiyakun.unitycicd/";
-        public const string VersionFile = "tools/ci-cd/version";
+        public const string VersionFile = "tools/cicd/cicd_version";
         public const string CICDConfigFile = "cicd_config.json";
 
         // string name = "";
@@ -28,22 +28,38 @@ namespace UnityCICD.Editor
         [InitializeOnLoadMethod]
         static void Setup()
         {
-            // versionファイルが無い、バージョンが異なる場合にコピーする
+            CheckExternalFile();
+        }
+
+        static void CheckExternalFile()
+        {
+            string versionFilePath = BuildUtility.GetRootPath() + VersionFile;
+            // Debug.Log($"CheckExternalFile: versionFilePath={versionFilePath}");
+
+            // versionファイルが無い場合はコピーする
+            if (File.Exists(versionFilePath) == false)
+            {
+                CopyExternalFiles();
+                return;
+            }
+
+            // バージョンが異なる場合コピーする
             try
             {
-                Version ver = Version.Parse(File.ReadAllText(BuildUtility.GetRootPath() + VersionFile));
-                CICDSetup json = CICDSetup.Load();
-
-                if (ver != new Version(json.version))
+                Version ver = Version.Parse(File.ReadAllText(versionFilePath));
+                if (ver != new Version(CICDConfig.CurrentVersion))
                 {
                     // Debug.Log("copy. different a version");
                     CopyExternalFiles();
+
+                    Debug.Assert(Version.Parse(File.ReadAllText(versionFilePath)) == new Version(CICDConfig.CurrentVersion),
+                        $"{VersionFile} ファイルのバージョンを更新してください。");
                 }
             }
             catch
             {
-                // Debug.Log("copy. not found a file");
-                CopyExternalFiles();
+                Debug.Assert(false);
+                // CopyExternalFiles();
             }
         }
 
