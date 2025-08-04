@@ -31,11 +31,20 @@ if __name__ == "__main__":
   # if args.override and os.path.exists(dest):
   #   os.remove(dest)
 
-  runner = None
+  # モノレポかポリレポか判断
+  up_pass = None
+  if os.path.exists('../../../cicd_config.json'):
+    up_pass = '../../../'
+  elif os.path.exists('../../cicd_config.json'):
+    up_pass = '../../'
+  else:
+    print("cicd_config.json not found.")
+    sys.exit(1)
 
   # cicd_config.jsonからrunner情報を取得
+  runner = None
   try:
-    with open('../../../cicd_config.json', 'r', encoding='utf-8') as f:
+    with open('{}cicd_config.json'.format(up_pass), 'r', encoding='utf-8') as f:
       cicd_config = json.load(f)
     # print(cicd_config['runners'])
 
@@ -56,7 +65,7 @@ if __name__ == "__main__":
         runner['unity_path'],
         # "/Applications/Unity/Hub/Editor/6000.0.50f1-x86_64/Unity.app/Contents/MacOS/Unity",
         # '-projectPath', "C:/local/dev/itomon/survivors/survivors",
-        '-projectPath',  '../../../',
+        '-projectPath',  '{}'.format(up_pass),
         '-forgetProjectPath'
         '-batchmode',
         '-runTests',
