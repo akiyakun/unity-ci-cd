@@ -1,10 +1,13 @@
 ﻿#if __USE_UNICICD_BUILDMENU__
+using System.IO;
+using System.Reflection;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 namespace UnityCICD.Editor
 {
-    public class BuildMenu
+    public static class BuildMenu
     {
         public enum BuildMode
         {
@@ -201,6 +204,80 @@ namespace UnityCICD.Editor
 
         // }
         // #endregion
+
+
+        #region Menu
+        public static void AddMenuItem(string name, string shortcut, bool isChecked, int priority, System.Action execute, System.Func<bool> validate)
+        {
+            var addMenuItemMethod = typeof(Menu).GetMethod("AddMenuItem", BindingFlags.Static | BindingFlags.NonPublic);
+            addMenuItemMethod?.Invoke(null, new object[] { name, shortcut, isChecked, priority, execute, validate });
+        }
+
+        public static void AddSeparator(string name, int priority)
+        {
+            var addSeparatorMethod = typeof(Menu).GetMethod("AddSeparator", BindingFlags.Static | BindingFlags.NonPublic);
+            addSeparatorMethod?.Invoke(null, new object[] { name, priority });
+        }
+
+        // CICDConfigファイルに設定してあるシーンをメニューに動的に追加
+        // InitializeOnLoad のタイミングで呼び出すのを想定しています。
+        public static void SetupScenesMenuItem(int menuPriority, string menuRootName)
+        {
+            var config = CICDConfig.Load();
+            int priority = menuPriority;
+
+            // RequiredScene
+            config.BuildSettings.GetRequiredScenePathArraySorted().ForEach(
+                path => AddSceneMenuItem(path, ++priority, menuRootName));
+
+            AddSeparator("Separator", priority += 10);
+
+            // InAppDebugScene
+            config.BuildSettings.GetInAppDebugScenePathArraySorted().ForEach(path =>
+                AddSceneMenuItem(path, ++priority, menuRootName));
+        }
+
+        static void AddSceneMenuItem(string scenePath, int priority, string menuRootName)
+        {
+            string sceneName = Path.GetFileNameWithoutExtension(scenePath);
+
+            AddMenuItem($"{menuRootName}{sceneName}", "", false, priority, () =>
+            {
+                if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                {
+                    EditorSceneManager.OpenScene(scenePath);
+                }
+            }, null);
+        }
+
+        /* 現状未使用なのでコメントアウト
+        static string GetScenePath(string sceneName)
+        {
+            var config = CICDConfig.Load();
+
+            // RequiredScene
+            {
+                var array = config.BuildSettings.GetRequiredScenePathArray();
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (array[i].IndexOf(sceneName) != -1) return array[i];
+                }
+            }
+
+            // InAppDebugScene
+            {
+                var array = config.BuildSettings.GetInAppDebugScenePathArray();
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (array[i].IndexOf(sceneName) != -1) return array[i];
+                }
+            }
+
+            return null;
+        }
+        //*/
+        #endregion
+
 
 #if false
         // 作業用
