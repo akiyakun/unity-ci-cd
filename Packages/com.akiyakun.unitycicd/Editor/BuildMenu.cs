@@ -20,6 +20,7 @@ namespace UnityCICD.Editor
         public const string BuildsMenu = TopMenu + "Builds/";
         public const string BuildsToolsMenu = BuildsMenu + "Tools/";
 
+        // BuildMenu = 1000000 - 1010000
         public const int PriorityBuilds = 1000000;
         public const int PriorityTests  = 1000100;
         public const int PriorityBottom = 1001000;
