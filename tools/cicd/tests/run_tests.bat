@@ -1,3 +1,4 @@
+@rem ‚¤‚¦‚©‚ç‚µ‚½ (sjis”FŽ¯‚³‚¹‚éŽô•¶)
 @echo off
 
 @REM Chaange current directory to the directory of this script
