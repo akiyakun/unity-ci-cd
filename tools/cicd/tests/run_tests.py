@@ -76,7 +76,7 @@ if __name__ == "__main__":
         '-assemblyNames', args.assemblyNames,
         #'-testCategory', 'Project.Tests',
         # '-testResults', '../../../build/tests_playmode_results.xml',
-        '-testResults', 'build/tests_results.xml'
+        '-testResults', 'Logs/tests_results.xml'
       ],
       capture_output=True,  # 標準出力・標準エラー出力を取得
       text=True,            # 出力を文字列として取得

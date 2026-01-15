@@ -1,3 +1,7 @@
+# v1.2.10
+
+###################################################################################################
+# 公式の.gitignoreのコピー
 # This .gitignore file should be placed at the root of your Unity project directory
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
@@ -71,7 +75,19 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 ###################################################################################################
+
+###################################################################################################
+# 追加設定
+# !/**/*.gitignore
+
+# Unity
+## アセットにオプションとして含まれる場合が多々あるため除外しないほうがよいかも？
 !*.unitypackage
+## Addressable
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/OSX.meta
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/OSX
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/Windows.meta
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/Windows
 
 # OS generated
 # Windows
@@ -88,5 +104,30 @@ Thumbs.db
 # VSCode
 /.vscode/
 *.code-workspace
-.vsconfig
 
+# VisualStudio
+.vsconfig
+*.slnx
+
+# Microsoft Office
+~$*
+
+# Python
+**/__pycache__/
+
+# Package
+# ローカルフォルダに入れ子で.gitignoreを作成してください
+# /[Pp]ackages/
+# !/[Pp]ackages/manifest.json
+# !/[Pp]ackages/packages-lock.json
+
+# Addressable
+# link.xmlは自動生成されるものなので除外する
+# https://discussions.unity.com/t/link-xml-part-of-version-control/868834/5
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/link.xml.meta
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/link.xml
+
+# Recorder
+/[Rr]ecordings/
+
+###################################################################################################
