@@ -46,7 +46,7 @@ namespace UnityCICD.Editor
             try
             {
                 // sb.Append($"branch - hash: {Call("rev-parse --abbrev-ref HEAD")} - {Call("rev-parse --short HEAD")}");
-                sb.Append($"[{Call("rev-parse --abbrev-ref HEAD")}] {Call("rev-parse --short HEAD")} - {Call("show -s --format=%s HEAD")}");
+                sb.Append($"[{Call("rev-parse --abbrev-ref HEAD")}] {Call("rev-parse --short=7 HEAD")} - {Call("show -s --format=%s HEAD")}");
             }
             catch (Exception e)
             {
