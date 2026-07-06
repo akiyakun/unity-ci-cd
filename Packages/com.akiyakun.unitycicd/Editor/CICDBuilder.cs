@@ -437,12 +437,20 @@ namespace UnityCICD.Editor
                 List<string> scenes = new List<string>();
 
                 // 必須シーンをリストに追加
-                scenes.AddRange(Config.BuildSettings.GetRequiredScenePathArray());
+                // scenes.AddRange(Config.BuildSettings.GetRequiredScenePathArray());
+                Config.BuildSettings.CreateSortedRequiredSceneInfoList().ForEach(sceneInfo =>
+                {
+                    scenes.Add(sceneInfo.SceneAssetPath);
+                });
 
                 // InAppDebugシーンをリストに追加
                 if (BuildOptions.HasOption(CICDPlatformBuildOptions.InAppDebug))
                 {
-                    scenes.AddRange(Config.BuildSettings.GetInAppDebugScenePathArray());
+                    // scenes.AddRange(Config.BuildSettings.GetInAppDebugScenePathArray());
+                    Config.BuildSettings.CreateSortedInAppDebugSceneInfoList().ForEach(sceneInfo =>
+                    {
+                        scenes.Add(sceneInfo.SceneAssetPath);
+                    });
                 }
 
                 bpo.scenes = scenes.ToArray();

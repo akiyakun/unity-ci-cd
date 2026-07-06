@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace UnityCICD.Editor
 {
@@ -23,11 +24,25 @@ namespace UnityCICD.Editor
             public string BuildInfoTextPath = "Assets/StreamingAssets/build_info.txt";
         }
 
+        public enum SceneType
+        {
+            Single,
+            Additive,
+
+            // メニューでセパレーターを表示するためのもの
+            Separator,
+        }
+
         [System.Serializable]
         public struct SceneInfo
         {
             public int Priority;
+            public SceneType Type;
             public SceneAsset SceneAsset;
+            public string Name;
+
+            [NonSerialized, HideInInspector]
+            public string SceneAssetPath;
         }
 
 
@@ -49,69 +64,87 @@ namespace UnityCICD.Editor
         public List<SceneInfo> InAppDebugSceneList;
 
         // 必須シーンのパスリストを取得
-        public string[] GetRequiredScenePathArray(bool filter = false)
+        // public string[] GetRequiredScenePathArray(bool filter = false)
+        // {
+        //     RequiredSceneList.Sort((a, b) => a.Priority - b.Priority);
+
+        //     var ret = new string[RequiredSceneList.Count];
+        //     for (int i = 0; i < RequiredSceneList.Count; ++i)
+        //     {
+        //         if (filter && RequiredSceneList[i].Priority < 0) continue;
+
+        //         var path = UnityEditor.AssetDatabase.GetAssetPath(RequiredSceneList[i].SceneAsset);
+        //         // Debug.Log(path);
+        //         ret[i] = path;
+        //     }
+
+        //     return ret;
+        // }
+
+        // 必須シーンのパスリストを生成(Filter&Sort)
+        public List<SceneInfo> CreateSortedRequiredSceneInfoList(bool filter = true)
         {
-            RequiredSceneList.Sort((a, b) => a.Priority - b.Priority);
-
-            var ret = new string[RequiredSceneList.Count];
-            for (int i = 0; i < RequiredSceneList.Count; ++i)
-            {
-                if (filter && RequiredSceneList[i].Priority < 0) continue;
-
-                var path = UnityEditor.AssetDatabase.GetAssetPath(RequiredSceneList[i].SceneAsset);
-                // Debug.Log(path);
-                ret[i] = path;
-            }
-
-            return ret;
+            return CreateSortedSceneInfoList(RequiredSceneList, filter: filter);
         }
+        // public List<string> GetRequiredScenePathArraySorted()
+        // {
+        //     var sorted = new List<SceneInfo>(RequiredSceneList);
+        //     sorted.Sort((a, b) => a.Priority - b.Priority);
 
-        // 必須シーンのパスリストを取得(Filter&Sort)
-        public List<string> GetRequiredScenePathArraySorted()
-        {
-            var sorted = new List<SceneInfo>(RequiredSceneList);
-            sorted.Sort((a, b) => a.Priority - b.Priority);
+        //     var ret = new List<string>(sorted.Count);
+        //     sorted.ForEach(sceneInfo =>
+        //     {
+        //         if (sceneInfo.Priority < 0) return;
+        //         ret.Add(UnityEditor.AssetDatabase.GetAssetPath(sceneInfo.SceneAsset));
+        //     });
 
-            var ret = new List<string>(sorted.Count);
-            sorted.ForEach(sceneInfo =>
-            {
-                if (sceneInfo.Priority < 0) return;
-                ret.Add(UnityEditor.AssetDatabase.GetAssetPath(sceneInfo.SceneAsset));
-            });
-
-            return ret;
-        }
+        //     return ret;
+        // }
 
         // InAppDebugシーンのパスリストを取得
-        public string[] GetInAppDebugScenePathArray(bool filter = false)
-        {
-            var ret = new string[InAppDebugSceneList.Count];
-            for (int i = 0; i < InAppDebugSceneList.Count; ++i)
-            {
-                if (filter && RequiredSceneList[i].Priority < 0) continue;
+        // public string[] GetInAppDebugScenePathArray(bool filter = false)
+        // {
+        //     var ret = new string[InAppDebugSceneList.Count];
+        //     for (int i = 0; i < InAppDebugSceneList.Count; ++i)
+        //     {
+        //         if (filter && RequiredSceneList[i].Priority < 0) continue;
 
-                var path = UnityEditor.AssetDatabase.GetAssetPath(InAppDebugSceneList[i].SceneAsset);
-                // Debug.Log(path);
-                ret[i] = path;
-            }
-            return ret;
+        //         var path = UnityEditor.AssetDatabase.GetAssetPath(InAppDebugSceneList[i].SceneAsset);
+        //         // Debug.Log(path);
+        //         ret[i] = path;
+        //     }
+        //     return ret;
+        // }
+
+        // InAppDebugシーンのパスリストを生成(Filter&Sort)
+        public List<SceneInfo> CreateSortedInAppDebugSceneInfoList(bool filter = true)
+        {
+            return CreateSortedSceneInfoList(InAppDebugSceneList, filter: filter);
         }
 
-        // InAppDebugシーンのパスリストを取得(Filter&Sort)
-        public List<string> GetInAppDebugScenePathArraySorted()
+        // filter: trueのとき Priority < 0のものは除外する
+        List<SceneInfo> CreateSortedSceneInfoList(List<SceneInfo> source, bool filter)
         {
-            var sorted = new List<SceneInfo>(InAppDebugSceneList);
+            // プライオリティでソート
+            var sorted = new List<SceneInfo>(source);
             sorted.Sort((a, b) => a.Priority - b.Priority);
 
-            var ret = new List<string>(sorted.Count);
+            // フィルタリングして新しいリストを作る
+            var ret = new List<SceneInfo>(sorted.Count);
             sorted.ForEach(sceneInfo =>
             {
-                if (sceneInfo.Priority < 0) return;
-                ret.Add(UnityEditor.AssetDatabase.GetAssetPath(sceneInfo.SceneAsset));
+                // フィルタ除外
+                if (filter && sceneInfo.Priority < 0) return;
+
+                // アセットパスを取得
+                sceneInfo.SceneAssetPath = UnityEditor.AssetDatabase.GetAssetPath(sceneInfo.SceneAsset);
+
+                ret.Add(sceneInfo);
             });
 
             return ret;
         }
+
 
 #if UNITY_EDITOR
         void Reset()

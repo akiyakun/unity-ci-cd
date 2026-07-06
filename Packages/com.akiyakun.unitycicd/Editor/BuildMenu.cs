@@ -22,7 +22,7 @@ namespace UnityCICD.Editor
 
         // BuildMenu = 1000000 - 1010000
         public const int PriorityBuilds = 1000000;
-        public const int PriorityTests  = 1000100;
+        public const int PriorityTests = 1000100;
         public const int PriorityBottom = 1001000;
 
         #region Builds
@@ -228,25 +228,60 @@ namespace UnityCICD.Editor
             int priority = menuPriority;
 
             // RequiredScene
-            config.BuildSettings.GetRequiredScenePathArraySorted().ForEach(
-                path => AddSceneMenuItem(path, ++priority, menuRootName));
+            config.BuildSettings.CreateSortedRequiredSceneInfoList().ForEach(sceneInfo =>
+            {
+                if (sceneInfo.Type == BuildSettingsScriptableObject.SceneType.Separator)
+                {
+                    AddSeparator("Separator", priority += 10);
+                }
+                else
+                {
+                    AddSceneMenuItem(sceneInfo, ++priority, menuRootName);
+                }
+            });
 
             AddSeparator("Separator", priority += 10);
 
             // InAppDebugScene
-            config.BuildSettings.GetInAppDebugScenePathArraySorted().ForEach(path =>
-                AddSceneMenuItem(path, ++priority, menuRootName));
+            config.BuildSettings.CreateSortedInAppDebugSceneInfoList().ForEach(sceneInfo =>
+            {
+                if (sceneInfo.Type == BuildSettingsScriptableObject.SceneType.Separator)
+                {
+                    AddSeparator("Separator", priority += 10);
+                }
+                else
+                {
+                    AddSceneMenuItem(sceneInfo, ++priority, menuRootName);
+                }
+            });
         }
 
-        static void AddSceneMenuItem(string scenePath, int priority, string menuRootName)
+        static void AddSceneMenuItem(BuildSettingsScriptableObject.SceneInfo sceneInfo, int priority, string menuRootName)
         {
-            string sceneName = Path.GetFileNameWithoutExtension(scenePath);
+            string name;
+            if (string.IsNullOrEmpty(sceneInfo.Name))
+            {
+                name = Path.GetFileNameWithoutExtension(sceneInfo.SceneAssetPath);
+            }
+            else
+            {
+                name = sceneInfo.Name;
+            }
 
-            AddMenuItem($"{menuRootName}{sceneName}", "", false, priority, () =>
+            AddMenuItem($"{menuRootName}{name}", "", false, priority, () =>
             {
                 if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 {
-                    EditorSceneManager.OpenScene(scenePath);
+                    if (sceneInfo.Type == BuildSettingsScriptableObject.SceneType.Single)
+                    {
+                        EditorSceneManager.OpenScene(sceneInfo.SceneAssetPath, OpenSceneMode.Single);
+                    }
+                    else if (sceneInfo.Type == BuildSettingsScriptableObject.SceneType.Additive)
+                    {
+                        var scene = EditorSceneManager.OpenScene(sceneInfo.SceneAssetPath, OpenSceneMode.Additive);
+                        // sceneをアクティブにする
+                        EditorSceneManager.SetActiveScene(scene);
+                    }
                 }
             }, null);
         }
