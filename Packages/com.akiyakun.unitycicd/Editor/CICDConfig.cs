@@ -91,7 +91,10 @@ namespace UnityCICD.Editor
                     // Debug.Assert(buildSettings.InAppDebugSceneList.Count > 0);
                     foreach (var sceneInfo in buildSettings.InAppDebugSceneList)
                     {
-                        Debug.Assert(sceneInfo.SceneAsset != null, "InAppDebug scene is null reference");
+                        // Separatorは無視
+                        if (sceneInfo.Type == BuildSettingsScriptableObject.SceneType.Separator) continue;
+                        // SceneAssetの参照が切れている場合はErrorを出す
+                        if(sceneInfo.SceneAsset == null) Debug.LogError("InAppDebug scene is null reference");
                     }
                 }
 
