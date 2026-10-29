@@ -61,6 +61,8 @@ Packages/com.example.lib|libs/com.example.lib
 * `3` : 実行エラー(コンパイルエラー、ダイアログで止まったなど)
 * `1` : Unity の起動に失敗した(ログを確認)、または `cicd_config.json` や Unity が見つからないなど Unity を起動する前のエラー
 
+0 以外の終了コードは、テスト前のインポート段階から来ることもあります(コンパイルエラーで `1` など)。そのときはテストを実行せずに終わります。どちらの段階かは、ジョブのログの `---- import ----` / `---- tests ----` の見出しと、表示されたログのファイル名(`unity_import.log` / `unity_tests.log`)で分かります。
+
 ## テストアセンブリの複数指定
 `TEST_ASSEMBLY_NAMES` は `A.Tests;B.Tests` のように `;` 区切りで複数指定できます。
 cmd は `;` や `,` も引数の区切りとして扱うので、`run_tests.bat` には `%2=A.Tests %3=B.Tests` のように分かれて届きます。
