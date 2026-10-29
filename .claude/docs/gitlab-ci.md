@@ -49,7 +49,8 @@ Packages/com.example.lib|libs/com.example.lib
 ### artifacts(テスト結果と Unity のログ)
 `when: always` で、テストが失敗したときも次を残します(1週間)。
 * `Logs/tests_results.xml` : Test Runner の結果(NUnit 形式)
-* `Logs/unity_tests.log` : Unity のログ全体
+* `Logs/unity_tests.log` : テスト実行時の Unity のログ全体
+* `Logs/unity_import.log` : テスト前のインポートだけの起動のログ(1.2.2 から)
 
 ジョブのログには `run_tests.py` が Unity のログの末尾400行を表示します。全体を見たいときは artifacts からダウンロードします。
 
