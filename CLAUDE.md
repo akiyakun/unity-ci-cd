@@ -38,3 +38,4 @@ Unity 用の CI/CD パッケージです。目的は、Unity プロジェクト�
 * [.claude/docs/gitlab-ci.md](.claude/docs/gitlab-ci.md) : GitLab CI テンプレートの使い方と各設定の理由
 * [.claude/docs/gitlab-runner-setup.md](.claude/docs/gitlab-runner-setup.md) : Windows で gitlab-runner をセットアップする手順
 * [.claude/docs/troubleshooting.md](.claude/docs/troubleshooting.md) : CI で実際に起きた症状と原因
+* [.claude/docs/todo.md](.claude/docs/todo.md) : 次の機会に入れるもの(関係する変更をするときに一緒に入れる)
