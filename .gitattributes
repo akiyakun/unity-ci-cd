@@ -12,7 +12,7 @@
 *.md text=auto eol=lf
 
 ## Windows
-*.bat text=auto eol=crlf
+*.bat text=auto working-tree-encoding=CP932 eol=crlf
 
 # Unity
 *.mat merge=unityyamlmerg eol=lf

@@ -11,7 +11,7 @@ namespace UnityCICD.Editor
     [System.Serializable]
     public class CICDConfig
     {
-        public const string CurrentVersion = "1.2.0";
+        public const string CurrentVersion = "1.2.1";
         public const string ConfigFile = "cicd_config.json";
 
         public string version;
