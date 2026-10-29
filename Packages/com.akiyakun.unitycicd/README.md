@@ -10,6 +10,16 @@ Player設定でシンボル`__USE_UNICICD_BUILDMENU__`を追加します。
 
 `Assets/Editor`フォルダにProjectウィンドウの右クリックメニューから`Create > App > CICD > CICDBuildSettings`を選択し、ビルド設定ファイルを作成します。
 
+# 更新手順(既存プロジェクト)
+パッケージを更新したら以下を行います。
+1. プロジェクト直下の`cicd_config.json`の`"version"`をパッケージのバージョン(`CICDConfig.CurrentVersion`)に書き換えます。書き換えるまではUnity起動時にエラーログが出ます。
+2. `tools/`フォルダはUnity Editor起動時に自動で上書きコピーされます(`tools/cicd/cicd_version`がパッケージのバージョンと異なる場合)。プロジェクト側で変更したファイルは上書きされるので注意してください。
+3. `cicd_config.json`の`runners > unity_path`を現在使っているUnityのパスに合わせます。
+
+## 1.2.1
+* `run_tests.py` : Unityのログを`Logs/unity_tests.log`に出力して末尾を表示、Unityの終了コードをそのまま返す、`unity_path`が無い場合に案内を表示、引数のカンマ抜けを修正
+* GitLab CI 用のテンプレート`Templates~/GitLab CI/gitlab-ci.yml`を追加
+
 
 ## 対応
 * Android
