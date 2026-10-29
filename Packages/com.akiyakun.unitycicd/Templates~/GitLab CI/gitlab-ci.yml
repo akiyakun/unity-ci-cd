@@ -8,6 +8,10 @@ variables:
   # Unity プロジェクトのフォルダ（リポジトリ直下からの相対パス）
   # リポジトリ直下が Unity プロジェクトなら "."
   PROJECT_DIR_NAME: "."
+  # テストを実行するプラットフォーム（PlayMode / EditMode）
+  TEST_PLATFORM: "PlayMode"
+  # テストアセンブリ名（自分のテストアセンブリ名に変える）
+  TEST_ASSEMBLY_NAMES: "Project.Tests"
   # shell Runner では作業フォルダが残るので、Library/ などの無視ファイルは消さずに使い回す
   # （既定の -ffdx だと毎回 Library/ が消えてフルインポートになる）
   GIT_CLEAN_FLAGS: "-ffd"
@@ -15,14 +19,16 @@ variables:
 tests_windows:
   stage: test
   tags:
+    # Runner に付けたタグに合わせる
     - windows
   rules:
     # develop への push と、画面・API からの手動実行（ブランチ問わず）で動かす
     - if: '$CI_COMMIT_BRANCH == "develop"'
     - if: '$CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "api"'
   before_script:
-    # Packages/ のシンボリックリンクを etc/symlinks.txt から作る
-    # （etc/setup.bat は管理者権限が必要なので、CI では権限のいらないジャンクションで代用する）
+    # etc/symlinks.txt があれば、そこに書かれたリンクをジャンクションで作る（無ければ何もしない）
+    # 書式: 1行に「リンクのパス|リンク先のパス」（リポジトリ直下からの相対パスか絶対パス。# で始まる行はコメント）
+    # （Windows のシンボリックリンクは管理者権限か開発者モードが必要なので、CI では権限のいらないジャンクションで代用する）
     - |
       if (Test-Path "$env:CI_PROJECT_DIR/etc/symlinks.txt") {
         Get-Content "$env:CI_PROJECT_DIR/etc/symlinks.txt" | Where-Object { $_ -and -not $_.StartsWith('#') } | ForEach-Object {
@@ -35,14 +41,16 @@ tests_windows:
           }
         }
       }
-    # Unity Package Manager が社内 GitLab の git パッケージ（DialogueSystem など）を取得できるよう、
-    # このジョブの間だけジョブトークンで認証する（グローバルの git 設定は変えない）
+    # Packages/manifest.json で同じ GitLab 上の private な git パッケージを参照している場合に、
+    # Unity Package Manager が取得できるよう、このジョブの間だけジョブトークンで認証する（グローバルの git 設定は変えない）
     # ※ 取得先のプロジェクトの『設定 > CI/CD > ジョブトークンの権限』に、このプロジェクトを追加しておくこと
     - $env:GIT_CONFIG_COUNT = "1"
     - $env:GIT_CONFIG_KEY_0 = "url.https://gitlab-ci-token:$($env:CI_JOB_TOKEN)@$($env:CI_SERVER_HOST)/.insteadOf"
     - $env:GIT_CONFIG_VALUE_0 = "https://$($env:CI_SERVER_HOST)/"
   script:
-    - '& "$env:CI_PROJECT_DIR/$env:PROJECT_DIR_NAME/tools/cicd/tests/run_tests.bat" PlayMode Project.Tests'
+    # tools/ は unity-ci-cd パッケージが Editor 起動時にプロジェクトへコピーしたもの
+    # （run_tests.bat は cicd_config.json の runners から name が "Windows" のものを使う）
+    - '& "$env:CI_PROJECT_DIR/$env:PROJECT_DIR_NAME/tools/cicd/tests/run_tests.bat" $env:TEST_PLATFORM $env:TEST_ASSEMBLY_NAMES'
   artifacts:
     when: always
     paths:
