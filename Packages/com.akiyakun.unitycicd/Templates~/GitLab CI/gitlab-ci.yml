@@ -1,0 +1,51 @@
+# GitLab CI/CD テンプレート（Windows の shell Runner で PlayMode テストを実行する）
+# 使い方: リポジトリ直下に .gitlab-ci.yml としてコピーし、PROJECT_DIR_NAME とタグを合わせる。
+# 前提: Runner は shell（pwsh）executor、Unity をライセンス認証したユーザーでサービスとして動かす。
+stages:
+  - test
+
+variables:
+  # Unity プロジェクトのフォルダ（リポジトリ直下からの相対パス）
+  # リポジトリ直下が Unity プロジェクトなら "."
+  PROJECT_DIR_NAME: "."
+  # shell Runner では作業フォルダが残るので、Library/ などの無視ファイルは消さずに使い回す
+  # （既定の -ffdx だと毎回 Library/ が消えてフルインポートになる）
+  GIT_CLEAN_FLAGS: "-ffd"
+
+tests_windows:
+  stage: test
+  tags:
+    - windows
+  rules:
+    # develop への push と、画面・API からの手動実行（ブランチ問わず）で動かす
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "api"'
+  before_script:
+    # Packages/ のシンボリックリンクを etc/symlinks.txt から作る
+    # （etc/setup.bat は管理者権限が必要なので、CI では権限のいらないジャンクションで代用する）
+    - |
+      if (Test-Path "$env:CI_PROJECT_DIR/etc/symlinks.txt") {
+        Get-Content "$env:CI_PROJECT_DIR/etc/symlinks.txt" | Where-Object { $_ -and -not $_.StartsWith('#') } | ForEach-Object {
+          $link, $src = $_.Split('|')
+          $linkPath = Join-Path $env:CI_PROJECT_DIR $link
+          $srcPath = if ([System.IO.Path]::IsPathRooted($src)) { $src } else { Join-Path $env:CI_PROJECT_DIR $src }
+          if (-not (Test-Path $linkPath)) {
+            New-Item -ItemType Junction -Path $linkPath -Target $srcPath | Out-Null
+            Write-Host "junction: $link -> $src"
+          }
+        }
+      }
+    # Unity Package Manager が社内 GitLab の git パッケージ（DialogueSystem など）を取得できるよう、
+    # このジョブの間だけジョブトークンで認証する（グローバルの git 設定は変えない）
+    # ※ 取得先のプロジェクトの『設定 > CI/CD > ジョブトークンの権限』に、このプロジェクトを追加しておくこと
+    - $env:GIT_CONFIG_COUNT = "1"
+    - $env:GIT_CONFIG_KEY_0 = "url.https://gitlab-ci-token:$($env:CI_JOB_TOKEN)@$($env:CI_SERVER_HOST)/.insteadOf"
+    - $env:GIT_CONFIG_VALUE_0 = "https://$($env:CI_SERVER_HOST)/"
+  script:
+    - '& "$env:CI_PROJECT_DIR/$env:PROJECT_DIR_NAME/tools/cicd/tests/run_tests.bat" PlayMode Project.Tests'
+  artifacts:
+    when: always
+    paths:
+      - $PROJECT_DIR_NAME/Logs/tests_results.xml
+      - $PROJECT_DIR_NAME/Logs/unity_tests.log
+    expire_in: 1 week

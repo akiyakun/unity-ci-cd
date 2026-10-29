@@ -20,6 +20,11 @@ Player設定でシンボル`__USE_UNICICD_BUILDMENU__`を追加します。
 ## Testについて
 テストジョブは用意していますが、テスト用のライブラリやアセットはこのプロジェクトでは扱いません。
 
+## CIテンプレート
+`Templates~` フォルダにCI設定のテンプレートがあります(Unity上では表示されないのでエクスプローラで直接開いてください)。
+* `Templates~/GitHub Actions` : GitHub Actions 用（詳細は `doc/GitHub Actions.md`）
+* `Templates~/GitLab CI/gitlab-ci.yml` : GitLab CI/CD 用（Windows の shell Runner で PlayMode テストを実行。リポジトリ直下に `.gitlab-ci.yml` としてコピーして使う）
+
 # シンボル
 __DEBUG__
 デバッグビルドのときに定義される。
