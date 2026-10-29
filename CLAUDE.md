@@ -27,8 +27,8 @@ Unity 用の CI/CD パッケージです。目的は、Unity プロジェクト�
 
 ## .bat の文字コード
 * `.bat` は CP932(Windows の「Shift_JIS」)・CRLF で保存します。日本語の Windows の cmd は `.bat` を CP932 として読むためです。
-* 導入先のプロジェクト(afl の `.gitattributes` を使うもの)では、リポジトリの中は UTF-8・LF で、`*.bat text=auto working-tree-encoding=CP932 eol=crlf` によりチェックアウト時に CP932・CRLF に変換されます。
-  * このリポジトリの `.gitattributes` は `working-tree-encoding` を指定していないので、`.bat` は CP932 のバイトのまま格納されています。別のリポジトリへはチェックアウトしたファイル(作業ツリーのバイト)をコピーし、blob や base64 で直接渡さないでください。
+* リポジトリの中は UTF-8・LF で、`.gitattributes` の `*.bat text=auto working-tree-encoding=CP932 eol=crlf` によりチェックアウト時に CP932・CRLF に変換されます(このリポジトリも、afl の `.gitattributes` を使う導入先のプロジェクトも同じ)。
+  * 別のリポジトリへはチェックアウトしたファイル(作業ツリーのバイト)をコピーし、blob や base64 で直接渡さないでください。
 * `working-tree-encoding=sjis` と書いてはいけません。Git(iconv)は sjis を厳密な Shift_JIS として扱うため、`\` が `¥`、`~` が `‾` としてリポジトリに入り、GitLab の画面や差分で化けます。Web エディタや API で普通の `\` `~` を書くとチェックアウトで失敗し、`①`・`髙` などの CP932 専用文字はコミットできません。
 * `.bat` 先頭の `@rem うえからした (sjis認識させる呪文)` は、VS Code などに Shift_JIS と推測させるための行です。Git の設定とは関係なく、CP932 でもそのまま使えます(VS Code は `files.autoGuessEncoding` が有効な場合に推測します)。
 * 古い Git(2.18 未満)や libgit2 系のクライアントは `working-tree-encoding` に対応しておらず、UTF-8 のまま出てくるので `.bat` が正しく動きません。
