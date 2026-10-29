@@ -12,7 +12,7 @@ Runner の用意は [gitlab-runner-setup.md](gitlab-runner-setup.md) を参照�
    | --- | --- | --- |
    | `PROJECT_DIR_NAME` | `"."` | Unity プロジェクトのフォルダ(リポジトリ直下からの相対パス)。モノレポならサブフォルダ名 |
    | `TEST_PLATFORM` | `"PlayMode"` | `PlayMode` か `EditMode` |
-   | `TEST_ASSEMBLY_NAMES` | `"Project.Tests"` | 自分のテストアセンブリ名に変えます |
+   | `TEST_ASSEMBLY_NAMES` | `"Project.Tests"` | 自分のテストアセンブリ名に変えます。複数は `;` 区切り |
 3. `tags` を Runner に付けたタグに合わせます(既定は `windows`)。
 4. プロジェクトの `cicd_config.json` の `runners` に `name` が `"Windows"` のものがあり、`unity_path` が Runner の PC にインストールされている Unity を指しているか確認します。
 5. `tools/` がコミットされているか確認します(パッケージ導入後に Unity Editor を一度起動するとコピーされます)。
@@ -60,4 +60,7 @@ Packages/com.example.lib|libs/com.example.lib
 * `3` : 実行エラー(コンパイルエラー、ダイアログで止まったなど)
 * `1` : Unity の起動に失敗した(ログを確認)、または `cicd_config.json` や Unity が見つからないなど Unity を起動する前のエラー
 
-`TEST_ASSEMBLY_NAMES` は `run_tests.bat` の引数として渡すため、指定できるアセンブリは1つです(cmd はセミコロンも引数の区切りとして扱います)。
+## テストアセンブリの複数指定
+`TEST_ASSEMBLY_NAMES` は `A.Tests;B.Tests` のように `;` 区切りで複数指定できます。
+cmd は `;` や `,` も引数の区切りとして扱うので、`run_tests.bat` には `%2=A.Tests %3=B.Tests` のように分かれて届きます。
+`run_tests.bat` は `%1` をテストプラットフォームとし、残りの引数をすべて `run_tests.py --assemblyNames` に渡します。`run_tests.py` はそれを `;` で連結して Unity の `-assemblyNames` に渡します。

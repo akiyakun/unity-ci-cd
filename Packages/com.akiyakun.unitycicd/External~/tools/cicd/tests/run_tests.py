@@ -14,7 +14,8 @@ def parse_args():
     help='Target runner name.', required=True)
   parser.add_argument('--testPlatform', type=str,
     help='Unity -testPlatform', required=True)
-  parser.add_argument('--assemblyNames', type=str,
+  # 複数指定可。run_tests.bat 経由だと cmd が ; で引数を分けるので、受け取った後に ; で連結して Unity に渡す
+  parser.add_argument('--assemblyNames', type=str, nargs='+',
     help='Unity -assemblyNames', required=True)
   # parser.add_argument('--override', action='store_true',
   #   help='既に存在する場合でも作成しなおす')
@@ -87,7 +88,7 @@ if __name__ == "__main__":
         '-testPlatform', args.testPlatform,
         # '-playerHeartbeatTimeout', '1',
         # '-assemblyNames', 'Project.Tests',
-        '-assemblyNames', args.assemblyNames,
+        '-assemblyNames', ';'.join(name for name in args.assemblyNames if name),
         #'-testCategory', 'Project.Tests',
         # '-testResults', '../../../build/tests_playmode_results.xml',
         '-testResults', test_results,

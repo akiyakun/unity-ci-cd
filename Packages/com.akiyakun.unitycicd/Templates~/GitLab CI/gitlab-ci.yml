@@ -10,7 +10,7 @@ variables:
   PROJECT_DIR_NAME: "."
   # テストを実行するプラットフォーム（PlayMode / EditMode）
   TEST_PLATFORM: "PlayMode"
-  # テストアセンブリ名（自分のテストアセンブリ名に変える）
+  # テストアセンブリ名（自分のテストアセンブリ名に変える。複数は ; 区切り）
   TEST_ASSEMBLY_NAMES: "Project.Tests"
   # shell Runner では作業フォルダが残るので、Library/ などの無視ファイルは消さずに使い回す
   # （既定の -ffdx だと毎回 Library/ が消えてフルインポートになる）

@@ -18,6 +18,7 @@ Player設定でシンボル`__USE_UNICICD_BUILDMENU__`を追加します。
 
 ## 1.2.1
 * `run_tests.py` : Unityのログを`Logs/unity_tests.log`に出力して末尾を表示、Unityの終了コードをそのまま返す、`unity_path`が無い場合に案内を表示、引数のカンマ抜けを修正
+* `run_tests.bat` / `run_tests.py` : テストアセンブリを複数指定できるようにした(`run_tests.bat PlayMode A.Tests;B.Tests`)
 * GitLab CI 用のテンプレート`Templates~/GitLab CI/gitlab-ci.yml`を追加
 
 
