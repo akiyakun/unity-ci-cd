@@ -16,6 +16,9 @@ Player設定でシンボル`__USE_UNICICD_BUILDMENU__`を追加します。
 2. `tools/`フォルダはUnity Editor起動時に自動で上書きコピーされます(`tools/cicd/cicd_version`がパッケージのバージョンと異なる場合)。プロジェクト側で変更したファイルは上書きされるので注意してください。
 3. `cicd_config.json`の`runners > unity_path`を現在使っているUnityのパスに合わせます。
 
+## 1.2.2
+* `run_tests.py` : テストの前に `-batchmode -quit` でインポートだけ行う起動を挟むようにした(ログは`Logs/unity_import.log`)。`Library/`が空の初回に「Scene(s) Have Been Modified」のダイアログでテストが止まる(終了コード3)のを防ぐため。`--skipImport`で省略できる
+
 ## 1.2.1
 * `run_tests.py` : Unityのログを`Logs/unity_tests.log`に出力して末尾を表示、Unityの終了コードをそのまま返す、`unity_path`が無い場合に案内を表示、引数のカンマ抜けを修正
 * `run_tests.bat` / `run_tests.py` : テストアセンブリを複数指定できるようにした(`run_tests.bat PlayMode A.Tests;B.Tests`)

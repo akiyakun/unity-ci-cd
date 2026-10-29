@@ -25,7 +25,7 @@ GitLab CI(Windows の shell Runner)で実際に起きた症状と原因です。
 ## Library が空の初回だけ「Scene(s) Have Been Modified」ダイアログで終了コード3になる
 * 原因: 初回インポートの後処理が空のシーンを変更済みにしてしまい、`-runTests` の実行時に保存確認のダイアログが出て止まる。
 * 2回目以降(`Library/` が残っている状態)は通ります。`GIT_CLEAN_FLAGS: "-ffd"` で `Library/` を残しているので、初回だけ再実行すれば済みます。
-* 対策案: `-runTests` の前に `-batchmode -quit` でインポートだけの起動を挟む(未実装)。
+* 対策: 1.2.2 から `run_tests.py` が `-runTests` の前に `-batchmode -quit` でインポートだけの起動を挟みます(ログは `Logs/unity_import.log`)。インポートが失敗したときはテストを実行せず、その終了コードで終わります。
 
 ## Unity 起動時に「cicd_config.json : Current v1.2.1, File v1.2.0」のエラーログが出る
 * 原因: パッケージを更新したが、プロジェクト直下の `cicd_config.json` の `"version"` が古いまま。

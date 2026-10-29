@@ -56,4 +56,5 @@ tests_windows:
     paths:
       - $PROJECT_DIR_NAME/Logs/tests_results.xml
       - $PROJECT_DIR_NAME/Logs/unity_tests.log
+      - $PROJECT_DIR_NAME/Logs/unity_import.log
     expire_in: 1 week

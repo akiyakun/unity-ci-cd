@@ -17,10 +17,22 @@ def parse_args():
   # 複数指定可。run_tests.bat 経由だと cmd が ; で引数を分けるので、受け取った後に ; で連結して Unity に渡す
   parser.add_argument('--assemblyNames', type=str, nargs='+',
     help='Unity -assemblyNames', required=True)
+  parser.add_argument('--skipImport', action='store_true',
+    help='テスト前のインポートだけの起動を省略する')
   # parser.add_argument('--override', action='store_true',
   #   help='既に存在する場合でも作成しなおす')
 
   return parser.parse_args()
+
+
+# Unityのログの末尾を表示(全体はCIのartifactsに残す)
+def print_log_tail(log_file):
+  if not os.path.exists(log_file): return
+  sys.stdout.reconfigure(errors='replace')
+  with open(log_file, 'r', encoding='utf-8', errors='replace') as f:
+    lines = f.readlines()
+  print("---- {} (last 400 lines) ----".format(log_file))
+  print(''.join(lines[-400:]))
 
 
 if __name__ == "__main__":
@@ -71,8 +83,40 @@ if __name__ == "__main__":
   test_results = os.path.join(project_path, 'Logs', 'tests_results.xml')
   # WindowsのUnity.exeは -logFile - でも標準出力に出ないため、ファイルに書いて終了後に表示する
   log_file = os.path.join(project_path, 'Logs', 'unity_tests.log')
+  import_log_file = os.path.join(project_path, 'Logs', 'unity_import.log')
+  # Library/ と一緒に Logs/ も消された状態で起動されることがあるので作っておく
+  os.makedirs(os.path.join(project_path, 'Logs'), exist_ok=True)
+
+  # インポートだけ先に済ませる
+  # Library/ が空の初回は、インポートの後処理でシーンが変更扱いになり、
+  # -runTests の開始時に保存確認のダイアログで止まる(終了コード3)ことがあるため
+  if not args.skipImport:
+    print("---- import ----", flush=True)
+    import_code = 0
+    try:
+      result = subprocess.run(
+        [
+          unity_path,
+          '-projectPath', project_path,
+          '-forgetProjectPath',
+          '-batchmode',
+          '-quit',
+          '-logFile', import_log_file
+        ],
+        check=True
+      )
+      print("return code: {}".format(result.returncode))
+    except subprocess.CalledProcessError as e:
+      print(e)
+      import_code = e.returncode
+
+    # インポートに失敗したらテストは実行しない
+    if import_code != 0:
+      print_log_tail(import_log_file)
+      sys.exit(import_code)
 
   # Unityで実行
+  print("---- tests ----", flush=True)
   return_code = 0
   try:
     result = subprocess.run(
@@ -107,13 +151,7 @@ if __name__ == "__main__":
     print(e)
     return_code = e.returncode
 
-  # Unityのログの末尾を表示(全体はCIのartifactsに残す)
-  if os.path.exists(log_file):
-    sys.stdout.reconfigure(errors='replace')
-    with open(log_file, 'r', encoding='utf-8', errors='replace') as f:
-      lines = f.readlines()
-    print("---- {} (last 400 lines) ----".format(log_file))
-    print(''.join(lines[-400:]))
+  print_log_tail(log_file)
 
   if return_code != 0:
     sys.exit(return_code)
