@@ -5,7 +5,11 @@ charset = utf-8
 end_of_line = lf
 
 [*.bat]
-charset = shift-jis
+# EditorConfig の charset は latin1 / utf-8 / utf-8-bom / utf-16be / utf-16le しか指定できず、CP932（Shift_JIS）は書けない。
+# この charset が無いと [*] の charset = utf-8 が .bat に当たり、VS Code（EditorConfig 拡張 v0.18 以降）や JetBrains が
+# UTF-8 として開いて日本語が化けるので、unset にして utf-8 を当てないようにしている（消さないこと）。
+# .bat 自体は CP932・CRLF で保存する（.gitattributes の working-tree-encoding=CP932 を参照）。
+charset = unset
 end_of_line = crlf
 trim_trailing_whitespace = true
 
