@@ -13,6 +13,7 @@ Runner の用意は [gitlab-runner-setup.md](gitlab-runner-setup.md) を参照�
    | `PROJECT_DIR_NAME` | `"."` | Unity プロジェクトのフォルダ(リポジトリ直下からの相対パス)。モノレポならサブフォルダ名 |
    | `TEST_PLATFORM` | `"PlayMode"` | `PlayMode` か `EditMode` |
    | `TEST_ASSEMBLY_NAMES` | `"Project.Tests"` | 自分のテストアセンブリ名に変えます。複数は `;` 区切り |
+   | `CICD_IMPORT_TIMEOUT` / `CICD_TEST_TIMEOUT` | (テンプレートではコメント) | インポート / テストの制限時間(分)。指定しなければ 30 / 20。0 で無制限(1.2.3 から。「終了コード」参照) |
 3. `tags` を Runner に付けたタグに合わせます(既定は `windows`)。
 4. プロジェクトの `cicd_config.json` の `runners` に `name` が `"Windows"` のものがあり、`unity_path` が Runner の PC にインストールされている Unity を指しているか確認します。
 5. `tools/` がコミットされているか確認します(パッケージ導入後に Unity Editor を一度起動するとコピーされます)。
@@ -60,12 +61,13 @@ Packages/com.example.lib|libs/com.example.lib
 * `2` : テスト失敗
 * `3` : 実行エラー(コンパイルエラー、ダイアログで止まったなど)
 * `1` : Unity の起動に失敗した(ログを確認)、または `cicd_config.json` や Unity が見つからないなど Unity を起動する前のエラー
-* `124` : 制限時間(`--importTimeout` 既定30分 / `--testTimeout` 既定20分)を過ぎたので、`run_tests.py` が Unity を終了させた(1.2.3 から)
+* `124` : 制限時間(インポート既定30分 / テスト既定20分)を過ぎたので、`run_tests.py` が Unity を終了させた(1.2.3 から)
 
 0 以外の終了コードは、テスト前のインポート段階から来ることもあります(コンパイルエラーで `1` など)。そのときはテストを実行せずに終わります。どちらの段階かは、ジョブのログの `---- import ----` / `---- tests ----` の見出しと、表示されたログのファイル名(`unity_import.log` / `unity_tests.log`)で分かります。
 1.2.3 からは、インポート段階で失敗したときに「インポート段階で失敗しました(終了コード N)」と表示します。
 
 制限時間はジョブのタイムアウト(GitLab の既定は1時間)より短くしておきます。ジョブのタイムアウトで打ち切られると Unity が終了せずに残り、次のジョブが同じプロジェクトを開けずに起動直後に失敗するためです。制限時間を過ぎたときは `run_tests.py` が Unity を子プロセスごと終了させるので残りません。
+制限時間は CI の変数 `CICD_IMPORT_TIMEOUT` / `CICD_TEST_TIMEOUT`(分)で変えます。`run_tests.bat` は2つ目以降の引数をすべてテストアセンブリ名として渡すので、`--importTimeout` / `--testTimeout` は `run_tests.py` を直接呼ぶときだけ使えます。インポートとテストの合計にチェックアウトなどの時間を足しても、ジョブのタイムアウトに収まるようにします。
 また CI(環境変数 `CI` がある)の Windows では、起動前に同じプロジェクトを開いたまま残っている Unity を終了させます(開発者の PC で開いているエディタは閉じません)。
 
 ## テストアセンブリの複数指定

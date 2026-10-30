@@ -12,6 +12,10 @@ variables:
   TEST_PLATFORM: "PlayMode"
   # テストアセンブリ名（自分のテストアセンブリ名に変える。複数は ; 区切り）
   TEST_ASSEMBLY_NAMES: "Project.Tests"
+  # インポート / テストの制限時間（分、0 で無制限）。過ぎたら run_tests.py が Unity を終了させる
+  # 合計にチェックアウトなどの時間を足しても、ジョブのタイムアウト（GitLab の既定は 1 時間）に収まるようにする
+  # CICD_IMPORT_TIMEOUT: "30"
+  # CICD_TEST_TIMEOUT: "20"
   # shell Runner では作業フォルダが残るので、Library/ などの無視ファイルは消さずに使い回す
   # （既定の -ffdx だと毎回 Library/ が消えてフルインポートになる）
   GIT_CLEAN_FLAGS: "-ffd"

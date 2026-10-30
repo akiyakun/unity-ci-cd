@@ -18,6 +18,7 @@ Player設定でシンボル`__USE_UNICICD_BUILDMENU__`を追加します。
 
 ## 1.2.3
 * `run_tests.py` : Unity の起動に制限時間を付けた(`--importTimeout` 既定30分、`--testTimeout` 既定20分、0で無制限)。過ぎたら Unity を子プロセスごと終了させ、終了コード`124`で終わる。CI のジョブのタイムアウトで打ち切られると Unity が残り、次のジョブが起動直後に失敗するため
+  * CI からは環境変数`CICD_IMPORT_TIMEOUT` / `CICD_TEST_TIMEOUT`(分)で指定する(`run_tests.bat`には引数で渡せないため)
 * `run_tests.py` : CI(環境変数`CI`がある)の Windows では、起動前に同じプロジェクトを開いたまま残っている Unity を終了させる
 * `run_tests.py` : インポート段階で失敗したときに、その旨を一行表示するようにした
 
