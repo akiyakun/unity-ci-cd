@@ -16,6 +16,11 @@ Player設定でシンボル`__USE_UNICICD_BUILDMENU__`を追加します。
 2. `tools/`フォルダはUnity Editor起動時に自動で上書きコピーされます(`tools/cicd/cicd_version`がパッケージのバージョンと異なる場合)。プロジェクト側で変更したファイルは上書きされるので注意してください。
 3. `cicd_config.json`の`runners > unity_path`を現在使っているUnityのパスに合わせます。
 
+## 1.2.3
+* `run_tests.py` : Unity の起動に制限時間を付けた(`--importTimeout` 既定30分、`--testTimeout` 既定20分、0で無制限)。過ぎたら Unity を子プロセスごと終了させ、終了コード`124`で終わる。CI のジョブのタイムアウトで打ち切られると Unity が残り、次のジョブが起動直後に失敗するため
+* `run_tests.py` : CI(環境変数`CI`がある)の Windows では、起動前に同じプロジェクトを開いたまま残っている Unity を終了させる
+* `run_tests.py` : インポート段階で失敗したときに、その旨を一行表示するようにした
+
 ## 1.2.2
 * `run_tests.py` : テストの前に `-batchmode -quit` でインポートだけ行う起動を挟むようにした(ログは`Logs/unity_import.log`)。`Library/`が空の初回に「Scene(s) Have Been Modified」のダイアログでテストが止まる(終了コード3)のを防ぐため。`--skipImport`で省略できる
 

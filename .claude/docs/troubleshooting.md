@@ -27,6 +27,12 @@ GitLab CI(Windows の shell Runner)で実際に起きた症状と原因です。
 * 2回目以降(`Library/` が残っている状態)は通ります。`GIT_CLEAN_FLAGS: "-ffd"` で `Library/` を残しているので、初回だけ再実行すれば済みます。
 * 対策: 1.2.2 から `run_tests.py` が `-runTests` の前に `-batchmode -quit` でインポートだけの起動を挟みます(ログは `Logs/unity_import.log`)。インポートが失敗したときはテストを実行せず、その終了コードで終わります。
 
+## テストが止まったままジョブのタイムアウトで失敗し、その後のジョブが起動直後に終了コード1で失敗する
+* 原因: テスト中に Error Pause(例外でエディタが一時停止する)などで止まり、ジョブのタイムアウトで打ち切られた。そのとき `Unity.exe` が終了せずに残り、同じプロジェクトを開いたままなので、次のジョブの Unity が起動直後に失敗する。
+* 対処: Runner の PC で残っている `Unity.exe` を終了させてから再実行します。
+* 対策: 1.2.3 から `run_tests.py` に制限時間(`--importTimeout` 既定30分 / `--testTimeout` 既定20分)があり、過ぎたら Unity を子プロセスごと終了させて終了コード `124` で終わります。CI の Windows では起動前に残った Unity も終了させます([gitlab-ci.md](gitlab-ci.md) の「終了コード」参照)。
+* 止まった原因のほうも直します。batchmode(CI の PlayMode テスト)では `Keyboard.current` などの入力デバイスが null になるので、毎フレーム触るコードでは null を確認します(onihime では afl の `DebuggerService` の `NullReferenceException` で Error Pause になっていた)。
+
 ## Unity 起動時に「cicd_config.json : Current v1.2.1, File v1.2.0」のエラーログが出る
 * 原因: パッケージを更新したが、プロジェクト直下の `cicd_config.json` の `"version"` が古いまま。
 * 対処: `"version"` をパッケージのバージョンに書き換えます(パッケージの README の「更新手順」参照)。
