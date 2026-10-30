@@ -13,12 +13,6 @@ TIMEOUT_EXIT_CODE = 124
 
 # def load_cicd_config():
 
-# 制限時間(分)の既定値。環境変数があればそれを使う(run_tests.bat には引数で渡せないので、CI の変数で指定するため)
-def timeout_default(env_name, default):
-  value = os.environ.get(env_name)
-  return float(value) if value else default
-
-
 def parse_args():
   parser = argparse.ArgumentParser(description ='desc')
 
@@ -33,10 +27,10 @@ def parse_args():
     help='テスト前のインポートだけの起動を省略する')
   # CI のジョブのタイムアウト(GitLab の既定は 1 時間)より先に切れるようにしておく
   # ジョブのタイムアウトで打ち切られると Unity が残り、次のジョブが起動できなくなるため
-  parser.add_argument('--importTimeout', type=float, default=timeout_default('CICD_IMPORT_TIMEOUT', 30),
-    help='インポートだけの起動の制限時間(分)。0 で無制限。環境変数 CICD_IMPORT_TIMEOUT でも指定できる')
-  parser.add_argument('--testTimeout', type=float, default=timeout_default('CICD_TEST_TIMEOUT', 20),
-    help='テストの起動の制限時間(分)。0 で無制限。環境変数 CICD_TEST_TIMEOUT でも指定できる')
+  parser.add_argument('--importTimeout', type=int, default=30,
+    help='インポートだけの起動の制限時間(分)。0 で無制限')
+  parser.add_argument('--testTimeout', type=int, default=20,
+    help='テストの起動の制限時間(分)。0 で無制限')
   # parser.add_argument('--override', action='store_true',
   #   help='既に存在する場合でも作成しなおす')
 
@@ -58,15 +52,7 @@ def kill_process_tree(pid):
     subprocess.run(['taskkill', '/PID', str(pid), '/T', '/F'],
       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
   else:
-    # 親を止めてから子(Unity が直接起動したもの)を終了させ、最後に親を終了させる
-    # (親を先に終了させると、子の親が変わって見つけられなくなる)
-    try:
-      os.kill(pid, signal.SIGSTOP)
-      subprocess.run(['pkill', '-KILL', '-P', str(pid)],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-      os.kill(pid, signal.SIGKILL)
-    except ProcessLookupError:
-      pass
+    os.kill(pid, signal.SIGKILL)
 
 
 # 前のジョブで残った Unity(このプロジェクトを開いたまま)を終了させる
@@ -99,13 +85,11 @@ def kill_stale_unity(project_path):
       kill_process_tree(process['ProcessId'])
       killed.append(str(process['ProcessId']))
 
-  # taskkill はプロセスが終わりきる前に戻ることがあるので、終わるまで待ってから次の Unity を起動する
+  # taskkill はプロセスが消えきる前に戻ることがあるので、プロジェクトのロックが外れるまで待つ
   if killed:
     subprocess.run(
-      [
-        'powershell', '-NoProfile', '-Command',
-        "Wait-Process -Id {} -Timeout 60 -ErrorAction SilentlyContinue".format(','.join(killed))
-      ],
+      ['powershell', '-NoProfile', '-Command',
+        'Wait-Process -Id {} -Timeout 30 -ErrorAction SilentlyContinue'.format(','.join(killed))],
       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
 
@@ -116,16 +100,20 @@ def run_unity(command, timeout_minutes):
   try:
     return_code = process.wait(timeout=timeout_minutes * 60 if timeout_minutes > 0 else None)
   except subprocess.TimeoutExpired:
-    print("{:g} 分たっても Unity が終わらないので終了させます(テストやエディタの一時停止で止まった可能性があります)。".format(timeout_minutes), flush=True)
+    # 表示で失敗しても Unity が残らないように、先に終了させる
     kill_process_tree(process.pid)
-    process.wait()
+    print("{} 分たっても Unity が終わらないので終了させました(テストやエディタの一時停止で止まった可能性があります)。".format(timeout_minutes), flush=True)
+    try:
+      process.wait(timeout=60)
+    except subprocess.TimeoutExpired:
+      print("Unity を終了させられませんでした(PID {})。Runner の PC で終了させてください。".format(process.pid), flush=True)
     return_code = TIMEOUT_EXIT_CODE
   print("return code: {}".format(return_code), flush=True)
   return return_code
 
 
 if __name__ == "__main__":
-  # 日本語を表示できない文字コード(英語の Windows の cp1252 など)でも、表示で落ちて Unity を終了させられないことがないように
+  # 日本語以外の Windows などで、日本語の表示やログの文字が出力の文字コードに無くても落ちないようにする
   sys.stdout.reconfigure(errors='replace')
   args = parse_args()
   # if args.params is None: args.params = ''
