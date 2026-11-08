@@ -46,13 +46,19 @@ Player設定でシンボル`__USE_UNICICD_BUILDMENU__`を追加します。
 
 # シンボル
 __DEBUG__
-デバッグビルドのときに定義される。
+デバッグビルド(Debug)のときに定義される。
+
+__RELEASE__
+リリースビルド(Release)とパブリッシュビルド(Publish)のときに定義される。
 
 __PUBLISH__
-本番用のときに定義される。
+本番用(Publish)のときに定義される。Publish では `__DEBUG__`・`__TESTS__`・`__INAPPDEBUG__` は定義されない(InAppDebug オプションを指定しても外される)。
+
+__INAPPDEBUG__
+InAppDebug オプションを付けてビルドしたときに定義される(Debug・Release のみ)。
 
 __TESTS__
-テストビルドのときに定義される。
+テスト用。Debug・Release・Publish のビルドでは外される。
 
 __USE_UNICICD_BUILDMENU__
 本ライブラリで用意しているビルドメニューを使用する。

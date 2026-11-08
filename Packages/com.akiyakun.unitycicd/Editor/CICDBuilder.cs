@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -27,6 +29,70 @@ namespace UnityCICD.Editor
             public StackTraceLogType[] StackTraces = new StackTraceLogType[System.Enum.GetNames(typeof(LogType)).Length];
         }
         OriginalSetting originalSetting = new OriginalSetting();
+
+        // ビルド中に Unity や URP が書き換える設定ファイル（ProjectSettings.asset、RenderPipelineAsset など）を
+        // ビルド前の内容に戻すため、ビルド前のファイルの中身を保存しておく
+        // MEMO: ProjectSettings.asset は Editor に読み込み直させる方法が無いので、戻るのはディスク上の内容だけ。
+        //       Editor を開いたままビルドしたときは、次に設定が保存されたときにビルド中の書き換えがまた出ることがある
+        class SettingsFileSnapshot
+        {
+            readonly Dictionary<string, byte[]> files = new Dictionary<string, byte[]>();
+
+            public void Take()
+            {
+                // 未保存の変更をディスクに書き出してから保存する。
+                // 書き出さないと、ビルド後に古い内容で上書きして未保存の変更を消してしまう
+                AssetDatabase.SaveAssets();
+
+                files.Clear();
+                foreach (var path in CollectTargetPaths())
+                {
+                    if (File.Exists(path)) files[path] = File.ReadAllBytes(path);
+                }
+            }
+
+            public void Restore()
+            {
+                foreach (var pair in files)
+                {
+                    var path = pair.Key;
+
+                    // 後処理(finally)から呼ばれるので、1つ失敗しても残りは戻し、例外は外に出さない
+                    try
+                    {
+                        if (File.Exists(path) && File.ReadAllBytes(path).SequenceEqual(pair.Value)) continue;
+
+                        File.WriteAllBytes(path, pair.Value);
+                        Log("[Build] Restored: " + path);
+
+                        // Assets 以下はメモリ上のアセットもディスクの内容に合わせる
+                        if (path.StartsWith("Assets/"))
+                        {
+                            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+                        }
+                    }
+                    catch (System.Exception e)
+                    {
+                        LogError("[Build] Failed to restore: " + path + " " + e.Message);
+                    }
+                }
+                files.Clear();
+            }
+
+            static IEnumerable<string> CollectTargetPaths()
+            {
+                var paths = new HashSet<string> { "ProjectSettings/ProjectSettings.asset" };
+                foreach (var filter in new[] { "t:RenderPipelineAsset", "t:RenderPipelineGlobalSettings" })
+                {
+                    foreach (var guid in AssetDatabase.FindAssets(filter, new[] { "Assets" }))
+                    {
+                        paths.Add(AssetDatabase.GUIDToAssetPath(guid));
+                    }
+                }
+                return paths;
+            }
+        }
+        SettingsFileSnapshot settingsFileSnapshot = new SettingsFileSnapshot();
 
         public CICDBuilder()
         {
@@ -107,6 +173,12 @@ namespace UnityCICD.Editor
             Debug.Assert(options != null);
             BuildOptions = options;
 
+            // Publish ビルドには InAppDebug を含めない
+            if (options.BuildMode == CICDBuildMode.Publish && options.Options.Remove(CICDPlatformBuildOptions.InAppDebug))
+            {
+                Debug.LogWarning("[Build] Publish build does not support InAppDebug. InAppDebug option was removed.");
+            }
+
             // platformBuild = Config.BuildSettings.PlatformBuildFactory.Create(options.BuildTarget.ToString());
             platformBuild = Config.BuildSettings.PlatformBuildFactory.Create();
 
@@ -155,6 +227,9 @@ namespace UnityCICD.Editor
         {
             var result = new CICDBuildResult();
             if (Initialized == false) return result;
+
+            // ビルド中に書き換わる設定ファイルを、ビルド後に戻せるよう保存しておく
+            settingsFileSnapshot.Take();
 
             // FIXME: CICDBuildMode.Currentのときのみ処理したい
             // if (BuildOptions.BuildTarget == BuildTarget.NoTarget)
@@ -361,8 +436,15 @@ namespace UnityCICD.Editor
                     Git.WriteBuildInfoText();
                     break;
                 case CICDBuildMode.Publish:
-                    // Log("[Build] Release Build.");
+                    // Log("[Build] Publish Build.");
+                    // Publish は Release に __PUBLISH__ を加えたもの。
+                    // InAppDebug は Initialize() で外しているので、__INAPPDEBUG__ は上で外れている。
+                    // BuildInfoText(Git のコミット情報)は InAppDebug でしか使わず、出荷物にも入れないので書かない
                     stackTrace = 0;
+                    SymbolEditor.RemoveSymbol("__DEBUG__");
+                    SymbolEditor.RemoveSymbol("__TESTS__");
+                    SymbolEditor.AddSymbol("__RELEASE__");
+                    SymbolEditor.AddSymbol("__PUBLISH__");
                     break;
                 default:
                     Debug.Assert(false);
@@ -408,6 +490,9 @@ namespace UnityCICD.Editor
 
             // 戻した設定を保存
             AssetDatabase.SaveAssets();
+
+            // ビルド中に書き換わった設定ファイルをビルド前の内容に戻す
+            settingsFileSnapshot.Restore();
         }
 
         // ビルドプレイヤーオプション設定

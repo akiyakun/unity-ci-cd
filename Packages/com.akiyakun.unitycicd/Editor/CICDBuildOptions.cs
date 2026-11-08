@@ -23,7 +23,8 @@ namespace UnityCICD.Editor
         Release,
 
         // パブリッシュビルド
-        // __PUBLISH__ が定義される
+        // __RELEASE__ と __PUBLISH__ が定義される
+        // __DEBUG__、__TESTS__、__INAPPDEBUG__ は定義されない（InAppDebug オプションは無視される）
         Publish,
     }
 
