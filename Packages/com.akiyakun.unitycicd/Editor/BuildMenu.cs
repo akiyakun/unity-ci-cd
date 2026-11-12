@@ -222,7 +222,11 @@ namespace UnityCICD.Editor
 
         // CICDConfigファイルに設定してあるシーンをメニューに動的に追加
         // InitializeOnLoad のタイミングで呼び出すのを想定しています。
-        public static void SetupScenesMenuItem(int menuPriority, string menuRootName)
+        // onBeforeOpenAdditiveScene: Additive のシーンを開く直前(保存の確認の後)に呼ばれる。
+        //   Additive のシーンの前に開いておきたいシーンがあるプロジェクトで、そのシーンを開くのに使う。
+        //   null なら何もしない。
+        public static void SetupScenesMenuItem(int menuPriority, string menuRootName,
+            System.Action<BuildSettingsScriptableObject.SceneInfo> onBeforeOpenAdditiveScene = null)
         {
             var config = CICDConfig.Load();
             int priority = menuPriority;
@@ -236,7 +240,7 @@ namespace UnityCICD.Editor
                 }
                 else
                 {
-                    AddSceneMenuItem(sceneInfo, ++priority, menuRootName);
+                    AddSceneMenuItem(sceneInfo, ++priority, menuRootName, onBeforeOpenAdditiveScene);
                 }
             });
 
@@ -251,12 +255,13 @@ namespace UnityCICD.Editor
                 }
                 else
                 {
-                    AddSceneMenuItem(sceneInfo, ++priority, menuRootName);
+                    AddSceneMenuItem(sceneInfo, ++priority, menuRootName, onBeforeOpenAdditiveScene);
                 }
             });
         }
 
-        static void AddSceneMenuItem(BuildSettingsScriptableObject.SceneInfo sceneInfo, int priority, string menuRootName)
+        static void AddSceneMenuItem(BuildSettingsScriptableObject.SceneInfo sceneInfo, int priority, string menuRootName,
+            System.Action<BuildSettingsScriptableObject.SceneInfo> onBeforeOpenAdditiveScene)
         {
             string name;
             if (string.IsNullOrEmpty(sceneInfo.Name))
@@ -278,6 +283,7 @@ namespace UnityCICD.Editor
                     }
                     else if (sceneInfo.Type == BuildSettingsScriptableObject.SceneType.Additive)
                     {
+                        onBeforeOpenAdditiveScene?.Invoke(sceneInfo);
                         var scene = EditorSceneManager.OpenScene(sceneInfo.SceneAssetPath, OpenSceneMode.Additive);
                         // sceneをアクティブにする
                         EditorSceneManager.SetActiveScene(scene);
