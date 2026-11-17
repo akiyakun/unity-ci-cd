@@ -54,18 +54,14 @@ namespace UnityCICD.Editor
 
         public static void ApplyApiCompatibilityLevel(BuildTargetGroup group)
         {
-#if UNITY_2021_2_1_OR_NEWER
             // .NET Standard 2.1
-			PlayerSettings.SetApiCompatibilityLevel(group, ApiCompatibilityLevel.NET_Standard);
-#else
-            PlayerSettings.SetApiCompatibilityLevel(group, ApiCompatibilityLevel.NET_Standard_2_0);
-#endif
+            PlayerSettings.SetApiCompatibilityLevel(NamedBuildTarget.FromBuildTargetGroup(group), ApiCompatibilityLevel.NET_Standard);
         }
 
         public static void AndroidSettings()
         {
             BuildTargetGroup group = BuildTargetGroup.Android;
-            PlayerSettings.SetScriptingBackend(group, ScriptingImplementation.IL2CPP);
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(group), ScriptingImplementation.IL2CPP);
             // PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             ApplyApiCompatibilityLevel(group);
@@ -74,7 +70,7 @@ namespace UnityCICD.Editor
             if (AndroidMonoBuild)
             {
                 // Monoでビルド
-                PlayerSettings.SetScriptingBackend(group, ScriptingImplementation.Mono2x);
+                PlayerSettings.SetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(group), ScriptingImplementation.Mono2x);
                 // Monoは64bitビルド非対応
                 PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7;
             }
@@ -84,10 +80,10 @@ namespace UnityCICD.Editor
         public static void iOSSettings()
         {
             BuildTargetGroup group = BuildTargetGroup.iOS;
-            PlayerSettings.SetScriptingBackend(group, ScriptingImplementation.IL2CPP);
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(group), ScriptingImplementation.IL2CPP);
             ApplyApiCompatibilityLevel(group);
 
-            PlayerSettings.SetArchitecture(BuildTargetGroup.iOS, (int)AppleMobileArchitecture.ARM64);
+            PlayerSettings.SetArchitecture(NamedBuildTarget.iOS, (int)AppleMobileArchitecture.ARM64);
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
 
         }
@@ -112,7 +108,7 @@ namespace UnityCICD.Editor
         {
             BuildTargetGroup group = BuildTargetGroup.Standalone;
             // PlayerSettings.SetScriptingBackend(group, ScriptingImplementation.Mono2x);
-            PlayerSettings.SetScriptingBackend(group, ScriptingImplementation.IL2CPP);
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(group), ScriptingImplementation.IL2CPP);
             ApplyApiCompatibilityLevel(group);
 
             // PlayerSettings.SetArchitecture(BuildTargetGroup.Standalone, 1);     // 64bit

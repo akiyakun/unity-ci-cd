@@ -2,7 +2,7 @@
   "name": "com.akiyakun.unitycicd",
   "version": "1.0.3",
   "displayName": "unity-ci-cd",
-  "unity": "2020.3",
+  "unity": "6000.0",
   "description": "unity-ci-cd",
   "hideInEditor": false
 }

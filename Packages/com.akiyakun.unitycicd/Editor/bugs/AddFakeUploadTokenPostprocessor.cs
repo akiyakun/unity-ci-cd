@@ -35,12 +35,7 @@ namespace UnityCICD.Editor.Build
             string pbxFilename = pathToBuiltProject + "/Unity-iPhone.xcodeproj/project.pbxproj";
             proj.ReadFromFile(pbxFilename);
 
-#if UNITY_2019_3_OR_NEWER
             string guid = proj.GetUnityMainTargetGuid();
-#else
-            string targetName = PBXProject.GetUnityTargetName();
-            string guid = proj.TargetGuidByName(targetName);
-#endif
 
             proj.SetBuildProperty(guid, "USYM_UPLOAD_AUTH_TOKEN", "FakeToken");
 

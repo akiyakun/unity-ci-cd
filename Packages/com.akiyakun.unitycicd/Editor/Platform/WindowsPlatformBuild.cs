@@ -1,6 +1,7 @@
 #if UNITY_STANDALONE_WIN
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
@@ -61,8 +62,8 @@ namespace UnityCICD.Editor
         {
             if (BuildOptions.HasOption(WindowsPlatformBuildOptions.MonoBuild))
             {
-                oldScriptingBackend = PlayerSettings.GetScriptingBackend(bpo.targetGroup);
-                PlayerSettings.SetScriptingBackend(bpo.targetGroup, ScriptingImplementation.Mono2x);
+                oldScriptingBackend = PlayerSettings.GetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(bpo.targetGroup));
+                PlayerSettings.SetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(bpo.targetGroup), ScriptingImplementation.Mono2x);
 
                 // MEMO: WindowsでSetArchitecture()は使えないBuildTargetが違うのでこちらを変更する必要がある
                 // oldArchitecture = PlayerSettings.GetArchitecture(bpo.targetGroup);
@@ -72,8 +73,8 @@ namespace UnityCICD.Editor
             else if (BuildOptions.HasOption(WindowsPlatformBuildOptions.IL2CPPBuild))
             {
                 // Debug.Log("IL2CPPBuild 2");
-                oldScriptingBackend = PlayerSettings.GetScriptingBackend(bpo.targetGroup);
-                PlayerSettings.SetScriptingBackend(bpo.targetGroup, ScriptingImplementation.IL2CPP);
+                oldScriptingBackend = PlayerSettings.GetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(bpo.targetGroup));
+                PlayerSettings.SetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(bpo.targetGroup), ScriptingImplementation.IL2CPP);
 
                 // MEMO: WindowsでSetArchitecture()は使えないBuildTargetが違うのでこちらを変更する必要がある
                 // oldArchitecture = PlayerSettings.GetArchitecture(bpo.targetGroup);
@@ -89,7 +90,7 @@ namespace UnityCICD.Editor
             // Mono or IL2CPP
             // ビルドターゲットは戻さなくていいかな…
             // PlayerSettings.SetArchitecture(bpo.targetGroup, oldArchitecture);
-            PlayerSettings.SetScriptingBackend(bpo.targetGroup, oldScriptingBackend);
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(bpo.targetGroup), oldScriptingBackend);
         }
     }
 }

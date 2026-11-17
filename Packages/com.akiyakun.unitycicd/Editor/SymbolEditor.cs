@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Build;
 
 namespace UnityCICD.Editor
 {
@@ -32,7 +33,7 @@ namespace UnityCICD.Editor
         public static List<string> GetSymbols(BuildTargetGroup targetGroup = BuildTargetGroup.Unknown)
         {
             var group = targetGroup == BuildTargetGroup.Unknown ? EditorUserBuildSettings.selectedBuildTargetGroup : targetGroup;
-            return new List<string>(PlayerSettings.GetScriptingDefineSymbolsForGroup(group).Split(new[] { ';' }));
+            return new List<string>(PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(group)).Split(new[] { ';' }));
         }
 
         public static void SetSymbols(List<string> defineList, BuildTargetGroup targetGroup = BuildTargetGroup.Unknown)
@@ -44,7 +45,7 @@ namespace UnityCICD.Editor
             {
                 defines += ";" + d;
             }
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, defines);
+            PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(group), defines);
         }
     }
 }

@@ -31,6 +31,8 @@ Player設定でシンボル`__USE_UNICICD_BUILDMENU__`を追加します。
 
 
 ## 対応
+Unity 6(6000.0)以上。PlayerSettings は NamedBuildTarget を受け取るメソッドを使っています(BuildTargetGroup を受け取るメソッドは Unity 6 で古い扱いになり、警告が出るため)。
+
 * Android
 * iOS
 * Windows
